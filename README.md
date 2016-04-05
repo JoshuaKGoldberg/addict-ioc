@@ -50,7 +50,7 @@ class YetAnotherClass {
 ### Registration
 The registration is the entry point to declare settings for a type registration on the container.
 
-The `register` method enables all other fluent declarations and needs to proceed them. If it somehow is missing in front of a fluent declaration, an error will be thrown.
+The `register` method enables all other fluent declarations and needs to proceed them. If it somehow is missing before a fluent declaration, an error will be thrown.
 
 #### By Type
 
