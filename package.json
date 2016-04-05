@@ -1,0 +1,32 @@
+{
+  "name": "addict-ioc",
+  "version": "1.0.0",
+  "description": "A fluent ioc container for JavaScript.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/5minds/addict-ioc.git"
+  },
+  "keywords": [
+    "ioc",
+    "dependency",
+    "injection",
+    "fluent",
+    "addict"
+  ],
+  "author": "Sebastian Meier <sebastian.meier@5minds.de>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/5minds/addict-ioc/issues"
+  },
+  "homepage": "https://github.com/5minds/addict-ioc#readme",
+  "devDependencies": {
+    "should": "^8.3.0"
+  }
+}
