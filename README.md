@@ -1,10 +1,18 @@
 # Addict IoC
 ## Basic Usage
 ### Import Package
-tbd
+The package exports a singleton container to be used all over your application.
+
+The following example shows how you can override the default settings if needed and what the default settings are.
 
 ```js
 const container = require('addict-ioc');
+
+container.setDefaults({
+  isSingleton: false,
+  wantsInjection: true,
+  isLazy: false
+});
 ```
 
 ### Dependency Injection
