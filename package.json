@@ -1,7 +1,7 @@
 {
   "name": "addict-ioc",
   "version": "1.0.0",
-  "description": "A fluent ioc container for JavaScript.",
+  "description": "A fluent IoC container for JavaScript.",
   "main": "index.js",
   "directories": {
     "test": "test"
