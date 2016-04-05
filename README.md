@@ -270,7 +270,7 @@ class SomeOtherClass {
 ```
 
 #### With Function Reference (defered)
-As seen in the examle below, the `config` function gets executed when the registration it is declared for gets instantiated. In case this class gets injected lazy, the `config` function will not be executed until the lazy injection is resolved.
+As seen in the examle below, the `config` function gets executed when the registered class it is declared for gets instantiated. In case this class gets injected lazy, the `config` function will not be executed until the lazy injection is resolved.
 
 ```js
 container.register(SomeClass)
