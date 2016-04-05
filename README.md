@@ -1,5 +1,5 @@
 
-![logo](addict-ioc_logo.png)
+![logo](logo.png)
 
 Addict IoC is a lightweight IoC container with a fluent declaration syntax easing your development and simplifying your code.
 
