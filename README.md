@@ -1,6 +1,5 @@
 
-![Alt text](http://github.com/5minds/addict-ioc/addict-ioc_logo.svg)
-<img src="http://github.com/5minds/addict-ioc/addict-ioc_logo.svg">
+![logo](addict-ioc_logo.png)
 
 Addict IoC is a lightweight IoC container with a fluent declaration syntax easing your development and simplifying your code.
 
