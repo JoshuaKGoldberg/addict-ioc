@@ -107,38 +107,41 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(resolution.config).equal(config);
   });
 
-    it('should resolve registration with single dependency declared as type', function testCallback() {
-      const key = 'test';
-      const config = {
-        test: 'this is a test'
-      };
+  it('should resolve registration with single dependency declared as type', function testCallback() {
+    const key = 'test';
+    const config = {
+      test: 'this is a test'
+    };
 
-      let secondTypeConstructorParam;
+    let secondTypeConstructorParam;
 
-      const SecondType = class SecondType {
-        constructor(param) {
-          secondTypeConstructorParam = param;
-        }
-        get config() {
-          return this._config;
-        }
-        set config(value) {
-          this._config = value;
-        }
-      };
+    const SecondType = class SecondType {
+      constructor(param) {
+        secondTypeConstructorParam = param;
+      }
+      get config() {
+        return this._config;
+      }
+      set config(value) {
+        this._config = value;
+      }
+    };
 
-      container.register(TestType);
+    container.register(TestType);
 
-      container.register(key, SecondType)
-        .dependencies(TestType)
-        .configure(config);
+    container.register(key, SecondType)
+      .dependencies(TestType)
+      .configure(config);
 
-      const resolution = container.resolve(key);
+    const resolution = container.resolve(key);
 
-      should(resolution).be.instanceOf(SecondType);
-      should(resolution.config).equal(config);
-      should(secondTypeConstructorParam).be.instanceOf(TestType);
-    });
+    should(resolution).be.instanceOf(SecondType);
+    should(resolution.config).equal(config);
+    should(secondTypeConstructorParam).be.instanceOf(TestType);
+  });
+
+  it.skip('should resolve with same instance if declared singleton', function testCallback() {
+  });
 
   it('should inject into target function if declared', function testCallback() {
     const key = 'test';
@@ -258,6 +261,9 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(typeof secondTypeConstructorParam).equal('function');
     should(secondTypeConstructorParam).not.be.instanceOf(TestType);
     should(resolvedLazyWrapper).be.instanceOf(TestType);
+  });
+
+  it.skip('should inject same instance multiple times if dependencies contains dependency declared singleton multiple times', function testCallback() {
   });
 
   it('should throw error on direct circular dependency', function testCallback(next) {
