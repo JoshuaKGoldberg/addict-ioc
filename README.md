@@ -115,7 +115,7 @@ class YetAnotherClass {
 ```
 
 ### Multiplicity
-The `singleton` declaration determines whether the container instantiates a registration once or every time it is requested.
+The `singleton` declaration determines whether the container instantiates a registered class once or every time it is requested.
 
 #### Transient
 By default registrations are transient, causing any `dependencies` referencing the class to get a *`new instance`* injected. A `lazy` dependency and the service locater (`resolve`) will also return a *`new instance`* every time they are called.
