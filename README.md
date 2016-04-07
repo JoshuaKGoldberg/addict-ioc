@@ -5,6 +5,24 @@ Addict IoC is a lightweight IoC container with a fluent declaration syntax easin
 
 It is designed to be easily extensible for your own needs without complicating the architecture by abstractions.
 
+## Features
+
+* Fluent Declaration Syntax
+* Fully covered by Unit Tests
+* Written in Vanilla ES6 JavaScript
+  * Lightweight
+  * Well structured, easily understandable code
+  * Without external dependencies
+* Dependency Injection into
+  * Constructor
+  * Properties
+  * Methods
+* Singleton or Transient Instantiation
+* Injection with lazy instantiation
+* Circular Dependency Detection
+* Configuration Injection
+* Service Locator
+
 ## Basic Usage
 ### Import Package
 The package exports a singleton container to be used all over your application.
