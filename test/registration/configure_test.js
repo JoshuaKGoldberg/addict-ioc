@@ -31,4 +31,16 @@ describe('Type Registration Configure Test', function describeCallback() {
     }
 
   });
+
+  it('should throw error if type of config declaration is not supported', function testCallback(next) {
+
+    try {
+      container.configure('this should not work');
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+
+  });
 });
