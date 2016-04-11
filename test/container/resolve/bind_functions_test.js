@@ -9,19 +9,21 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
 
   it('should bind functions to instance', function testCallback() {
 
+    const testString = 'this should not work';
+
     const TestType = class TestType {
-      constructor(testString) {
+      constructor() {
         this.testString = testString;
       }
       testMethod() {
         return this.testString;
       }
     };
-    const testString = 'this should work';
 
-    const instance = new TestType(testString);
+    container.register(TestType)
+      .bindFunctions();
 
-    container._bindFunctionsToInstance(instance);
+    const instance = container.resolve(TestType);
 
     const testFunction = (paramFunction) => {
       return paramFunction();
@@ -40,17 +42,20 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
     // This is due to a possible official implementation in the future ES7 proposal
     // as this is a shortcoming of the ES6 class implementation
 
+    const testString = 'this should not work';
+
     const TestType = class TestType {
-      constructor(testString) {
+      constructor() {
         this.testString = testString;
       }
       testMethod() {
         return this.testString;
       }
     };
-    const testString = 'this should not work';
 
-    const instance = new TestType(testString);
+    container.register(TestType);
+
+    const instance = container.resolve(TestType);
 
     const testFunction = (paramFunction) => {
       return paramFunction();
@@ -58,6 +63,50 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
 
     try {
       const resultString = testFunction(instance.testMethod);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+
+  });
+
+  it('should only bind defined functions if explicitly declared', function testCallback(next) {
+
+    const testString = 'this should not work';
+
+    const TestType = class TestType {
+      constructor() {
+        this.testString = testString;
+      }
+      testMethod() {
+        return this.testString;
+      }
+      secondTestMethod() {
+        return this.testString;
+      }
+      thirdTestMethod() {
+        return this.testString;
+      }
+    };
+
+    container.register(TestType)
+      .bindFunctions('testMethod', 'thirdTestMethod');
+
+    const instance = container.resolve(TestType);
+
+    const testFunction = (paramFunction) => {
+      return paramFunction();
+    };
+
+    const firstValidResultString = testFunction(instance.testMethod);
+    const secondValidResultString = testFunction(instance.thirdTestMethod);
+
+    should(firstValidResultString).equal(testString);
+    should(secondValidResultString).equal(testString);
+
+    try {
+      const failingResultString = testFunction(instance.secondTestMethod);
 
     } catch (error) {
       should(error).not.be.null();
