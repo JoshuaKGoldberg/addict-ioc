@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "benchmark": "node --expose-gc test/benchmark/run_benchmarks.js",
+    "benchmark": "node --expose-gc benchmark/run_benchmarks.js",
     "test": "mocha test/*"
   },
   "repository": {

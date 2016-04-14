@@ -1,7 +1,7 @@
 'use strict';
 
 const BenchmarkBase = require('./../benchmark_base');
-const container = require('./../../../lib/container');
+const container = require('./../../lib/container');
 
 class TestType {}
 
