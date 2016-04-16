@@ -91,10 +91,10 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it.skip('should not throw error on direct circular dependency', function testCallback(next) {
+  it.skip('should throw error on direct circular dependency', function testCallback(next) {
   });
 
-  it.skip('should not throw error on indirect circular dependency', function testCallback(next) {
+  it.skip('should throw error on indirect circular dependency', function testCallback(next) {
   });
 
 });
