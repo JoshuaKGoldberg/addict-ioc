@@ -6,7 +6,7 @@ const container = require('./../../lib/container');
 
 class TestType {}
 
-describe.only('Dependency Injection Container Validate Dependencies Test', function describeCallback() {
+describe('Dependency Injection Container Validate Dependencies Test', function describeCallback() {
 
   it('should throw error if dependencies are not registered', function testCallback(next) {
     const key = 'test';
@@ -89,6 +89,12 @@ describe.only('Dependency Injection Container Validate Dependencies Test', funct
     } catch (error) {
       next(error);
     }
+  });
+
+  it.skip('should throw error on direct circular dependency', function testCallback(next) {
+  });
+
+  it.skip('should throw error on indirect circular dependency', function testCallback(next) {
   });
 
 });
