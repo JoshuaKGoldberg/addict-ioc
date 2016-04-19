@@ -6,7 +6,7 @@ const container = require('./../../lib/container');
 
 class TestType {}
 
-describe.only('Dependency Injection Container Validate Dependencies Test', function describeCallback() {
+describe('Dependency Injection Container Validate Dependencies Test', function describeCallback() {
 
   it('should throw error if dependencies are not registered', function testCallback(next) {
     const key = 'test';
