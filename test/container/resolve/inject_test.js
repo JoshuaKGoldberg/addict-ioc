@@ -4,7 +4,8 @@ const should = require('should');
 
 const container = require('./../../../lib/container');
 
-class TestType {
+const TestType = class TestType {
+  constructor() {}
   set config(value) {
     this._config = value;
   }
@@ -14,6 +15,10 @@ class TestType {
 }
 
 describe('Dependency Injection Container Resolve Test', function describeCallback() {
+
+  beforeEach(() => {
+    container.clear();
+  });
 
   it('should inject into target function if declared', function testCallback() {
     const key = 'test';
@@ -135,7 +140,62 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(resolvedLazyWrapper).be.instanceOf(TestType);
   });
 
-  it.skip('should inject same instance multiple times if dependencies contains dependency declared singleton multiple times', function testCallback() {
+  it('should inject same instance multiple times if dependencies contains dependency declared singleton multiple times', function testCallback() {
+
+    const key = 'test';
+    const dependencyKey = 'dependency';
+    const config = {
+      test: 'this is a test'
+    };
+
+    let firstInjectedDependency;
+    let secondInjectedDependency;
+
+    const FirstType = class FirstType {
+      constructor() {}
+      set config(value) {
+        this._config = value;
+      }
+      get config() {
+        return this._config;
+      }
+    }
+
+    const SecondType = class SecondType {
+      constructor() {}
+      get config() {
+        return this._config;
+      }
+      set config(value) {
+        this._config = value;
+      }
+      injectionTargetProperty(firstDependency, secondDependency) {
+        firstInjectedDependency = firstDependency;
+        secondInjectedDependency = secondDependency;
+      }
+    };
+
+    container.register(dependencyKey, FirstType)
+      .singleton();
+
+    container.register(key, SecondType)
+      .dependencies(dependencyKey, dependencyKey)
+      .injectInto('injectionTargetProperty')
+      .configure(config);
+
+    const resolvedDependency = container.resolve(dependencyKey);
+    const resolvedKey = container.resolve(key);
+
+    should(firstInjectedDependency).not.be.null();
+    should(secondInjectedDependency).not.be.null();
+    should(resolvedDependency).not.be.null();
+
+    should(resolvedDependency).be.instanceOf(FirstType);
+
+
+    should(resolvedDependency === firstInjectedDependency).be.ok();
+    should(resolvedDependency === secondInjectedDependency).be.ok();
+
   });
 
 });
