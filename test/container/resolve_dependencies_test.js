@@ -8,6 +8,10 @@ class TestType {}
 
 describe('Dependency Injection Container Resolve Dependencies Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should resolve registration without dependencies', function testCallback() {
     const key = 'test';
 

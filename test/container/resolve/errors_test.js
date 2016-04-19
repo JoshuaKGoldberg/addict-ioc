@@ -15,6 +15,10 @@ class TestType {
 
 describe('Dependency Injection Container Resolve Error Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should throw error on indirect circular dependency', function testCallback(next) {
     const key = 'test';
     const dependencyKey = 'dependency';
