@@ -7,21 +7,25 @@ It is designed to be easily extensible for your own needs without complicating t
 
 ## Features
 
-* Fluent Declaration Syntax
-* Fully covered by Unit Tests
-* Written in Vanilla ES6 JavaScript
-  * Lightweight
-  * Well structured, easily understandable code
-  * Without external dependencies
-* Dependency Injection into
-  * Constructor
-  * Properties
-  * Methods
-* Singleton or Transient Instantiation
-* Injection with lazy instantiation
-* Circular Dependency Detection
-* Configuration Injection
-* Service Locator
+    * Fluent Declaration Syntax
+    * Fully covered by Unit Tests
+    * Written in Vanilla ES6 JavaScript
+      * Lightweight
+      * Well structured, easily understandable code
+      * Without external dependencies
+    * Dependency Injection into
+      * Constructor
+      * Properties
+      * Methods
+    * Singleton or Transient Instantiation
+    * Injection with lazy instantiation
+    * Support for factory functions
+    * Circular Dependency Detection
+    * Configuration Injection
+    * Subscribe to instances created before they get injected
+    * Optional auto-bind methods (e.g.: EventHandler) to instance
+    * Validation of registered dependencies
+    * Service Locator
 
 ## Basic Usage
 ### Import Package
@@ -83,6 +87,22 @@ container.register(SomeClass);
 class SomeClass {}
 
 container.register('SomeClassKeyName', SomeClass);
+```
+
+#### As Factory Functions
+The method `registerFactory` is used to register a factory function instead of an ES6 class as the instantiation point for a given key.
+
+```js
+const key = 'test';
+const factory = (something) => {
+  return {
+    logIt: () => {
+      console.log(something);
+    }
+  }
+}
+
+container.registerFactory(key, factory);
 ```
 
 ### Dependencies
@@ -245,7 +265,7 @@ class SomeOtherClass {
 
 container.register(SomeOtherClass)
   .dependencies(SomeClass)
-  .injectInto('anyFunction');
+  .injectLazy();
 ```
 
 ### Configuration
