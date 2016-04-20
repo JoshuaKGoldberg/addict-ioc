@@ -362,4 +362,48 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(first === anotherFirst).be.false();
   });
 
+
+  it('should create missing subscriber', function testCallback() {
+
+    const liveLogs = [];
+
+    class FirstType {
+      constructor() {
+        this._count = 10;
+      }
+
+      get count() {
+        liveLogs.push(this._count);
+        return this._count;
+      }
+
+      set count(value) {
+        liveLogs.push(value);
+        this._count = value;
+      }
+    }
+
+    container.register(FirstType);
+
+    class SecondType {
+      constructor() {
+        this.count = 0;
+      }
+      newFirstTypeCreated(firstTypeInstance) {
+        this.count++;
+        firstTypeInstance.count += 1;
+        liveLogs.push(this.count);
+      }
+    }
+
+    container.register(SecondType)
+      .onNewInstance(FirstType, 'newFirstTypeCreated');
+
+    const first1 = container.resolve(FirstType);
+    const first2 = container.resolve(FirstType);
+
+    const expectedLogs = [10, 11, 1, 10, 11, 2];
+    should(liveLogs).eql(expectedLogs);
+  });
+
 });
