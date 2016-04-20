@@ -8,6 +8,10 @@ class TestType {}
 
 describe('Dependency Injection Container Resolve Factory Function Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should resolve factory function without dependencies', function testCallback() {
     const key = 'test';
     const factory = () => {

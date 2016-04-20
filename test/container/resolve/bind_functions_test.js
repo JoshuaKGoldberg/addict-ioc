@@ -6,6 +6,9 @@ const container = require('./../../../lib/container');
 
 describe('Dependency Injection Container Bind Functions To Instance Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
 
   it('should bind functions to instance', function testCallback() {
 
