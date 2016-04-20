@@ -19,33 +19,34 @@ describe('Dependency Injection Container Resolve Error Test', function describeC
     container.clear();
   });
 
+  it('should throw error on direct circular dependency', function testCallback(next) {
+    const key = 'test';
+
+    const SecondType = class SecondType {};
+
+    container.register(key, SecondType)
+      .dependencies(key);
+
+    try {
+      container.resolve(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+  });
+
   it('should throw error on indirect circular dependency', function testCallback(next) {
     const key = 'test';
     const dependencyKey = 'dependency';
-    const config = {
-      test: 'this is a test'
-    };
 
-    let secondTypeConstructorParam;
-
-    const SecondType = class SecondType {
-      constructor(param) {
-        secondTypeConstructorParam = param;
-      }
-      get config() {
-        return this._config;
-      }
-      set config(value) {
-        this._config = value;
-      }
-    };
+    const SecondType = class SecondType {};
 
     container.register(dependencyKey, TestType)
       .dependencies(key);
 
     container.register(key, SecondType)
-      .dependencies(dependencyKey)
-      .configure(config);
+      .dependencies(dependencyKey);
 
     try {
       container.resolve(key);
