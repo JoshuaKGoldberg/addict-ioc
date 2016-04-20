@@ -95,10 +95,42 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it.skip('should throw error on direct circular dependency', function testCallback(next) {
+  it('should throw error on direct circular dependency', function testCallback(next) {
+    const key = 'test';
+
+    const SecondType = class SecondType {};
+
+    container.register(key, SecondType)
+      .dependencies(key);
+
+    try {
+      container.validateDependencies(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
   });
 
-  it.skip('should throw error on indirect circular dependency', function testCallback(next) {
+  it('should throw error on indirect circular dependency', function testCallback(next) {
+    const key = 'test';
+    const dependencyKey = 'dependency';
+
+    const SecondType = class SecondType {};
+
+    container.register(dependencyKey, TestType)
+      .dependencies(key);
+
+    container.register(key, SecondType)
+      .dependencies(dependencyKey);
+
+    try {
+      container.validateDependencies(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
   });
 
 });
