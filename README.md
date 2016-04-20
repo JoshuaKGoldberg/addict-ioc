@@ -43,17 +43,13 @@ container.setDefaults({
 For a regular dependency injection you just need to register one or more classes on the container. As soon as a class is registered, it can be referenced within another registrations `dependencies` declaration. When a class registered with dependencies gets instantiated by the container, its dependencies are injected into the constructor by default.
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-container.register(SomeOtherClass);
+container.register(SomeClass);
 
 class SomeOtherClass {}
 
-
-container.register(YetAnotherClass)
-  .dependencies(SomeClass, SomeOtherClass);
+container.register(SomeOtherClass);
 
 class YetAnotherClass {
 
@@ -62,6 +58,9 @@ class YetAnotherClass {
     this._someOtherClass = somethingOther;
   }
 }
+
+container.register(YetAnotherClass)
+  .dependencies(SomeClass, SomeOtherClass);
 ```
 
 ## Advanced Usage
@@ -73,17 +72,17 @@ The `register` method enables all other fluent declarations and needs to proceed
 #### By Type
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
+
+container.register(SomeClass);
 ```
 
 #### By Key
 
 ```js
-container.register('SomeClassKeyName', SomeClass);
-
 class SomeClass {}
+
+container.register('SomeClassKeyName', SomeClass);
 ```
 
 ### Dependencies
@@ -92,13 +91,9 @@ The `dependencies` declaration adds dependencies that have to be resolved before
 #### By Type
 
 ```js
-
-container.register(SomeClass);
-
 class SomeClass {}
 
-container.register(YetAnotherClass)
-  .dependencies(SomeClass);
+container.register(SomeClass);
 
 class YetAnotherClass {
 
@@ -106,22 +101,21 @@ class YetAnotherClass {
     this._someClass = something;
   }
 }
+
+container.register(YetAnotherClass)
+  .dependencies(SomeClass);
 ```
 
 #### By Key
 
 ```js
-container.register('SomeClassKeyName', SomeClass);
-
 class SomeClass {}
 
-container.register(SomeOtherClass);
+container.register('SomeClassKeyName', SomeClass);
 
 class SomeOtherClass {}
 
-container.register(YetAnotherClass)
-  .dependencies('SomeClassKeyName', SomeOtherClass);
-
+container.register(SomeOtherClass);
 
 class YetAnotherClass {
 
@@ -130,6 +124,9 @@ class YetAnotherClass {
     this._someOtherClass = somethingOther;
   }
 }
+
+container.register(YetAnotherClass)
+  .dependencies('SomeClassKeyName', SomeOtherClass);
 ```
 
 ### Multiplicity
@@ -139,14 +136,10 @@ The `singleton` declaration determines whether the container instantiates a regi
 By default registrations are transient, causing any `dependencies` referencing the class to get a *`new instance`* injected. A `lazy` dependency and the service locater (`resolve`) will also return a *`new instance`* every time they are called.
 
 ```js
-container.register(SomeClass);
-  //.singleton(false); this can be configured explicitly as well
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass, SomeClass);
+container.register(SomeClass);
+  //.singleton(false); this can be configured explicitly as well
 
 class SomeOtherClass {
 
@@ -154,21 +147,20 @@ class SomeOtherClass {
     console.log(something === alsoSomething); // "false"
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass, SomeClass);
 ```
 
 #### Singleton
 The `singleton` declaration causes any `dependencies` referencing the class declared singleton to get the *`same instance`* injected. A `lazy` dependency and the service locater (`resolve`) will also return the *`same instance`* every time they are called.
 
 ```js
+class SomeClass {}
+
 container.register(SomeClass)
   .singleton();
   //.singleton(true); this can be configured explicitly as well
-
-class SomeClass {}
-
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass, SomeClass);
 
 class SomeOtherClass {
 
@@ -176,6 +168,9 @@ class SomeOtherClass {
     console.log(something === alsoSomething); // "true"
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass, SomeClass);
 ```
 
 ### Targeted Injection
@@ -186,14 +181,9 @@ The `injectInto` declaration enables you to determine where `dependencies` decla
 #### Property
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .injectInto('anyProperty');
+container.register(SomeClass);
 
 class SomeOtherClass {
 
@@ -205,19 +195,18 @@ class SomeOtherClass {
     this._someClass = value;
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .injectInto('anyProperty');
 ```
 
 #### Function
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .injectInto('anyFunction');
+container.register(SomeClass);
 
 class SomeOtherClass {
 
@@ -229,20 +218,19 @@ class SomeOtherClass {
     this._someClass = value;
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .injectInto('anyFunction');
 ```
 
 ### Lazy Injection
 The `injectLazy` declaration allows you to determine the point in time a class gets instantiated yourself. The function injected resolves and injects all dependencies as configured. If a `config` function is declared for the registration, this function will then be executed as well.
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .injectInto('anyFunction');
+container.register(SomeClass);
 
 class SomeOtherClass {
 
@@ -254,6 +242,10 @@ class SomeOtherClass {
     const someClass = this._someClassLazy();
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .injectInto('anyFunction');
 ```
 
 ### Configuration
@@ -262,14 +254,9 @@ The `configure` declaration allows you to set the `config` property of a class i
 #### Static configuration
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .config({aConfigValue: 'something'});
+container.register(SomeClass);
 
 class SomeOtherClass {
 
@@ -285,18 +272,16 @@ class SomeOtherClass {
     console.log(this._config.aConfigValue); // something
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .config({aConfigValue: 'something'});
 ```
 
 #### With Function Reference (defered)
 As seen in the examle below, the `config` function gets executed when the registered class it is declared for gets instantiated. In case this class gets injected lazy, the `config` function will not be executed until the lazy injection is resolved.
 
 ```js
-container.register(SomeClass)
-  .config(() => {
-    console.log('config function executed');
-    return { aConfigValue: 'something' }
-  });
-
 class SomeClass {
 
   get config() {
@@ -308,10 +293,11 @@ class SomeClass {
   }
 }
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .injectLazy();
+container.register(SomeClass)
+  .config(() => {
+    console.log('config function executed');
+    return { aConfigValue: 'something' }
+  });
 
 class SomeOtherClass {
 
@@ -323,20 +309,19 @@ class SomeOtherClass {
     const someClass = this._someClassLazy(); // config function executed
   }
 }
+
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .injectLazy();
 ```
 
 ### No Injection (Service Locator)
 The `noInjection` declaration allows you to determine the point in time a class gets instantiated yourself.
 
 ```js
-container.register(SomeClass);
-
 class SomeClass {}
 
-
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
-  .noInjection();
+container.register(SomeClass);
 
 class SomeOtherClass {
 
@@ -348,9 +333,8 @@ class SomeOtherClass {
     const someClass = container.resolve(SomeClass);
   }
 }
-```
 
-## Possible future features
-- Feature extension
-  - Needs accessible extension hooks
-  - Little abstraction to load other fluent elements and hook them into the container
+container.register(SomeOtherClass)
+  .dependencies(SomeClass)
+  .noInjection();
+```
