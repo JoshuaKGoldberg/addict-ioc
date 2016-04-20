@@ -14,7 +14,7 @@ const TestType = class TestType {
   }
 }
 
-describe('Dependency Injection Container Resolve Test', function describeCallback() {
+describe('Dependency Injection Container Resolve Injection Test', function describeCallback() {
 
   beforeEach(() => {
     container.clear();
