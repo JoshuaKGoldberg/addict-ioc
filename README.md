@@ -40,7 +40,9 @@ const container = require('addict-ioc');
 container.setDefaults({
   isSingleton: false,
   wantsInjection: true,
-  isLazy: false
+  isLazy: false,
+  bindFunctions: false,
+  autoCreateMissingSubscribers: true
 });
 ```
 
