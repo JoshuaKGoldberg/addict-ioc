@@ -8,6 +8,10 @@ class TestType {}
 
 describe('Type Registration Unregister Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should unregister type for key', function testCallback() {
     const key = 'test';
     container.register(key, TestType);

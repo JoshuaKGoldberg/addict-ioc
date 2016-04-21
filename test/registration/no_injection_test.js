@@ -8,6 +8,10 @@ class TestType {}
 
 describe('Type Registration Without Injection Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should configure registered type', function testCallback() {
     const key = 'test';
     container.register(key, TestType)

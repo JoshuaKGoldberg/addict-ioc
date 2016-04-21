@@ -6,6 +6,10 @@ const container = require('./../../lib/container.js');
 
 describe('Type Registration With Factory Test', function describeCallback() {
 
+  beforeEach(() => {
+    container.clear();
+  });
+
   it('should register factory function for key', function testCallback() {
     const key = 'test';
     const factory = (something) => {
