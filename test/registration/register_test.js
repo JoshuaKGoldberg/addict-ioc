@@ -6,7 +6,7 @@ const container = require('./../../lib/container.js');
 
 class TestType {}
 
-describe('Type Registration Test', function describeCallback() {
+describe('Type Registration Register Test', function describeCallback() {
 
   it('should register type for key', function testCallback() {
     const key = 'test';

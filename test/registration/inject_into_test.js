@@ -6,7 +6,7 @@ const container = require('./../../lib/container.js');
 
 class TestType {}
 
-describe('Type Registration Injection Target Test', function describeCallback() {
+describe('Type Registration with Injection Target Test', function describeCallback() {
 
   it('should configure registered type', function testCallback() {
     const key = 'test';
