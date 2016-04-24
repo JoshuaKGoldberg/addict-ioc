@@ -144,6 +144,18 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(secondTypeConstructorParam).be.instanceOf(TestType);
   });
 
+  it('should resolve registration registered with type by equal key', function testCallback() {
+    const key = 'SecondType';
+
+    const SecondType = class SecondType {};
+
+    container.register(SecondType);
+
+    const resolution = container.resolve(key);
+
+    should(resolution).be.instanceOf(SecondType);
+  });
+
   it('should resolve with same instance if declared singleton', function testCallback() {
 
     const SecondType = class SecondType {
