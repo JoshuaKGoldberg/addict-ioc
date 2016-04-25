@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/5minds/addict-ioc#readme",
   "devDependencies": {
+    "mocha": "^2.4.5",
     "should": "^8.3.0"
   }
 }
