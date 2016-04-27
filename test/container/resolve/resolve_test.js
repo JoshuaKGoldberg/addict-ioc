@@ -221,6 +221,128 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(first.config === second.config).be.true();
   });
 
+  it('should resolve registration with require dependency as relative path', function testCallback() {
+    const key = 'test';
+    const requiredModule = './test_data/require_type';
+
+    let secondTypeConstructorParam;
+
+    const SecondType = class SecondType {
+      constructor(param) {
+        secondTypeConstructorParam = param;
+      }
+    };
+
+    container.setRequire({
+      rootPath: __dirname
+    })
+
+    container.require(requiredModule);
+
+    container.register(key, SecondType)
+      .dependencies(requiredModule);
+
+    const resolution = container.resolve(key);
+
+    const expectedModule = require(requiredModule);
+    const instantiatedModule = new expectedModule();
+
+    should(resolution).be.instanceOf(SecondType);
+    should(secondTypeConstructorParam).not.eql(expectedModule);
+    should(secondTypeConstructorParam).eql(instantiatedModule);
+  });
+
+  it('should resolve registration with require dependency as package', function testCallback() {
+    const key = 'test';
+    const requiredModule = 'fs';
+
+    let secondTypeConstructorParam;
+
+    const SecondType = class SecondType {
+      constructor(param) {
+        secondTypeConstructorParam = param;
+      }
+    };
+
+    container.setRequire({
+      rootPath: __dirname
+    })
+
+    container.require(requiredModule);
+
+    container.register(key, SecondType)
+      .dependencies(requiredModule);
+
+    const resolution = container.resolve(key);
+
+    const expectedModule = require(requiredModule);
+
+    should(resolution).be.instanceOf(SecondType);
+    should(secondTypeConstructorParam).eql(expectedModule);
+  });
+
+  it('should resolve registration with require dependency as relative path by alias', function testCallback() {
+    const key = 'test';
+    const alias = 'alias';
+    const requiredModule = './test_data/require_type';
+
+    let secondTypeConstructorParam;
+
+    const SecondType = class SecondType {
+      constructor(param) {
+        secondTypeConstructorParam = param;
+      }
+    };
+
+    container.setRequire({
+      rootPath: __dirname
+    })
+
+    container.require(requiredModule).as(alias);
+
+    container.register(key, SecondType)
+      .dependencies(alias);
+
+    const resolution = container.resolve(key);
+
+    const expectedModule = require(requiredModule);
+    const instantiatedModule = new expectedModule();
+
+    should(resolution).be.instanceOf(SecondType);
+    should(secondTypeConstructorParam).not.eql(expectedModule);
+    should(secondTypeConstructorParam).eql(instantiatedModule);
+  });
+
+  it('should resolve registration with require dependency as package by alias', function testCallback() {
+    const key = 'test';
+    const alias = 'alias';
+    const requiredModule = 'fs';
+
+    let secondTypeConstructorParam;
+
+    const SecondType = class SecondType {
+      constructor(param) {
+        secondTypeConstructorParam = param;
+      }
+    };
+
+    container.setRequire({
+      rootPath: __dirname
+    })
+
+    container.require(requiredModule).as(alias);
+
+    container.register(key, SecondType)
+      .dependencies(alias);
+
+    const resolution = container.resolve(key);
+
+    const expectedModule = require(requiredModule);
+
+    should(resolution).be.instanceOf(SecondType);
+    should(secondTypeConstructorParam).eql(expectedModule);
+  });
+
   it('should call single subscriber before resolving new instance', function testCallback() {
 
     const FirstType = class FirstType {
