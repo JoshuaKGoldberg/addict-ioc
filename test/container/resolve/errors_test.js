@@ -57,6 +57,22 @@ describe('Dependency Injection Container Resolve Error Test', function describeC
     }
   });
 
+  it('should throw error on resolving registration registered with function (not type) by equal key', function testCallback(next) {
+    const key = 'SecondType';
+
+    const SecondType = function SecondType() {};
+
+    container.register(SecondType);
+
+    try {
+      container.resolve(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+  });
+
   it('should throw error if dependency key is not registered', function testCallback(next) {
 
     try {
