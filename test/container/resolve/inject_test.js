@@ -198,4 +198,48 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
 
   });
 
+
+  it('should inject into into named properties if set', function testCallback() {
+    const key = 'test';
+    const dependencyKey = 'dependencyOne';
+    const secondDependencyKey = 'dependencyTwo';
+
+    const SecondType = class SecondType {
+      get dependency() {
+        return this._dependency;
+      }
+      set dependency(value) {
+        this._dependency = value;
+      }
+        get secondDependency() {
+          return this._secondDependency;
+        }
+        set secondDependency(value) {
+          this._secondDependency = value;
+        }
+    };
+
+    const ThirdType = class ThirdType {}
+
+    container.register(dependencyKey, TestType);
+
+    container.register(secondDependencyKey, ThirdType);
+
+    const registration = container.register(key, SecondType)
+      .dependencies(dependencyKey, secondDependencyKey);
+
+    registration.settings.namedPropertyInjection = true;
+
+    const resolvedDependencies = container.resolveDependencies(key);
+
+    const resolvedKey = container.resolve(key);
+
+    should(resolvedKey.dependencyOne).not.be.null();
+    should(resolvedKey.dependencyOne).be.instanceOf(TestType);
+    should(typeof resolvedDependencies[0] == typeof resolvedKey.dependencyOne).be.ok();
+
+    should(resolvedKey.dependencyTwo).not.be.null();
+    should(resolvedKey.dependencyTwo).be.instanceOf(TestType);
+    should(typeof resolvedDependencies[1] == typeof resolvedKey.dependencyTwo).be.ok();
+  });
 });
