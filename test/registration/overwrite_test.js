@@ -6,7 +6,7 @@ const container = require('./../../lib/container.js');
 
 class TestType {}
 
-describe('Type Registration with Injection Target Test', function describeCallback() {
+describe('Type Registration with Overwrite Test', function describeCallback() {
 
   beforeEach(() => {
     container.clear();
