@@ -156,6 +156,54 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(resolution).be.instanceOf(SecondType);
   });
 
+  it('should resolve registration with overwritten dependency', function testCallback() {
+
+        const SecondType = class SecondType {
+          constructor(overwriteType, testType) {
+            this._overwriteType = overwriteType;
+            this._testType = testType;
+          }
+
+          get testType() {
+            return this._testType;
+          }
+
+          get overwriteType() {
+            return this._overwriteType;
+          }
+        }
+
+        const testConfig = {
+          testConfiguration: 'test'
+        };
+
+        const OverwriteType = class OverwriteType {};
+
+        const testKey = 'testKey';
+        const testKey2 = 'testKey2';
+        const overwriteKey = 'overwriteKey';
+        const firstKey = 'firstTest';
+        const secondKey = 'secondKey';
+
+        container.register(testKey, TestType);
+
+        container.register(testKey2, TestType);
+
+        container.register(overwriteKey, OverwriteType);
+
+        container.register(firstKey, SecondType)
+          .dependencies(testKey, testKey2)
+          .overwrite(testKey, overwriteKey);
+
+
+        const first = container.resolve(firstKey);
+
+        should(first.testType).not.be.null();
+        should(first.testType).be.instanceOf(TestType);
+        should(first.overwriteType).not.be.null();
+        should(first.overwriteType).be.instanceOf(OverwriteType);
+  });
+
   it('should resolve with same instance if declared singleton', function testCallback() {
 
     const SecondType = class SecondType {
