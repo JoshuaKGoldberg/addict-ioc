@@ -392,7 +392,7 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
         }
         return this._instance;
       }
-    }
+    };
 
     container.register(FirstType);
 
@@ -460,19 +460,19 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
         }
         return this._instance;
       }
-    }
+    };
 
     const SecondType = class SecondType extends BaseType {
       constructor() {
         super();
       }
-    }
+    };
 
     const ThirdType = class ThirdType extends BaseType {
       constructor() {
         super();
       }
-    }
+    };
 
     container.register(FirstType);
 
