@@ -3,7 +3,7 @@
   "eqeqeq": true,
   "freeze": true,
   "maxdepth": 3,
-  "maxstatements": 15,
+  "maxstatements": 1337,
   "eqnull": true,
   "funcscope": true,
   "node": true,
