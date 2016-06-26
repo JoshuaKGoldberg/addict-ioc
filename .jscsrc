@@ -1,0 +1,19 @@
+{
+  "preset": "node-style-guide",
+  "validateIndentation": 2,
+  "validateQuoteMarks": "'",
+  "maximumLineLength": 120,
+  "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
+  "requireCapitalizedComments": { "allExcept": ["jshint"] },
+  "requireTrailingComma": null,
+  "requireCapitalizedConstructors": true,
+  "requireCurlyBraces": [
+    "if",
+    "else",
+    "for",
+    "while",
+    "do",
+    "try",
+    "catch"
+  ]
+}
