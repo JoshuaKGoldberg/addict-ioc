@@ -4,7 +4,15 @@ const should = require('should');
 
 const container = require('./../../../lib/container.js');
 
-class TestType {}
+const TestType = class TestType {
+  constructor() {}
+  set config(value) {
+    this._config = value;
+  }
+  get config() {
+    return this._config;
+  }
+};
 
 describe('Dependency Injection Container Resolve Factory Function Test', function describeCallback() {
 
@@ -17,8 +25,8 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
     const factory = () => {
       return {
         test: () => {}
-      }
-    }
+      };
+    };
 
     const referenceInstance = factory();
 
@@ -37,13 +45,9 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
         test: () => {
           return firstParam;
         }
-      }
-    }
+      };
+    };
 
-
-    const TestType = class TestType {
-      constructor() {}
-    }
     container.register(TestType);
 
     container.registerFactory(key, factory)
@@ -70,13 +74,9 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
         thirdTest: () => {
           return this.secondParam;
         }
-      }
-    }
+      };
+    };
 
-
-    const TestType = class TestType {
-      constructor() {}
-    }
     container.register(TestType);
 
     container.registerFactory(key, factory)
@@ -105,16 +105,19 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
         secondTest: () => {
           return secondParam;
         }
-      }
-    }
+      };
+    };
 
-    const TestType = class TestType {
-      constructor() {}
-    }
     container.register(TestType);
     const SecondType = class SecondType {
       constructor() {}
-    }
+      set config(value) {
+        this._config = value;
+      }
+      get config() {
+        return this._config;
+      }
+    };
     container.register(SecondType);
 
     container.registerFactory(key, factory)
