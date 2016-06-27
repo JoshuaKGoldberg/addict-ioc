@@ -12,7 +12,7 @@ const TestType = class TestType {
   get config() {
     return this._config;
   }
-}
+};
 
 describe('Dependency Injection Container Resolve Injection Test', function describeCallback() {
 
@@ -131,11 +131,12 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
 
     const resolution = container.resolve(key);
 
+    should(typeof secondTypeConstructorParam).equal('function');
+
     const resolvedLazyWrapper = secondTypeConstructorParam();
 
     should(resolution).be.instanceOf(SecondType);
     should(resolution.config).equal(config);
-    should(typeof secondTypeConstructorParam).equal('function');
     should(secondTypeConstructorParam).not.be.instanceOf(TestType);
     should(resolvedLazyWrapper).be.instanceOf(TestType);
   });
@@ -159,7 +160,7 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
       get config() {
         return this._config;
       }
-    }
+    };
 
     const SecondType = class SecondType {
       constructor() {}
@@ -192,10 +193,59 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
 
     should(resolvedDependency).be.instanceOf(FirstType);
 
-
     should(resolvedDependency === firstInjectedDependency).be.ok();
     should(resolvedDependency === secondInjectedDependency).be.ok();
-
   });
+});
+
+it('should inject dependencies mixed with args', function testCallback() {
+  const key = 'test';
+  const dependencyKey = 'dependency';
+  const config = {
+    test: 'this is a test'
+  };
+
+  const SecondType = class SecondType {
+    constructor(firstDependency, eins, zwei) {
+      this._injectedDependency = firstDependency;
+      this._eins = eins;
+      this._zwei = zwei;
+    }
+    get injectedDependency() {
+      return this._injectedDependency;
+    }
+    get eins() {
+      return this._eins;
+    }
+    get zwei() {
+      return this._zwei;
+    }
+    get config() {
+      return this._config;
+    }
+    set config(value) {
+      this._config = value;
+    }
+  };
+
+  container.register(dependencyKey, TestType);
+
+  container.register(key, SecondType)
+    .dependencies(dependencyKey)
+    .configure(config);
+
+  const testArgs = [
+    '1',
+    '2'
+  ];
+
+  const resolvedKey = container.resolve(key, testArgs, undefined);
+
+  should(resolvedKey.injectedDependency).not.be.null();
+  should(resolvedKey.injectedDependency).be.instanceOf(TestType);
+  should(resolvedKey.eins).not.be.undefined();
+  should(resolvedKey.eins).equal(testArgs[0]);
+  should(resolvedKey.zwei).not.be.undefined();
+  should(resolvedKey.zwei).equal(testArgs[1]);
 
 });

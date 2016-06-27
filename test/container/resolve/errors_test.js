@@ -112,7 +112,7 @@ describe('Dependency Injection Container Resolve Error Test', function describeC
 
     // this is against the pattern, but validation will falsify during resolve
     registration.settings.dependencies = () => {
-      'should not work'
+      return 'should not work';
     };
 
     try {
