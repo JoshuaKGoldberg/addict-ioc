@@ -234,16 +234,18 @@ it('should inject dependencies mixed with args', function testCallback() {
     .dependencies(dependencyKey)
     .configure(config);
 
-  const testArgs = [{
-    eins: '1',
-    zwei: '2'
-  }];
+  const testArgs = [
+    '1',
+    '2'
+  ];
 
-  const resolvedKey = container.resolve(key, undefined, testArgs);
+  const resolvedKey = container.resolve(key, testArgs, undefined);
 
   should(resolvedKey.injectedDependency).not.be.null();
   should(resolvedKey.injectedDependency).be.instanceOf(TestType);
-  should(resolvedKey.eins).equal(testArgs.eins);
-  should(resolvedKey.zwei).equal(testArgs.zwei);
+  should(resolvedKey.eins).not.be.undefined();
+  should(resolvedKey.eins).equal(testArgs[0]);
+  should(resolvedKey.zwei).not.be.undefined();
+  should(resolvedKey.zwei).equal(testArgs[1]);
 
 });
