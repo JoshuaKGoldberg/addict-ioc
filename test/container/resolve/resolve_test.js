@@ -403,7 +403,7 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(secondTypeConstructorParam).eql(expectedModule);
   });
 
-  it.only('should resolve self registration (container)', function testCallback() {
+  it('should resolve self registration (container)', function testCallback() {
 
     const resolution = container.resolve(container.config.injectContainerKey);
 
