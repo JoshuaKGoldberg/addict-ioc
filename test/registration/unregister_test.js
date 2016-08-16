@@ -19,12 +19,6 @@ describe('Type Registration Unregister Test', function describeCallback() {
     should(container.registrations[key]).be.undefined();
   });
 
-  it('should unregister type', function testCallback() {
-    container.register(TestType);
-    container.unregister(TestType);
-    should(container.registrations[TestType]).be.undefined();
-  });
-
   it('should throw error if key is not registered', function testCallback(next) {
 
     try {
