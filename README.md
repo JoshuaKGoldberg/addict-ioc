@@ -44,8 +44,7 @@ container.setDefaults({
   wantsInjection: true,
   isLazy: false,
   bindFunctions: false,
-  autoCreateMissingSubscribers: true,
-  autoCreateMissingRegistrations: false
+  autoCreateMissingSubscribers: true
 });
 ```
 

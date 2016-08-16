@@ -20,11 +20,16 @@ describe('Type Registration Register Test', function describeCallback() {
     should(container.registrations[key].settings.type).equal(TestType);
   });
 
-  it('should register type', function testCallback() {
-    container.register(TestType);
-    should(container.registrations[TestType]).not.be.null();
-    should(container.registrations[TestType].settings.key).equal(TestType);
-    should(container.registrations[TestType].settings.type).equal(TestType);
+  it('should throw error if no key is given', function testCallback(next) {
+
+    try {
+      container.register(TestType);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+
   });
 
   it('should throw error if key for type is not a string', function testCallback(next) {

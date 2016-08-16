@@ -23,10 +23,10 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
       }
     };
 
-    container.register(TestType)
+    container.register('Test', TestType)
       .bindFunctions();
 
-    const instance = container.resolve(TestType);
+    const instance = container.resolve('Test');
 
     const testFunction = (paramFunction) => {
       return paramFunction();
@@ -56,9 +56,9 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
       }
     };
 
-    container.register(TestType);
+    container.register('Test', TestType);
 
-    const instance = container.resolve(TestType);
+    const instance = container.resolve('Test');
 
     const testFunction = (paramFunction) => {
       return paramFunction();
@@ -93,10 +93,10 @@ describe('Dependency Injection Container Bind Functions To Instance Test', funct
       }
     };
 
-    container.register(TestType)
+    container.register('Test', TestType)
       .bindFunctions('testMethod', 'thirdTestMethod');
 
-    const instance = container.resolve(TestType);
+    const instance = container.resolve('Test');
 
     const testFunction = (paramFunction) => {
       return paramFunction();

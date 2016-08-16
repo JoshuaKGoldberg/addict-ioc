@@ -113,6 +113,7 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
 
   it('should resolve registration with single dependency declared as type', function testCallback() {
     const key = 'test';
+    const secondKey = 'second';
     const config = {
       test: 'this is a test'
     };
@@ -131,10 +132,10 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     };
 
-    container.register(TestType);
+    container.register(secondKey, TestType);
 
     container.register(key, SecondType)
-      .dependencies(TestType)
+      .dependencies(secondKey)
       .configure(config);
 
     const resolution = container.resolve(key);
@@ -142,18 +143,6 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(resolution).be.instanceOf(SecondType);
     should(resolution.config).equal(config);
     should(secondTypeConstructorParam).be.instanceOf(TestType);
-  });
-
-  it('should resolve registration registered with type by equal key', function testCallback() {
-    const key = 'SecondType';
-
-    const SecondType = class SecondType {};
-
-    container.register(SecondType);
-
-    const resolution = container.resolve(key);
-
-    should(resolution).be.instanceOf(SecondType);
   });
 
   it('should resolve registration with overwritten dependency', function testCallback() {
@@ -216,17 +205,18 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     };
 
-    container.register(TestType)
-      .singleton();
-
+    const key = 'test';
     const firstKey = 'firstTest';
     const secondKey = 'secondKey';
 
+    container.register(key, TestType)
+      .singleton();
+
     container.register(firstKey, SecondType)
-      .dependencies(TestType);
+      .dependencies(key);
 
     container.register(secondKey, SecondType)
-      .dependencies(TestType);
+      .dependencies(key);
 
 
     const first = container.resolve(firstKey);
@@ -259,18 +249,19 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       testConfiguration: 'test'
     };
 
-    container.register(TestType)
-      .singleton()
-      .configure(testConfig);
-
+    const key = 'test';
     const firstKey = 'firstTest';
     const secondKey = 'secondKey';
 
+    container.register(key, TestType)
+      .singleton()
+      .configure(testConfig);
+
     container.register(firstKey, SecondType)
-      .dependencies(TestType);
+      .dependencies(key);
 
     container.register(secondKey, SecondType)
-      .dependencies(TestType);
+      .dependencies(key);
 
 
     const first = container.resolve(firstKey);
@@ -449,14 +440,17 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     };
 
-    container.register(FirstType);
+    const key = 'one';
+    const secondKey = 'two';
 
-    container.register(SecondType)
-      .onNewInstance(FirstType, 'newTestType');
+    container.register(key, FirstType);
 
-    const second = container.resolve(SecondType);
-    const first = container.resolve(FirstType);
-    const anotherFirst = container.resolve(FirstType);
+    container.register(secondKey, SecondType)
+      .onNewInstance(key, 'newTestType');
+
+    const second = container.resolve(secondKey);
+    const first = container.resolve(key);
+    const anotherFirst = container.resolve(key);
 
     should(first.count).equal(1);
     should(anotherFirst.count).equal(2);
@@ -529,18 +523,22 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     };
 
-    container.register(FirstType);
+    const key = 'one';
+    const secondKey = 'two';
+    const thirdKey = 'three';
 
-    container.register(SecondType)
-      .onNewInstance(FirstType, 'newTestType');
+    container.register(key, FirstType);
 
-    container.register(ThirdType)
-      .onNewInstance(FirstType, 'newTestType');
+    container.register(secondKey, SecondType)
+      .onNewInstance(key, 'newTestType');
 
-    const second = container.resolve(SecondType);
-    const third = container.resolve(ThirdType);
-    const first = container.resolve(FirstType);
-    const anotherFirst = container.resolve(FirstType);
+    container.register(thirdKey, ThirdType)
+      .onNewInstance(key, 'newTestType');
+
+    const second = container.resolve(secondKey);
+    const third = container.resolve(thirdKey);
+    const first = container.resolve(key);
+    const anotherFirst = container.resolve(key);
 
     should(second.count).equal(2);
     should(third.count).equal(2);
@@ -572,7 +570,10 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     }
 
-    container.register(FirstType);
+    const key = 'one';
+    const secondKey = 'two';
+
+    container.register(key, FirstType);
 
     class SecondType {
       constructor() {
@@ -585,11 +586,11 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
       }
     }
 
-    container.register(SecondType)
-      .onNewInstance(FirstType, 'newFirstTypeCreated');
+    container.register(secondKey, SecondType)
+      .onNewInstance(key, 'newFirstTypeCreated');
 
-    const first1 = container.resolve(FirstType);
-    const first2 = container.resolve(FirstType);
+    const first1 = container.resolve(key);
+    const first2 = container.resolve(key);
 
     const expectedLogs = [10, 11, 1, 10, 11, 2];
     should(liveLogs).eql(expectedLogs);

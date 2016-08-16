@@ -38,7 +38,8 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
   });
 
   it('should resolve factory function with single dependency', function testCallback() {
-    const key = 'test';
+    const key = 'one';
+    const secondKey = 'two';
 
     const factory = (firstParam) => {
       return {
@@ -48,12 +49,12 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
       };
     };
 
-    container.register(TestType);
+    container.register(key, TestType);
 
-    container.registerFactory(key, factory)
-      .dependencies(TestType);
+    container.registerFactory(secondKey, factory)
+      .dependencies(key);
 
-    const resolution = container.resolve(key);
+    const resolution = container.resolve(secondKey);
 
     const injectedParam = resolution.test();
     should(injectedParam).not.be.null();
@@ -61,7 +62,8 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
   });
 
   it('should inject into target function if declared', function testCallback() {
-    const key = 'test';
+    const key = 'one';
+    const secondKey = 'two';
 
     const factory = (firstParam) => {
       return {
@@ -77,13 +79,13 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
       };
     };
 
-    container.register(TestType);
+    container.register(key, TestType);
 
-    container.registerFactory(key, factory)
-      .dependencies(TestType)
+    container.registerFactory(secondKey, factory)
+      .dependencies(key)
       .injectInto('secondTest');
 
-    const resolution = container.resolve(key);
+    const resolution = container.resolve(secondKey);
 
     const injectedParam = resolution.test();
     should(injectedParam).be.undefined();
@@ -95,7 +97,9 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
   });
 
   it('should resolve factory function with multiple dependencies', function testCallback() {
-    const key = 'test';
+    const key = 'one';
+    const secondKey = 'two';
+    const thirdKey = 'three';
 
     const factory = (firstParam, secondParam) => {
       return {
@@ -108,7 +112,8 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
       };
     };
 
-    container.register(TestType);
+    container.register(key, TestType);
+
     const SecondType = class SecondType {
       constructor() {}
       set config(value) {
@@ -118,12 +123,13 @@ describe('Dependency Injection Container Resolve Factory Function Test', functio
         return this._config;
       }
     };
-    container.register(SecondType);
 
-    container.registerFactory(key, factory)
-      .dependencies(TestType, SecondType);
+    container.register(secondKey, SecondType);
 
-    const resolution = container.resolve(key);
+    container.registerFactory(thirdKey, factory)
+      .dependencies(key, secondKey);
+
+    const resolution = container.resolve(thirdKey);
 
     const firstInjectedParam = resolution.test();
     const secondInjectedParam = resolution.secondTest();
