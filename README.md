@@ -54,39 +54,33 @@ For a regular dependency injection you just need to register one or more classes
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('First', SomeClass);
 
 class SomeOtherClass {}
 
-container.register(SomeOtherClass);
+container.register('Second', SomeOtherClass);
 
 class YetAnotherClass {
 
-  constructor(something, somethingOther) {
-    this._someClass = something;
-    this._someOtherClass = somethingOther;
+  constructor(some, someOther) {
+    this._someClass = some;
+    this._someOtherClass = someOther;
   }
 }
 
-container.register(YetAnotherClass)
-  .dependencies(SomeClass, SomeOtherClass);
+container.register('Third', YetAnotherClass)
+  .dependencies('First', 'Second');
+
+const yetAnotherClassInstance = container.resolve('Third');
+// now the constructor has been called with the two dependency instances
+// the instances of 'First' and 'Second' are created before the 'Third' instance
 ```
 
 # Advanced Usage
 ## Registration
 The registration is the entry point to declare settings for a type registration on the container.
 
-The `register` method enables all other fluent declarations and needs to proceed them. If it somehow is missing before a fluent declaration, an error will be thrown.
-
-### By Type
-
-```js
-class SomeClass {}
-
-container.register(SomeClass);
-```
-
-### By Key
+The `register` method is used to register classes on the container and creates a registration object on which other fluent methods are available to further specify the registration. If it somehow is missing before a fluent declaration, an error will be thrown.
 
 ```js
 class SomeClass {}
@@ -98,7 +92,6 @@ container.register('SomeClassKeyName', SomeClass);
 The method `registerFactory` is used to register a factory function instead of an ES6 class as the instantiation point for a given key.
 
 ```js
-const key = 'test';
 const factory = (something) => {
   return {
     logIt: () => {
@@ -107,31 +100,23 @@ const factory = (something) => {
   }
 }
 
-container.registerFactory(key, factory);
+container.registerFactory('factoryKey', factory);
+```
+
+### As Static Object
+
+In cases where you don't need the container to instantiate something, e.g. when you use an external singleton instance or decide to create the instance yourself, you can register the resulting object directly to the container.
+
+```js
+const object = {
+  'this-could-be': 'virtually-anything'
+}
+
+container.registerObject('objectKey', object);
 ```
 
 ## Dependencies
 The `dependencies` declaration adds dependencies that have to be resolved before the registered class gets instantiated.
-
-### By Type
-
-```js
-class SomeClass {}
-
-container.register(SomeClass);
-
-class YetAnotherClass {
-
-  constructor(something) {
-    this._someClass = something;
-  }
-}
-
-container.register(YetAnotherClass)
-  .dependencies(SomeClass);
-```
-
-### By Key
 
 ```js
 class SomeClass {}
@@ -140,7 +125,7 @@ container.register('SomeClassKeyName', SomeClass);
 
 class SomeOtherClass {}
 
-container.register(SomeOtherClass);
+container.register('SomeOtherClassKeyName', SomeOtherClass);
 
 class YetAnotherClass {
 
@@ -151,7 +136,7 @@ class YetAnotherClass {
 }
 
 container.register(YetAnotherClass)
-  .dependencies('SomeClassKeyName', SomeOtherClass);
+  .dependencies('SomeClassKeyName', 'SomeOtherClassKeyName');
 ```
 
 ## Multiplicity
@@ -163,7 +148,7 @@ By default registrations are transient, causing any `dependencies` referencing t
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
   //.singleton(false); this can be configured explicitly as well
 
 class SomeOtherClass {
@@ -173,8 +158,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass, SomeClass);
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey', 'SomeClassKey');
 ```
 
 ### Singleton
@@ -183,7 +168,7 @@ The `singleton` declaration causes any `dependencies` referencing the class decl
 ```js
 class SomeClass {}
 
-container.register(SomeClass)
+container.register('SomeClassKey', SomeClass)
   .singleton();
   //.singleton(true); this can be configured explicitly as well
 
@@ -194,8 +179,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass, SomeClass);
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey', 'SomeClassKey');
 ```
 
 ## Targeted Injection
@@ -203,12 +188,12 @@ The `injectInto` declaration enables you to determine where `dependencies` decla
 
 _Note: The `injectInto` declaration expects a `string`, not a reference to the target property or function._
 
-### Property
+### Into Property
 
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
 
 class SomeOtherClass {
 
@@ -221,17 +206,17 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .injectInto('anyProperty');
 ```
 
-### Function
+### Into Function
 
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
 
 class SomeOtherClass {
 
@@ -244,8 +229,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .injectInto('anyFunction');
 ```
 
@@ -255,7 +240,7 @@ The `injectLazy` declaration allows you to determine the point in time a class g
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
 
 class SomeOtherClass {
 
@@ -268,8 +253,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .injectLazy();
 ```
 
@@ -279,7 +264,7 @@ The `onNewInstance` declaration allows you to invoke a method of your choice eve
 ```js
 class FirstType {}
 
-container.register(FirstType);
+container.register('first', FirstType);
 
 class SecondType {
   newFirstTypeCreated(firstTypeInstance) {
@@ -287,11 +272,11 @@ class SecondType {
   }
 }
 
-container.register(SecondType)
-  .onNewInstance(FirstType, 'newFirstTypeCreated');
+container.register('second', SecondType)
+  .onNewInstance('first', 'newFirstTypeCreated');
 
-container.resolve(FirstType);
-container.resolve(FirstType);
+container.resolve('first');
+container.resolve('first');
 // test
 // test
 ```
@@ -304,7 +289,7 @@ The `configure` declaration allows you to set the `config` property of a class i
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
 
 class SomeOtherClass {
 
@@ -321,8 +306,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .config({aConfigValue: 'something'});
 ```
 
@@ -341,7 +326,7 @@ class SomeClass {
   }
 }
 
-container.register(SomeClass)
+container.register('SomeClassKey', SomeClass)
   .config(() => {
     console.log('config function executed');
     return { aConfigValue: 'something' }
@@ -358,8 +343,8 @@ class SomeOtherClass {
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .injectLazy();
 ```
 
@@ -369,7 +354,7 @@ The `noInjection` declaration allows you to determine the point in time a class 
 ```js
 class SomeClass {}
 
-container.register(SomeClass);
+container.register('SomeClassKey', SomeClass);
 
 class SomeOtherClass {
 
@@ -378,11 +363,11 @@ class SomeOtherClass {
   }
 
   start() {
-    const someClass = container.resolve(SomeClass);
+    const someClass = container.resolve('SomeClassKey');
   }
 }
 
-container.register(SomeOtherClass)
-  .dependencies(SomeClass)
+container.register('SomeOtherClassKey', SomeOtherClass)
+  .dependencies('SomeClassKey')
   .noInjection();
 ```
