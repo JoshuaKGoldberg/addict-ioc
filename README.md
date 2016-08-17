@@ -19,6 +19,7 @@ It is designed to be easily extensible for your own needs without complicating t
   * Constructor
   * Properties
   * Methods
+* Discovery by Tags and Key/Value Matching
 * Singleton or Transient Instantiation
 * Injection with lazy instantiation
 * Support for factory functions
