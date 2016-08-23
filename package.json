@@ -1,5 +1,8 @@
 {
-  "name": "addict-ioc",
+  "name": "@5minds/addict-ioc",
+  "publishConfig": {
+      "registry": "https://www.npmjs.com"
+  },
   "version": "1.0.0",
   "description": "A fluent IoC container for JavaScript.",
   "main": "index.js",
