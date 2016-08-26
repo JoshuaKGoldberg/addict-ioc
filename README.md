@@ -688,3 +688,7 @@ try {
 ```
 
 The method will throw an error if the validation fails, but it won't stop the validation on the first error so that you can get all validation errors in a single run. The error description will contain a list of all the validation errors.
+
+_Note: The IoC container validates a circular dependency if there is a `singleton` dependency in the tree. You can adjust this by setting `container.config.circularDependencyCanIncludeSingleton` to false so that the validation fails even if it is no strictly defined circular dependency._
+
+_Note: The IoC container validates a circular dependency if there is a `lazy` dependency in the tree. You can adjust this by setting `container.config.circularDependencyCanIncludeLazy` to false so that the validation fails even if it is no strictly defined circular dependency._
