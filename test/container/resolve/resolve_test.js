@@ -225,6 +225,28 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(first.testType === second.testType).be.true();
   });
 
+  it.only('should resolve with layered config', function testCallback() {
+
+    const testConfig = {
+      one: '1',
+      two: '2'
+    };
+
+    const key = 'test';
+
+    container.register(key, TestType)
+      .configure(testConfig);
+
+    const layeredConfig = {
+      two: '5'
+    };
+
+    const instance = container.resolve(key, undefined, layeredConfig);
+
+    should(instance.config.one).equal('1');
+    should(instance.config.two).equal('5');
+  });
+
   it('should resolve with same instance if declared singleton with config', function testCallback() {
 
     const SecondType = class SecondType {
