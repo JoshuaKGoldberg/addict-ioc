@@ -193,4 +193,69 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
       next();
     }
   });
+
+  it('should not throw error on circular dependency that includes a singleton', function testCallback() {
+    const key = 'test';
+    const secondKey = 'second';
+
+    const SecondType = class SecondType {};
+
+    container.register(secondKey, SecondType)
+      .dependencies(key)
+      .singleton();
+
+    const ThirdType = class ThirdType {};
+
+    container.register(key, ThirdType)
+      .dependencies(secondKey);
+
+    container.validateDependencies(key);
+  });
+
+  it('should not throw error on circular dependency that includes lazy dependencies', function testCallback() {
+    const key = 'test';
+    const secondKey = 'second';
+
+    const SecondType = class SecondType {};
+
+    container.register(secondKey, SecondType)
+      .dependencies(key)
+      .injectLazy();
+
+    const ThirdType = class ThirdType {};
+
+    container.register(key, ThirdType)
+      .dependencies(secondKey);
+
+    container.validateDependencies(key);
+  });
+
+  it('should throw error on circular dependency that includes explicitly declared lazy dependencies', function testCallback(next) {
+    const key = 'test';
+    const secondKey = 'second';
+    const thirdKey = 'third';
+
+    const FirstType = class FirstType {};
+
+    container.register(thirdKey, FirstType);
+
+    const SecondType = class SecondType {};
+
+    container.register(secondKey, SecondType)
+      .dependencies(key, thirdKey)
+      .injectLazy(thirdKey);
+
+    const ThirdType = class ThirdType {};
+
+    container.register(key, ThirdType)
+      .dependencies(secondKey);
+
+    try {
+      container.validateDependencies(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+  });
 });
