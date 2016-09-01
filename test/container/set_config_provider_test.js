@@ -1,11 +1,8 @@
 'use strict';
 
 const should = require('should');
-const proxyquire = require('proxyquire').noCallThru();
 
-const container = proxyquire('./../../index', {
-  './config_validation': {}
-});
+const container = require('./../../lib/container');
 
 class TestType {}
 
