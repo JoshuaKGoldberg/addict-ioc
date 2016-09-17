@@ -111,40 +111,6 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(resolution.config).equal(config);
   });
 
-  it('should resolve registration with single dependency declared as type', function testCallback() {
-    const key = 'test';
-    const secondKey = 'second';
-    const config = {
-      test: 'this is a test'
-    };
-
-    let secondTypeConstructorParam;
-
-    const SecondType = class SecondType {
-      constructor(param) {
-        secondTypeConstructorParam = param;
-      }
-      get config() {
-        return this._config;
-      }
-      set config(value) {
-        this._config = value;
-      }
-    };
-
-    container.register(secondKey, TestType);
-
-    container.register(key, SecondType)
-      .dependencies(secondKey)
-      .configure(config);
-
-    const resolution = container.resolve(key);
-
-    should(resolution).be.instanceOf(SecondType);
-    should(resolution.config).equal(config);
-    should(secondTypeConstructorParam).be.instanceOf(TestType);
-  });
-
   it('should resolve registration with overwritten dependency', function testCallback() {
 
     const SecondType = class SecondType {
@@ -572,50 +538,104 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
   });
 
 
-  it('should create missing subscriber', function testCallback() {
+    it('should create missing subscriber', function testCallback() {
 
-    const liveLogs = [];
+      const liveLogs = [];
 
-    class FirstType {
-      constructor() {
-        this._count = 10;
+      class FirstType {
+        constructor() {
+          this._count = 10;
+        }
+
+        get count() {
+          liveLogs.push(this._count);
+          return this._count;
+        }
+
+        set count(value) {
+          liveLogs.push(value);
+          this._count = value;
+        }
       }
 
-      get count() {
-        liveLogs.push(this._count);
-        return this._count;
+      const key = 'one';
+      const secondKey = 'two';
+
+      container.register(key, FirstType);
+
+      class SecondType {
+        constructor() {
+          this.count = 0;
+        }
+        newFirstTypeCreated(firstTypeInstance) {
+          this.count++;
+          firstTypeInstance.count += 1;
+          liveLogs.push(this.count);
+        }
       }
 
-      set count(value) {
-        liveLogs.push(value);
-        this._count = value;
+      container.register(secondKey, SecondType)
+        .onNewInstance(key, 'newFirstTypeCreated');
+
+      const first1 = container.resolve(key);
+      const first2 = container.resolve(key);
+
+      const expectedLogs = [10, 11, 1, 10, 11, 2];
+      should(liveLogs).eql(expectedLogs);
+    });
+
+    it('should resolve lazy registration with runtime parameters', function testCallback() {
+      const testKey = 'test';
+      const secondKey = 'second';
+      const testRuntimeInjectionArgs = ['1', '2'];
+      const testRuntimeConfig = {
+        test: 'config'
+      };
+
+      class SecondType {
+        constructor(testTypeLazy) {
+          this._testType = testTypeLazy(testRuntimeInjectionArgs, testRuntimeConfig);
+        }
+
+        get testType() {
+          return this._testType;
+        }
       }
-    }
 
-    const key = 'one';
-    const secondKey = 'two';
+      class ThirdType {
+        constructor(argOne, argTwo) {
+          this._argOne = argOne;
+          this._argTwo = argTwo;
+        }
 
-    container.register(key, FirstType);
+        get argOne() {
+          return this._argOne;
+        }
 
-    class SecondType {
-      constructor() {
-        this.count = 0;
+        get argTwo() {
+          return this._argTwo;
+        }
+
+        get config() {
+          return this._config;
+        }
+
+        set config(value) {
+          this._config = value;
+        }
       }
-      newFirstTypeCreated(firstTypeInstance) {
-        this.count++;
-        firstTypeInstance.count += 1;
-        liveLogs.push(this.count);
-      }
-    }
 
-    container.register(secondKey, SecondType)
-      .onNewInstance(key, 'newFirstTypeCreated');
+      container.register(testKey, ThirdType);
 
-    const first1 = container.resolve(key);
-    const first2 = container.resolve(key);
+      container.register(secondKey, SecondType)
+        .dependencies(testKey)
+        .injectLazy();
 
-    const expectedLogs = [10, 11, 1, 10, 11, 2];
-    should(liveLogs).eql(expectedLogs);
-  });
+      const resolvedInstance = container.resolve(secondKey);
+
+      should(resolvedInstance.testType.argOne).equal(testRuntimeInjectionArgs[0]);
+      should(resolvedInstance.testType.argTwo).equal(testRuntimeInjectionArgs[1]);
+      should(resolvedInstance.testType.config).equal(testRuntimeConfig);
+    });
 
 });
