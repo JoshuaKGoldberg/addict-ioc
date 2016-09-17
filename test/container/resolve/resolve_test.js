@@ -225,7 +225,7 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     should(first.testType === second.testType).be.true();
   });
 
-  it.only('should resolve with layered config', function testCallback() {
+  it('should resolve with layered config', function testCallback() {
 
     const testConfig = {
       one: '1',
