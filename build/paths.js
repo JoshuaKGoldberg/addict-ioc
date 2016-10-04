@@ -10,10 +10,10 @@ var pkg = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 
 var paths = {
   root: appRoot,
-  source: appRoot + '**/*.js',
+  source: appRoot + '**/*.ts',
   output: 'dist/',
   doc:'./doc',
-  packageName: pkg.name,
+  packageName: 'addict-ioc',
   ignore: [],
   useTypeScriptForDTS: false,
   importsToAdd: [],

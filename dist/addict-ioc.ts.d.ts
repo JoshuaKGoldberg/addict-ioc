@@ -1,15 +1,9 @@
 import * as path from 'path';
-export declare interface IDependencyInjectionContainerConfig {
-  registrationDefaults: TypeRegistrationSettings;
-  injectContainerKey: string;
-  circularDependencyCanIncludeSingleton: boolean;
-  circularDependencyCanIncludeLazy: boolean;
-}
 export declare interface IProvideConfig {
   get(config: string): any;
 }
 export declare interface ITypeRegistrationSettings {
-  defaults: TypeRegistrationSettings;
+  defaults: ITypeRegistrationSettings;
   key: any;
   type: any;
   isFactory: boolean;
@@ -29,8 +23,14 @@ export declare interface ITypeRegistrationSettings {
   autoCreateMissingRegistrations: boolean;
   isRequire: boolean;
 }
+export declare interface IDependencyInjectionContainerConfig {
+  registrationDefaults: ITypeRegistrationSettings;
+  injectContainerKey: string;
+  circularDependencyCanIncludeSingleton: boolean;
+  circularDependencyCanIncludeLazy: boolean;
+}
 export declare class TypeRegistrationSettings implements ITypeRegistrationSettings {
-  constructor(defaults: TypeRegistrationSettings, key: any, type: any, isFactory: boolean, isRequire: boolean);
+  constructor(defaults: ITypeRegistrationSettings, key: any, type: any, isFactory: boolean, isRequire: boolean);
   defaults: any;
   key: any;
   type: any;

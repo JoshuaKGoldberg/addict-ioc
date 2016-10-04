@@ -1,17 +1,10 @@
 
-interface IDependencyInjectionContainerConfig {
-  registrationDefaults: TypeRegistrationSettings;
-  injectContainerKey: string;
-  circularDependencyCanIncludeSingleton: boolean;
-  circularDependencyCanIncludeLazy: boolean;
-}
-
 interface IProvideConfig {
   get: (config: string) => any;
 }
 
 interface ITypeRegistrationSettings {
-  defaults: TypeRegistrationSettings;
+  defaults: ITypeRegistrationSettings;
   key: any;
   type: any;
   isFactory: boolean;
@@ -30,4 +23,11 @@ interface ITypeRegistrationSettings {
   autoCreateMissingSubscribers: boolean;
   autoCreateMissingRegistrations: boolean;
   isRequire: boolean;
+}
+
+interface IDependencyInjectionContainerConfig {
+  registrationDefaults: ITypeRegistrationSettings;
+  injectContainerKey: string;
+  circularDependencyCanIncludeSingleton: boolean;
+  circularDependencyCanIncludeLazy: boolean;
 }

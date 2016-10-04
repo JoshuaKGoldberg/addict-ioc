@@ -14,8 +14,10 @@ var ts = require('gulp-typescript');
 var gutil = require('gulp-util');
 var gulpIgnore = require('gulp-ignore');
 var merge = require('merge2');
-var jsName = paths.packageName + '.js';
+var jsName = paths.packageName + '.ts';
 var compileToModules = ['es2015', 'commonjs', 'amd', 'system', 'native-modules'];
+var path = require('path');
+var dag = require('breeze-dag');
 
 function cleanGeneratedCode() {
   return through2.obj(function(file, enc, callback) {
@@ -25,13 +27,57 @@ function cleanGeneratedCode() {
   });
 }
 
+var relativeImports = /import\s*{[a-zA-Z0-9_\$\,\s]+}\s*from\s*'(\.[^\s']+)';\s*/g;
+
+function sortFiles() {
+  var edges = [];
+  var files = {};
+
+  function getImports(file) {
+    var contents = file.contents;
+    var deps = [];
+    var match;
+    while (match = relativeImports.exec(contents)) {
+      deps.push(path.relative(file.base, path.resolve(path.dirname(file.path), match[1] + '.ts')));
+    }
+
+    return deps;
+  }
+
+  function bufferFile(file, enc, callback) {
+    var imports = getImports(file);
+    if (!imports.length) {
+      // include a null dependency so disconnected nodes will be included in the DAG traversal
+      imports = [null];
+    }
+
+    imports.forEach(function(dependency) {
+      edges.push([dependency, file.relative]);
+    });
+
+    files[file.relative] = file;
+    callback();
+  }
+
+  function endStream(callback) {
+    var self = this;
+
+    dag(edges, 1, function(filePath, next) {
+      self.push(files[filePath]);
+      next();
+    }, callback);
+  }
+
+  return through2.obj(bufferFile, endStream);
+};
+
 gulp.task('build-index', function() {
   var importsToAdd = paths.importsToAdd.slice();
 
   var src = gulp.src(paths.files);
 
   if (paths.sort) {
-    src = src.pipe(tools.sortFiles());
+    src = src.pipe(sortFiles());
   }
 
   if (paths.ignore) {

@@ -3,7 +3,7 @@ import {ITypeRegistrationSettings} from './interfaces';
 
 export class TypeRegistrationSettings implements ITypeRegistrationSettings  {
 
-  constructor(defaults: TypeRegistrationSettings,
+  constructor(defaults: ITypeRegistrationSettings,
     key: any,
     type: any,
     isFactory: boolean,
