@@ -9,7 +9,7 @@ interface ITypeRegistrationSettings {
   type: any;
   isFactory: boolean;
   isRequire: boolean;
-  dependencies: string|string[];
+  dependencies: string|Array<string>;
   tags: any;
   config: any;
   isSingleton: boolean;
@@ -17,12 +17,10 @@ interface ITypeRegistrationSettings {
   injectInto: string;
   isLazy: boolean;
   bindFunctions: boolean;
-  functionsToBind: string|string[];
-  lazyKeys: string|string[];
-  overwrittenKeys: string|string[];
+  functionsToBind: string|Array<string>;
+  lazyKeys: string|Array<string>;
+  overwrittenKeys: string|Array<string>;
   autoCreateMissingSubscribers: boolean;
-  autoCreateMissingRegistrations: boolean;
-  isRequire: boolean;
 }
 
 interface IDependencyInjectionContainerConfig {

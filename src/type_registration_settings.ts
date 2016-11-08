@@ -1,149 +1,94 @@
-
 import {ITypeRegistrationSettings} from './interfaces';
 
-export class TypeRegistrationSettings implements ITypeRegistrationSettings  {
+export class TypeRegistrationSettings implements ITypeRegistrationSettings {
 
-  constructor(defaults: ITypeRegistrationSettings,
-    key: any,
-    type: any,
-    isFactory: boolean,
-    isRequire: boolean) {
+  public defaults: ITypeRegistrationSettings = undefined;
+  public key: any = undefined;
+  public type: any = undefined;
+  public dependencies: string|Array<string> = undefined;
+  public tags: any = undefined;
+  public config: any = undefined;
+  public injectInto: string = undefined;
+  public functionsToBind: string|Array<string> = undefined;
+  public lazyKeys: string|Array<string> = undefined;
+  public overwrittenKeys: string|Array<string> = undefined;
 
-      this._defaults = defaults;
-      this._key = key;
-      this._type = type;
-      this._subscriptions = {
-        newInstance: []
-      };
-      this._isFactory = isFactory;
-      this._isRequire = isRequire;
-      this._functionsToBind = [];
-      this._lazyKeys = [];
-      this._tags = {};
-      this._overwrittenKeys = {};
-    }
+  private _isSingleton: boolean = undefined;
+  private _wantsInjection: boolean = undefined;
+  private _isLazy: boolean = undefined;
+  private _bindFunctions: boolean = undefined;
+  private _subscriptions: any = undefined;
+  private _isFactory: boolean = undefined;
+  private _isRequire: boolean = undefined;
+  private _autoCreateMissingSubscribers: boolean = undefined;
 
-    get defaults() {
-      return this._defaults;
-    }
+  constructor(defaults: ITypeRegistrationSettings, key: any, type: any, isFactory: boolean, isRequire: boolean) {
 
-    get key() {
-      return this._key;
-    }
+    this._subscriptions = {
+      newInstance: []
+    };
 
-    set key(value: any) {
-      this._key = value;
-    }
+    this.defaults = defaults;
+    this.key = key;
+    this.type = type;
 
-    get type() {
-      return this._type;
-    }
+    this._isFactory = isFactory;
+    this._isRequire = isRequire;
+  }
 
-    get isFactory() {
-      return typeof this._isFactory !== 'undefined' ? this._isFactory : false;
-    }
+  get isFactory(): boolean {
+    return typeof this._isFactory !== 'undefined' ? this._isFactory : false;
+  }
 
-    get dependencies() {
-      return this._dependencies;
-    }
+  get subscriptions(): any {
+    return this._subscriptions;
+  }
 
-    set dependencies(value: string|string[]) {
-      this._dependencies = value;
-    }
+  get isSingleton(): boolean {
+    return typeof this._isSingleton !== 'undefined' ? this._isSingleton : this.defaults.isSingleton;
+  }
 
-    get tags() {
-      return this._tags;
-    }
+  set isSingleton(value: boolean) {
+    this._isSingleton = value;
+  }
 
-    set tags(value: any) {
-      this._tags = value;
-    }
+  get wantsInjection(): boolean {
+    return typeof this._wantsInjection !== 'undefined' ? this._wantsInjection : this.defaults.wantsInjection;
+  }
 
-    get subscriptions() {
-      return this._subscriptions;
-    }
+  set wantsInjection(value: boolean) {
+    this._wantsInjection = value;
+  }
 
-    get config() {
-      return this._config;
-    }
+  get isLazy(): boolean {
+    return this._isLazy !== 'undefined' ? this._isLazy : this.defaults.isLazy;
+  }
 
-    set config(value: any) {
-      this._config = value;
-    }
+  set isLazy(value: boolean) {
+    this._isLazy = value;
+  }
 
-    get isSingleton() {
-      return typeof this._isSingleton !== 'undefined' ? this._isSingleton : this.defaults.isSingleton;
-    }
+  get bindFunctions(): boolean {
+    return this._bindFunctions !== 'undefined' ? this._bindFunctions : this.defaults.bindFunctions;
+  }
 
-    set isSingleton(value: boolean) {
-      this._isSingleton = value;
-    }
+  set bindFunctions(value: boolean) {
+    this._bindFunctions = value;
+  }
 
-    get wantsInjection() {
-      return typeof this._wantsInjection !== 'undefined' ? this._wantsInjection : this.defaults.wantsInjection;
-    }
+  get autoCreateMissingSubscribers(): boolean {
+    return this._autoCreateMissingSubscribers ? this._autoCreateMissingSubscribers : this.defaults.autoCreateMissingSubscribers;
+  }
 
-    set wantsInjection(value: boolean) {
-      this._wantsInjection = value;
-    }
+  set autoCreateMissingSubscribers(value: boolean) {
+    this._autoCreateMissingSubscribers = value;
+  }
 
-    get injectInto() {
-      return this._injectInto;
-    }
+  get isRequire(): boolean {
+    return typeof this._isRequire !== 'undefined' ? this._isRequire : false;
+  }
 
-    set injectInto(value: string) {
-      this._injectInto = value;
-    }
-
-    get isLazy() {
-      return this._isLazy !== 'undefined' ? this._isLazy : this.defaults.isLazy;
-    }
-
-    set isLazy(value: boolean) {
-      this._isLazy = value;
-    }
-
-    get bindFunctions() {
-      return this._bindFunctions !== 'undefined' ? this._bindFunctions : this.defaults.bindFunctions;
-    }
-
-    set bindFunctions(value: boolean) {
-      this._bindFunctions = value;
-    }
-
-    get functionsToBind() {
-      return this._functionsToBind;
-    }
-
-    get lazyKeys() {
-      return this._lazyKeys;
-    }
-
-    get overwrittenKeys() {
-      return this._overwrittenKeys;
-    }
-
-    get autoCreateMissingSubscribers() {
-      return this._autoCreateMissingSubscribers ? this._autoCreateMissingSubscribers : this.defaults.autoCreateMissingSubscribers;
-    }
-
-    set autoCreateMissingSubscribers(value: boolean) {
-      this._autoCreateMissingSubscribers = value;
-    }
-
-    get autoCreateMissingRegistrations() {
-      return this._autoCreateMissingRegistrations ? this._autoCreateMissingRegistrations : this.defaults.autoCreateMissingRegistrations;
-    }
-
-    set autoCreateMissingRegistrations(value: boolean) {
-      this._autoCreateMissingRegistrations = value;
-    }
-
-    get isRequire() {
-      return typeof this._isRequire !== 'undefined' ? this._isRequire : false;
-    }
-
-    set isRequire(value: boolean) {
-      this._isRequire = value;
-    }
+  set isRequire(value: boolean) {
+    this._isRequire = value;
+  }
 }

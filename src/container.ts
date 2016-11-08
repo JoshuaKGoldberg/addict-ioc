@@ -1,1136 +1,1042 @@
-import * as path from 'path';
 import {TypeRegistration} from './type_registration';
-import {ITypeRegistrationSettings} from './interfaces';
+import {ITypeRegistrationSettings, IDependencyInjectionContainerConfig, IProvideConfig} from './interfaces';
 
 export class DependencyInjectionContainer {
 
-    constructor(config: IDependencyInjectionContainerConfig) {
-      this._config = config;
-      this._registrations = {};
-      this._instances = {};
+  private _registrations: any = {};
+  private _instances: any = {};
+  private _externalConfigProvider: IProvideConfig = undefined;
 
-      this._initializeRegistrationDeclarations();
-      this._initializeBaseRegistrations();
+  constructor(public config: IDependencyInjectionContainerConfig) {
+    this._initializeRegistrationDeclarations();
+    this._initializeBaseRegistrations();
+  }
+
+  public clear() {
+    this._registrations = {};
+    this._instances = {};
+
+    this._initializeBaseRegistrations();
+  }
+
+  get registrations(): any {
+    return this._registrations;
+  }
+
+  get instances(): any {
+    return this._instances;
+  }
+
+  get externalConfigProvider(): IProvideConfig {
+    return this._externalConfigProvider;
+  }
+
+  public setConfigProvider(configProvider: IProvideConfig) {
+
+    if (typeof configProvider === 'function' && configProvider !== null) {
+
+      this._externalConfigProvider = configProvider;
+
+    } else {
+
+      throw new Error('Config provider must be a function.');
     }
-
-
-    clear() {
-      this._registrations = {};
-      this._instances = {};
-
-      this._initializeBaseRegistrations();
-    }
-
-    get config(): any {
-      return this._config;
-    }
-
-    get registrations() {
-      return this._registrations;
-    }
-
-    get instances() {
-      return this._instances;
-    }
-
-    get externalConfigProvider(): IProvideConfig {
-      return this._externalConfigProvider;
-    }
-
-
-    setRequire(rootPath: string) {
-        if (rootPath) {
-          const pathDiff = path.relative(__dirname, rootPath);
-          this._config.requireRelativePath = pathDiff;
-        }
-    }
-
-
-    setConfigProvider(getConfigCallback: IProvideConfig) {
-
-      if (typeof getConfigCallback === 'function' && getConfigCallback !== null) {
-
-        this._externalConfigProvider = getConfigCallback;
-
-      } else {
-
-        throw new Error('Config provider must be a function.');
-      }
-    }
-
-
-    setDefaults(registrationDefaults: ITypeRegistrationSettings) {
-      if (registrationDefaults) {
-
-        const defaultSettings = [
-          'isSingleton',
-          'wantsInjection',
-          'isLazy',
-          'bindFunctions',
-          'autoCreateMissingSubscribers'
-        ];
-
-        defaultSettings.forEach((defaultSetting) => {
-
-          const defaultSettingValue = registrationDefaults[defaultSetting];
-
-          this._setDefault(defaultSetting, defaultSettingValue);
-        });
-      }
-    }
-
-    _setDefault(settingKey: string, value: any) {
-
-      if (this._isValidBoolean(value)) {
-
-        this._config.registrationDefaults[settingKey] = value;
-
-        return true;
-      }
-      return false;
-    }
-
-    _isValidBoolean(settingValue: any) {
-      return typeof settingValue === 'boolean';
-    }
-
-
-    register(key: any, type: any): TypeRegistration {
-
-      const keyType = typeof key;
-
-      let currentRegistration;
-
-      if (keyType === 'string') {
-
-        currentRegistration = this._registerTypeByKey(key, type);
-
-      } else {
-
-        throw new Error(`The key type '${key}' is not supported.`);
-      }
-
-      this.registrations[key] = currentRegistration;
-
-      return currentRegistration;
-    }
-
-
-    unregister(key: any) {
-
-      if (this.registrations[key]) {
-
-        delete this.registrations[key];
-
-      } else {
-
-        throw new Error(`The key '${key}' is not registered.`);
-      }
-    }
-
-
-    _registerTypeByKey(key: any, type: any) {
-
-      if (!key) {
-        throw new Error(`No key specified for registration of type '${type}'`);
-      }
-
-      if (!type) {
-        throw new Error(`No type specified for registration of key '${key}'`);
-      }
-
-      return TypeRegistration.create({
-        defaults: this.config.registrationDefaults,
-        key: key,
-        type: type
-      });
-    }
-
-
-    registerFactory(key: any, factoryMethod: any) {
-
-      if (typeof key !== 'string') {
-        throw new Error(`No key specified for registration of factory function '${factoryMethod}'`);
-      }
-
-      const currentRegistration = TypeRegistration.create({
-        defaults: this.config.registrationDefaults,
-        key: key,
-        type: factoryMethod,
-        isFactory: true
-      });
-
-      this.registrations[key] = currentRegistration;
-
-      return currentRegistration;
-    }
-
-    registerObject(key: any, object: any) {
-
-      const keyType = typeof key;
-
-      let currentRegistration;
-
-      if (keyType === 'string') {
-
-        if (!key) {
-          throw new Error(`No key specified for registration of type '${keyType}'`);
-        }
-
-        currentRegistration = new TypeRegistration(this.config.registrationDefaults, key, object);
-
-      } else {
-
-        throw new Error(`The key type '${key}' is not supported.`);
-      }
-
-      this.registrations[key] = currentRegistration;
-
-      currentRegistration.settings.isObject = true;
-
-      return currentRegistration;
-    }
-
-
-    require(moduleName: string) {
-
-      if (typeof moduleName !== 'string') {
-        throw new Error(`No module name specified for registration of require`);
-      }
-
-      const currentRegistration = TypeRegistration.create({
-        defaults: this.config.registrationDefaults,
-        key: moduleName,
-        type: moduleName,
-        isRequire: true
-      });
-
-      this.registrations[moduleName] = currentRegistration;
-
-      currentRegistration['as'] = (key) => {
-
-        this.registrations[key] = this.registrations[moduleName];
-
-        delete this.registrations[moduleName];
-
-        currentRegistration.settings.key = key;
-      };
-
-      return currentRegistration;
-    }
-
-    _initializeBaseRegistrations() {
-      this.registerObject(this.config.injectContainerKey, this);
-    }
-
-    _initializeRegistrationDeclarations() {
-
-      const declarations = [
-        'dependencies',
-        'configure',
-        'singleton',
-        'noInjection',
-        'injectInto',
-        'injectLazy',
-        'onNewInstance',
-        'bindFunctions'
+  }
+
+  public setDefaults(registrationDefaults: ITypeRegistrationSettings) {
+    if (registrationDefaults) {
+
+      const defaultSettings = [
+        'isSingleton',
+        'wantsInjection',
+        'isLazy',
+        'bindFunctions',
+        'autoCreateMissingSubscribers'
       ];
 
-      declarations.forEach((declaration) => {
+      defaultSettings.forEach((defaultSetting) => {
 
-        this[declaration] = () => {
-          this._ensureRegistrationStarted(declaration);
-        };
+        const defaultSettingValue = registrationDefaults[defaultSetting];
+
+        this._setDefault(defaultSetting, defaultSettingValue);
       });
     }
+  }
 
-    _ensureRegistrationStarted(declaration) {
-      throw new Error(`There is no registration present to use '${declaration}'.
+  private _setDefault(settingKey: string, value: any) {
+
+    if (this._isValidBoolean(value)) {
+
+      this.config.registrationDefaults[settingKey] = value;
+
+      return true;
+    }
+    return false;
+  }
+
+  private _isValidBoolean(settingValue: any) {
+    return typeof settingValue === 'boolean';
+  }
+
+  public register(key: any, type: any): TypeRegistration {
+
+    const keyType = typeof key;
+
+    let currentRegistration;
+
+    if (keyType === 'string') {
+
+      currentRegistration = this._registerTypeByKey(key, type);
+
+    } else {
+
+      throw new Error(`The key type '${key}' is not supported.`);
+    }
+
+    this.registrations[key] = currentRegistration;
+
+    return currentRegistration;
+  }
+
+  public unregister(key: any) {
+
+    if (this.registrations[key]) {
+
+      delete this.registrations[key];
+
+    } else {
+
+      throw new Error(`The key '${key}' is not registered.`);
+    }
+  }
+
+  private _registerTypeByKey(key: any, type: any) {
+
+    if (!key) {
+      throw new Error(`No key specified for registration of type '${type}'`);
+    }
+
+    if (!type) {
+      throw new Error(`No type specified for registration of key '${key}'`);
+    }
+
+    return TypeRegistration.create({
+      defaults: this.config.registrationDefaults,
+      key: key,
+      type: type
+    });
+  }
+
+  public registerFactory(key: any, factoryMethod: any) {
+
+    if (typeof key !== 'string') {
+      throw new Error(`No key specified for registration of factory function '${factoryMethod}'`);
+    }
+
+    const currentRegistration = TypeRegistration.create({
+      defaults: this.config.registrationDefaults,
+      key: key,
+      type: factoryMethod,
+      isFactory: true
+    });
+
+    this.registrations[key] = currentRegistration;
+
+    return currentRegistration;
+  }
+
+  public registerObject(key: any, object: any) {
+
+    const keyType = typeof key;
+
+    let currentRegistration;
+
+    if (keyType === 'string') {
+
+      if (!key) {
+        throw new Error(`No key specified for registration of type '${keyType}'`);
+      }
+
+      currentRegistration = new TypeRegistration(this.config.registrationDefaults, key, object);
+
+    } else {
+
+      throw new Error(`The key type '${key}' is not supported.`);
+    }
+
+    this.registrations[key] = currentRegistration;
+
+    currentRegistration.settings.isObject = true;
+
+    return currentRegistration;
+  }
+
+  private _initializeBaseRegistrations() {
+    this.registerObject(this.config.injectContainerKey, this);
+  }
+
+  private _initializeRegistrationDeclarations() {
+
+    const declarations = [
+      'dependencies',
+      'configure',
+      'singleton',
+      'noInjection',
+      'injectInto',
+      'injectLazy',
+      'onNewInstance',
+      'bindFunctions'
+    ];
+
+    declarations.forEach((declaration) => {
+
+      this[declaration] = () => {
+        this._ensureRegistrationStarted(declaration);
+      };
+    });
+  }
+
+  private _ensureRegistrationStarted(declaration) {
+    throw new Error(`There is no registration present to use '${declaration}'.
         You can start a registration by calling the 'register' method.`);
+  }
+
+  private _getRegistration(key: any) {
+
+    const registration = this.registrations[key];
+
+    if (registration) {
+      return registration;
     }
 
+    throw new Error(`There is no registration created for key '${key}'.`);
+  }
 
-    _getRegistration(key: any) {
+  public resolve(key: any, injectionArgs: Array<any>, config: any) {
+    return this._resolve(key, injectionArgs, config);
+  }
 
-      const registration = this.registrations[key];
+  private _resolve(key: any, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
 
-      if (registration) {
-        return registration;
-      }
-
-      throw new Error(`There is no registration created for key '${key}'.`);
+    if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
+      throw new Error(`Injection args must be of type 'Array'.`);
     }
 
+    const registration = this._getRegistration(key);
 
-    resolve(key: any, injectionArgs: Array<any>, config: any) {
-      return this._resolve(key, injectionArgs, config);
-    }
-
-
-    _resolve(key: any, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
-
-      if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
-        throw new Error(`Injection args must be of type 'Array'.`);
-      }
-
-      const registration = this._getRegistration(key);
-
-      if (registration.settings.isObject) {
-
-        if (isLazy) {
-          return () => {
-            return registration.settings.type;
-          };
-        }
-
-        return registration.settings.type;
-      }
-
-      return this._resolveInstance(registration, injectionArgs, config, resolvedKeyHistory, isLazy);
-    }
-
-
-    _resolveInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
-
-      if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
-        throw new Error(`Circular dependency on key '${registration.settings.key}' detected.`);
-      }
-
-      const resolvedRegistrationConfig = this._getConfig(registration.settings.key);
-
-      const resolvedRuntimeConfig = this._resolveConfig(registration.settings.key, config);
-
-      const configUsed = this._mergeConfig(resolvedRegistrationConfig, resolvedRuntimeConfig);
-
-      if (registration.settings.isSingleton) {
-
-        return this._getInstance(registration, injectionArgs, configUsed);
-      }
+    if (registration.settings.isObject) {
 
       if (isLazy) {
-        return (lazyInjectionArgs, lazyConfig) => {
-
-          const injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
-
-          const lazyConfigUsed = this._mergeConfig(configUsed, lazyConfig);
-
-          return this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+        return () => {
+          return registration.settings.type;
         };
       }
 
-      return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+      return registration.settings.type;
     }
 
+    return this._resolveInstance(registration, injectionArgs, config, resolvedKeyHistory, isLazy);
+  }
 
-    _mergeArguments(baseArgs: Array<any>, additionalArgs: Array<any>) {
+  private _resolveInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
 
-      if (additionalArgs && !Array.isArray(additionalArgs)){
-        throw new Error('Arguments have to be of type Array');
-      }
-
-      if (!baseArgs) {
-        return additionalArgs;
-      }
-
-      const argsUsed = baseArgs || undefined;
-
-      if (!Array.isArray(argsUsed)){
-        throw new Error('Arguments have to be of type Array');
-      }
-
-      const finalArgs = Array.prototype.push.apply(argsUsed, additionalArgs);
-
-      return finalArgs;
+    if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
+      throw new Error(`Circular dependency on key '${registration.settings.key}' detected.`);
     }
 
+    const resolvedRegistrationConfig = this._getConfig(registration.settings.key);
 
-    _mergeConfig(baseConfig: any, additionalConfig: any) {
-      const configUsed = baseConfig || undefined;
+    const resolvedRuntimeConfig = this._resolveConfig(registration.settings.key, config);
 
-      if (!configUsed) {
-        return additionalConfig;
-      }
+    const configUsed = this._mergeConfig(resolvedRegistrationConfig, resolvedRuntimeConfig);
 
-      const finalConfig = Object.assign(configUsed, additionalConfig);
+    if (registration.settings.isSingleton) {
 
-      return finalConfig;
+      return this._getInstance(registration, injectionArgs, configUsed);
     }
 
+    if (isLazy) {
+      return (lazyInjectionArgs, lazyConfig) => {
 
-    _getInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any) {
+        const injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
-      let instances = this.instances[registration.settings.key];
-      let instance = null;
+        const lazyConfigUsed = this._mergeConfig(configUsed, lazyConfig);
 
-      if (typeof instances === 'undefined') {
+        return this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+      };
+    }
+
+    return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+  }
+
+  private _mergeArguments(baseArgs: Array<any>, additionalArgs: Array<any>) {
+
+    if (additionalArgs && !Array.isArray(additionalArgs)) {
+      throw new Error('Arguments have to be of type Array');
+    }
+
+    if (!baseArgs) {
+      return additionalArgs;
+    }
+
+    const argsUsed = baseArgs || undefined;
+
+    if (!Array.isArray(argsUsed)) {
+      throw new Error('Arguments have to be of type Array');
+    }
+
+    const finalArgs = Array.prototype.push.apply(argsUsed, additionalArgs);
+
+    return finalArgs;
+  }
+
+  private _mergeConfig(baseConfig: any, additionalConfig: any) {
+    const configUsed = baseConfig || undefined;
+
+    if (!configUsed) {
+      return additionalConfig;
+    }
+
+    const finalConfig = Object.assign(configUsed, additionalConfig);
+
+    return finalConfig;
+  }
+
+  private _getInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any) {
+
+    let instances = this.instances[registration.settings.key];
+    let instance = null;
+
+    if (typeof instances === 'undefined') {
+
+      return this._getNewInstance(registration, injectionArgs, config);
+    }
+
+    instances = this.instances[registration.settings.key][config][injectionArgs];
+
+    if (Array.isArray(instances)) {
+
+      if (instances.length === 0) {
 
         return this._getNewInstance(registration, injectionArgs, config);
-      }
-
-      instances = this.instances[registration.settings.key][config][injectionArgs];
-
-      if (Array.isArray(instances)) {
-
-        if (instances.length === 0) {
-
-          return this._getNewInstance(registration, injectionArgs, config);
-
-        } else {
-
-          instance = instances[0];
-        }
-      }
-
-      return instance;
-    }
-
-
-    _getKeysForInstanceConfigurationsByKey(key: any) {
-
-      const instance = this.instances[key];
-
-      if (!instance) {
-        return null;
-      }
-
-      return Object.keys(instance);
-    }
-
-
-    _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key: any, config: any) {
-
-      const instance = this.instances[key][config];
-
-      if (!instance) {
-        return null;
-      }
-
-      return Object.keys(instance);
-    }
-
-
-    _getAllInstances(key: any, config: any, injectionArgs: Array<any>) {
-
-      const configKeys = [];
-
-      if (config) {
-
-        configKeys.push(config);
 
       } else {
 
-        Array.prototype.push.apply(configKeys, this._getKeysForInstanceConfigurationsByKey(key));
+        instance = instances[0];
       }
-
-      if (configKeys.length === 0) {
-
-        return null;
-      }
-
-      const allInstances = [];
-
-      configKeys.forEach((configKey) => {
-
-        const instanceInjectionArgumentKeys = this._getKeysForInstanceInjectionArgumentsByKeyAndConfig(key, config);
-
-        if (!instanceInjectionArgumentKeys) {
-          return;
-        }
-
-        instanceInjectionArgumentKeys.forEach((instanceInjectionArgumentKey: string) => {
-
-          Array.prototype.push.apply(allInstances, this.instances[key][configKey][instanceInjectionArgumentKey]);
-        });
-      });
-
-      return allInstances;
     }
 
+    return instance;
+  }
 
-    _getNewInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>) {
+  private _getKeysForInstanceConfigurationsByKey(key: any) {
 
-      const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
+    const instance = this.instances[key];
 
-      const instance = this._createInstance(registration, dependencies, injectionArgs);
-
-      this._configureInstance(instance, config);
-
-      this._callSubscribers(registration, 'newInstance', instance);
-
-      this._bindFunctionsToInstance(registration, instance);
-
-      this._cacheInstance(registration.settings.key, instance, injectionArgs, config);
-
-      return instance;
+    if (!instance) {
+      return null;
     }
 
+    return Object.keys(instance);
+  }
 
-    _bindFunctionsToInstance(registration: TypeRegistration, instance: any) {
+  private _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key: any, config: any) {
 
-      if (!registration.settings.bindFunctions) {
+    const instance = this.instances[key][config];
+
+    if (!instance) {
+      return null;
+    }
+
+    return Object.keys(instance);
+  }
+
+  private _getAllInstances(key: any, config: any, injectionArgs: Array<any>) {
+
+    const configKeys = [];
+
+    if (config) {
+
+      configKeys.push(config);
+
+    } else {
+
+      Array.prototype.push.apply(configKeys, this._getKeysForInstanceConfigurationsByKey(key));
+    }
+
+    if (configKeys.length === 0) {
+
+      return null;
+    }
+
+    const allInstances = [];
+
+    configKeys.forEach((configKey) => {
+
+      const instanceInjectionArgumentKeys = this._getKeysForInstanceInjectionArgumentsByKeyAndConfig(key, config);
+
+      if (!instanceInjectionArgumentKeys) {
         return;
       }
 
-      let instanceKeys;
+      instanceInjectionArgumentKeys.forEach((instanceInjectionArgumentKey: string) => {
 
-      if (registration.settings.functionsToBind.length > 0) {
-
-        instanceKeys = registration.settings.functionsToBind;
-
-      } else {
-
-        const instancePrototype = Object.getPrototypeOf(instance);
-
-        instanceKeys = Object.getOwnPropertyNames(instancePrototype);
-      }
-
-      instanceKeys.forEach((instanceKey: string) => {
-
-        if (instanceKey === 'constructor') {
-          return;
-        }
-
-        const keyType = typeof instance[instanceKey];
-
-        if (keyType === 'function') {
-
-          const unboundKey = instance[instanceKey];
-
-          instance[instanceKey] = unboundKey.bind(instance);
-        }
+        Array.prototype.push.apply(allInstances, this.instances[key][configKey][instanceInjectionArgumentKey]);
       });
+    });
+
+    return allInstances;
+  }
+
+  private _getNewInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>) {
+
+    const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
+
+    const instance = this._createInstance(registration, dependencies, injectionArgs);
+
+    this._configureInstance(instance, config);
+
+    this._callSubscribers(registration, 'newInstance', instance);
+
+    this._bindFunctionsToInstance(registration, instance);
+
+    this._cacheInstance(registration.settings.key, instance, injectionArgs, config);
+
+    return instance;
+  }
+
+  private _bindFunctionsToInstance(registration: TypeRegistration, instance: any) {
+
+    if (!registration.settings.bindFunctions) {
+      return;
     }
 
+    let instanceKeys;
 
-    resolveDependencies(key: any) {
+    if (registration.settings.functionsToBind.length > 0) {
 
-      const registration = this._getRegistration(key);
+      instanceKeys = registration.settings.functionsToBind;
 
-      return this._resolveDependencies(registration);
+    } else {
+
+      const instancePrototype = Object.getPrototypeOf(instance);
+
+      instanceKeys = Object.getOwnPropertyNames(instancePrototype);
     }
 
+    instanceKeys.forEach((instanceKey: string) => {
 
-    _resolveDependencies(registration: any, resolvedKeyHistory: Array<any>) {
-
-      const resolvedDependencies = [];
-
-      const configuredDependencies = registration.settings.dependencies;
-
-      if (!configuredDependencies) {
-        return resolvedDependencies;
+      if (instanceKey === 'constructor') {
+        return;
       }
 
-      let dependencies;
-      const dependenciesType = typeof configuredDependencies;
+      const keyType = typeof instance[instanceKey];
 
-      if (Array.isArray(registration.settings.dependencies)) {
+      if (keyType === 'function') {
 
-        dependencies = configuredDependencies;
+        const unboundKey = instance[instanceKey];
 
-      } else if (dependenciesType === 'string') {
-
-        dependencies = [configuredDependencies];
-
-      } else {
-
-        throw new Error(`The type '${dependenciesType}' of your dependencies declaration is not yet supported.
-        Supported types: 'Array', 'String'`);
+        instance[instanceKey] = unboundKey.bind(instance);
       }
+    });
+  }
 
-      if (!resolvedKeyHistory) {
-        resolvedKeyHistory = [];
-      }
+  public resolveDependencies(key: any) {
 
-      resolvedKeyHistory.push(registration.settings.key);
+    const registration = this._getRegistration(key);
 
-      dependencies.forEach((dependency) => {
+    return this._resolveDependencies(registration);
+  }
 
-        const isLazy = this._isDependencyLazy(registration, dependency);
+  private _resolveDependencies(registration: any, resolvedKeyHistory: Array<any>) {
 
-        const dependencyKey = this._getDependencyKeyOverwritten(registration, dependency);
+    const resolvedDependencies = [];
 
-        const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy);
+    const configuredDependencies = registration.settings.dependencies;
 
-        resolvedDependencies.push(dependencyInstance);
-      });
-
+    if (!configuredDependencies) {
       return resolvedDependencies;
     }
 
+    let dependencies;
+    const dependenciesType = typeof configuredDependencies;
 
-    _isDependencyLazy(registration: TypeRegistration, dependency: string) {
+    if (Array.isArray(registration.settings.dependencies)) {
 
-      const isLazy = registration.settings.isLazy && (registration.settings.lazyKeys.length === 0 || registration.settings.lazyKeys.indexOf(dependency) >= 0);
+      dependencies = configuredDependencies;
 
-      return isLazy;
+    } else if (dependenciesType === 'string') {
+
+      dependencies = [configuredDependencies];
+
+    } else {
+
+      throw new Error(`The type '${dependenciesType}' of your dependencies declaration is not yet supported.
+        Supported types: 'Array', 'String'`);
     }
 
+    if (!resolvedKeyHistory) {
+      resolvedKeyHistory = [];
+    }
 
-    _getDependencyKeyOverwritten(registration: TypeRegistration, dependency: string) {
+    resolvedKeyHistory.push(registration.settings.key);
 
-      let dependencyKey = dependency;
+    dependencies.forEach((dependency) => {
 
-      if (registration.settings.overwrittenKeys[dependency]) {
+      const isLazy = this._isDependencyLazy(registration, dependency);
 
-        dependencyKey = registration.settings.overwrittenKeys[dependency];
+      const dependencyKey = this._getDependencyKeyOverwritten(registration, dependency);
+
+      const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy);
+
+      resolvedDependencies.push(dependencyInstance);
+    });
+
+    return resolvedDependencies;
+  }
+
+  private _isDependencyLazy(registration: TypeRegistration, dependency: string) {
+
+    const isLazy = registration.settings.isLazy && (registration.settings.lazyKeys.length === 0 || registration.settings.lazyKeys.indexOf(dependency) >= 0);
+
+    return isLazy;
+  }
+
+  private _getDependencyKeyOverwritten(registration: TypeRegistration, dependency: string) {
+
+    let dependencyKey = dependency;
+
+    if (registration.settings.overwrittenKeys[dependency]) {
+
+      dependencyKey = registration.settings.overwrittenKeys[dependency];
+    }
+
+    return dependencyKey;
+  }
+
+  private _createInstance(registration: TypeRegistration, dependencies: Array<any>, injectionArgs: Array<any>) {
+
+    let instance;
+
+    let type = registration.settings.type;
+
+    const argumentsToBeInjected = dependencies.concat(injectionArgs);
+
+    if (typeof type !== 'function') {
+
+      instance = type;
+
+      if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+
+        this._injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected);
       }
 
-      return dependencyKey;
-    }
-
-
-    _createInstance(registration: TypeRegistration, dependencies: Array<any>, injectionArgs: Array<any>) {
-
-      let instance;
-
-      let type = registration.settings.type;
-
-      if (registration.settings.isRequire) {
-
-        let relativeRequirePath: string;
-
-        if (registration.settings.type.substr(0, 1) === '.') {
-
-          relativeRequirePath = path.join(this.config.requireRelativePath, registration.settings.type);
-
-        } else {
-
-          relativeRequirePath = registration.settings.type;
-        }
-
-        type = require(relativeRequirePath);
-      }
-
-      const argumentsToBeInjected = dependencies.concat(injectionArgs);
-
-      if (typeof type !== 'function') {
-
-        instance = type;
-
-        if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
-
-          this._injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected);
-        }
-
-      } else if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-
-        if (registration.settings.isFactory) {
-
-          instance = this._createInstanceByFactoryWithInjection(type, argumentsToBeInjected);
-
-        } else {
-
-          instance = this._createInstanceByConstructorWithInjection(type, argumentsToBeInjected);
-        }
-
-      } else {
-        if (registration.settings.isFactory) {
-
-          instance = this._createInstanceByFactory(type);
-
-        } else {
-
-          instance = this._createInstanceByConstructor(type);
-        }
-
-        if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
-
-          this._injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected);
-        }
-      }
-
-      return instance;
-    }
-
-    _createInstanceByFactory(type: any) {
-      const instance = type();
-      return instance;
-    }
-
-    _createInstanceByFactoryWithInjection(type: any, argumentsToBeInjected: Array<any>) {
-      const instance = type.apply(undefined, argumentsToBeInjected);
-      return instance;
-    }
-
-    _createInstanceByConstructor(type) {
-      const instance = new type();
-      return instance;
-    }
-
-    _createInstanceByConstructorWithInjection(type, argumentsToBeInjected) {
-      const instance = new(Function.prototype.bind.apply(type, [null].concat(argumentsToBeInjected)))();
-      return instance;
-    }
-
-
-    _injectDependenciesIntoInstance(registration: TypeRegistration, instance: any, argumentsToBeInjected: Array<any>) {
-
-      let propertySource;
+    } else if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
 
       if (registration.settings.isFactory) {
 
-        propertySource = instance;
+        instance = this._createInstanceByFactoryWithInjection(type, argumentsToBeInjected);
 
       } else {
 
-        propertySource = Object.getPrototypeOf(instance);
+        instance = this._createInstanceByConstructorWithInjection(type, argumentsToBeInjected);
       }
 
-      const injectionTargetPropertyDescriptor = this._getPropertyDescriptor(propertySource, registration.settings.injectInto);
+    } else {
+      if (registration.settings.isFactory) {
 
-      if (injectionTargetPropertyDescriptor) {
-
-        if (typeof injectionTargetPropertyDescriptor.value === 'function') {
-
-          this._injectDependenciesIntoFunction(instance, injectionTargetPropertyDescriptor.value, argumentsToBeInjected);
-
-        } else if (injectionTargetPropertyDescriptor.set) {
-
-          this._injectDependenciesIntoProperty(instance, registration.settings.injectInto, argumentsToBeInjected);
-
-        } else {
-          throw new Error(`The setter for the '${registration.settings.injectInto}' property on type '${Object.getPrototypeOf(instance).constructor.name}' is missing.`);
-        }
+        instance = this._createInstanceByFactory(type);
 
       } else {
-        throw new Error(`The injection target '${registration.settings.injectInto}' on type '${Object.getPrototypeOf(instance).constructor.name}' is missing.`);
+
+        instance = this._createInstanceByConstructor(type);
+      }
+
+      if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+
+        this._injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected);
       }
     }
 
-    _getPropertyDescriptor(type: any, key: string) {
+    return instance;
+  }
 
-      const propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
+  private _createInstanceByFactory(type: any) {
+    const instance = type();
+    return instance;
+  }
 
-      if (propertyDescriptor) {
-        return propertyDescriptor;
+  private _createInstanceByFactoryWithInjection(type: any, argumentsToBeInjected: Array<any>) {
+    const instance = type.apply(undefined, argumentsToBeInjected);
+    return instance;
+  }
+
+  private _createInstanceByConstructor(type) {
+    const instance = new type();
+    return instance;
+  }
+
+  private _createInstanceByConstructorWithInjection(type, argumentsToBeInjected) {
+    const instance = new (Function.prototype.bind.apply(type, [null].concat(argumentsToBeInjected)))();
+    return instance;
+  }
+
+  private _injectDependenciesIntoInstance(registration: TypeRegistration, instance: any, argumentsToBeInjected: Array<any>) {
+
+    let propertySource;
+
+    if (registration.settings.isFactory) {
+
+      propertySource = instance;
+
+    } else {
+
+      propertySource = Object.getPrototypeOf(instance);
+    }
+
+    const injectionTargetPropertyDescriptor = this._getPropertyDescriptor(propertySource, registration.settings.injectInto);
+
+    if (injectionTargetPropertyDescriptor) {
+
+      if (typeof injectionTargetPropertyDescriptor.value === 'function') {
+
+        this._injectDependenciesIntoFunction(instance, injectionTargetPropertyDescriptor.value, argumentsToBeInjected);
+
+      } else if (injectionTargetPropertyDescriptor.set) {
+
+        this._injectDependenciesIntoProperty(instance, registration.settings.injectInto, argumentsToBeInjected);
+
+      } else {
+        throw new Error(`The setter for the '${registration.settings.injectInto}' property on type '${Object.getPrototypeOf(instance).constructor.name}' is missing.`);
       }
 
-      const prototype = Object.getPrototypeOf(type);
+    } else {
+      throw new Error(`The injection target '${registration.settings.injectInto}' on type '${Object.getPrototypeOf(instance).constructor.name}' is missing.`);
+    }
+  }
 
-      if (!prototype) {
-        return undefined;
-      }
+  private _getPropertyDescriptor(type: any, key: string) {
 
-      return this._getPropertyDescriptor(prototype, key);
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
+
+    if (propertyDescriptor) {
+      return propertyDescriptor;
     }
 
-    _injectDependenciesIntoFunction(instance: any, targetFunction: string, argumentsToBeInjected: Array<any>) {
-      targetFunction.apply(targetFunction, argumentsToBeInjected);
+    const prototype = Object.getPrototypeOf(type);
+
+    if (!prototype) {
+      return undefined;
     }
 
-    _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>) {
-      instance[property] = argumentsToBeInjected;
-    }
+    return this._getPropertyDescriptor(prototype, key);
+  }
 
+  private _injectDependenciesIntoFunction(instance: any, targetFunction: string, argumentsToBeInjected: Array<any>) {
+    targetFunction.apply(targetFunction, argumentsToBeInjected);
+  }
 
-    _getSubscriberRegistrations(key: any, subscriptionKey: string) {
+  private _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>) {
+    instance[property] = argumentsToBeInjected;
+  }
 
-      const subscribers = [];
+  private _getSubscriberRegistrations(key: any, subscriptionKey: string) {
 
-      const registrationKeys = Object.keys(this.registrations);
+    const subscribers = [];
 
-      registrationKeys.forEach((registrationKey) => {
+    const registrationKeys = Object.keys(this.registrations);
 
-        const registration = this.registrations[registrationKey];
+    registrationKeys.forEach((registrationKey) => {
 
-        registration.settings.subscriptions[subscriptionKey].some((subscription) => {
+      const registration = this.registrations[registrationKey];
 
-          if (subscription.key === key || subscription.key === '*') {
-
-            subscribers.push(registration);
-            return true;
-          }
-        });
-      });
-
-      return subscribers;
-    }
-
-
-    _getSubscriptionFromRegistrationByKey(registration: TypeRegistration, subscriptionKey: string, key: any) {
-
-      let resultSubscription = null;
       registration.settings.subscriptions[subscriptionKey].some((subscription) => {
 
-        if (subscription.key === key) {
+        if (subscription.key === key || subscription.key === '*') {
 
-          resultSubscription = subscription;
+          subscribers.push(registration);
           return true;
         }
       });
+    });
 
-      return resultSubscription;
-    }
+    return subscribers;
+  }
 
+  private _getSubscriptionFromRegistrationByKey(registration: TypeRegistration, subscriptionKey: string, key: any) {
 
-    _callSubscribers(registration: TypeRegistration, subscriptionKey: string, params: Array<any>) {
+    let resultSubscription = null;
+    registration.settings.subscriptions[subscriptionKey].some((subscription) => {
 
-      const subscriberRegistrations = this._getSubscriberRegistrations(registration.settings.key, subscriptionKey);
+      if (subscription.key === key) {
 
-      subscriberRegistrations.forEach((subscriberRegistration) => {
+        resultSubscription = subscription;
+        return true;
+      }
+    });
 
-        let subscribedInstances = this._getAllInstances(subscriberRegistration.settings.key);
+    return resultSubscription;
+  }
 
-        if (subscribedInstances === null) {
+  private _callSubscribers(registration: TypeRegistration, subscriptionKey: string, params: Array<any>) {
 
-          const newInstance = this._createMissingSubscriber(subscriberRegistration);
+    const subscriberRegistrations = this._getSubscriberRegistrations(registration.settings.key, subscriptionKey);
 
-          subscribedInstances = [newInstance];
-        }
+    subscriberRegistrations.forEach((subscriberRegistration) => {
 
-        subscribedInstances.forEach((subscribedInstance) => {
+      let subscribedInstances = this._getAllInstances(subscriberRegistration.settings.key);
 
-          this._callSubscriber(registration, subscriptionKey, subscriberRegistration, subscribedInstance, params);
-        });
+      if (subscribedInstances === null) {
+
+        const newInstance = this._createMissingSubscriber(subscriberRegistration);
+
+        subscribedInstances = [newInstance];
+      }
+
+      subscribedInstances.forEach((subscribedInstance) => {
+
+        this._callSubscriber(registration, subscriptionKey, subscriberRegistration, subscribedInstance, params);
       });
+    });
+  }
+
+  private _createMissingSubscriber(subscriberRegistration: TypeRegistration) {
+
+    if (subscriberRegistration.settings.autoCreateMissingSubscribers) {
+
+      return this._getNewInstance(subscriberRegistration);
     }
 
+    throw new Error(`There is no instance created for key '${subscriberRegistration.settings.key}'.`);
+  }
 
-    _createMissingSubscriber(subscriberRegistration: TypeRegistration) {
+  private _callSubscriber(subscribedRegistration: TypeRegistration, subscriptionKey: string, subscriberRegistration: TypeRegistration, subscribedInstance: any,
+                          params: Array<any>) {
 
-      if (subscriberRegistration.settings.autoCreateMissingSubscribers) {
+    if (!Array.isArray(params)) {
+      params = [params];
+    }
 
-        return this._getNewInstance(subscriberRegistration);
+    const methodSubscription = this._getSubscriptionFromRegistrationByKey(subscriberRegistration, subscriptionKey, subscribedRegistration.settings.key);
+
+    const subscribedMethod = subscribedInstance[methodSubscription.method];
+
+    subscribedMethod.apply(subscribedInstance, params);
+  }
+
+  private _configureInstance(instance: any, config: any) {
+
+    if (!config) {
+      return;
+    }
+
+    const configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
+
+    if (configPropertyDescriptor === undefined || !configPropertyDescriptor.set) {
+      const instancePrototype = Object.getPrototypeOf(instance);
+
+      throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
+    }
+
+    instance.config = config;
+  }
+
+  private _cacheInstance(key: any, instance: any, injectionArgs: Array<any>, config: any) {
+
+    if (!this.instances[key]) {
+      this.instances[key] = {};
+    }
+    if (!this.instances[key][config]) {
+      this.instances[key][config] = {};
+    }
+
+    if (!this.instances[key][config][injectionArgs]) {
+      this.instances[key][config][injectionArgs] = [];
+    }
+
+    this.instances[key][config][injectionArgs].push(instance);
+  }
+
+  private _getConfig(key: any) {
+
+    const config = this.registrations[key].settings.config;
+
+    const resolvedConfig = this._resolveConfig(key, config);
+
+    if (!resolvedConfig) {
+      return undefined;
+    }
+
+    return resolvedConfig;
+  }
+
+  private _resolveConfig(key: any, config: any) {
+
+    const registration = this.registrations[key];
+
+    let resolvedConfig;
+
+    const configType = typeof config;
+
+    if (configType === 'function') {
+      resolvedConfig = config(key);
+
+      if (!resolvedConfig) {
+        throw new Error(`The specified config function for registration key ${registration.settings.key} returned undefined.`);
       }
 
-      throw new Error(`There is no instance created for key '${subscriberRegistration.settings.key}'.`);
-    }
+    } else if (configType === 'object') {
+      resolvedConfig = config;
 
-
-    _callSubscriber(subscribedRegistration: TypeRegistration, subscriptionKey: string, subscriberRegistration: TypeRegistration, subscribedInstance: any, params: Array<any>) {
-
-      if (!Array.isArray(params)) {
-        params = [params];
+      if (!resolvedConfig) {
+        throw new Error(`The specified config for registration key ${registration.settings.key} is undefined.`);
       }
 
-      const methodSubscription = this._getSubscriptionFromRegistrationByKey(subscriberRegistration, subscriptionKey, subscribedRegistration.settings.key);
+    } else if (configType === 'string') {
 
-      const subscribedMethod = subscribedInstance[methodSubscription.method];
+      if (typeof this.externalConfigProvider !== 'function' || this.externalConfigProvider === null) {
+        throw new Error(`The specified config for registration key ${registration.settings.key} is null.`);
+      }
 
-      subscribedMethod.apply(subscribedInstance, params);
+      resolvedConfig = this.externalConfigProvider(config, registration);
+
+      if (!resolvedConfig) {
+        throw new Error(`The specified config for registration key ${registration.settings.key} is null.`);
+      }
+
+    } else {
+
+      resolvedConfig = undefined;
     }
 
+    return resolvedConfig;
+  }
 
-    _configureInstance(instance: any, config: any) {
+  public validateDependencies(key?: any) {
 
-      if (!config) {
+    let registrationKeys;
+
+    if (Array.isArray(key)) {
+
+      registrationKeys = key;
+
+    } else if (typeof key !== 'undefined') {
+
+      registrationKeys = [key];
+
+    } else {
+
+      registrationKeys = Object.keys(this.registrations);
+    }
+
+    const errors = this._validateDependencies(registrationKeys);
+
+    if (errors.length > 0) {
+      throw new Error(`Errors during validation of dependencies:
+          ${errors.toString()}`);
+    }
+  }
+
+  private _validateDependencies(registrationKeys: Array<any>, parentRegistrationHistory: TypeRegistration[]) {
+    const errors = [];
+
+    registrationKeys.forEach((registrationKey) => {
+
+      const registration = this.registrations[registrationKey];
+      const dependencies = registration.settings.dependencies;
+
+      if (!parentRegistrationHistory) {
+
+        parentRegistrationHistory = [];
+
+      } else if (parentRegistrationHistory.indexOf(registration) >= 0) {
+
+        errors.push(`Circular dependency on key '${registrationKey}' detected.`);
         return;
       }
 
-      const configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
+      const subParentRegistrationHistory = [];
+      Array.prototype.push.apply(subParentRegistrationHistory, parentRegistrationHistory);
 
-      if (configPropertyDescriptor === undefined || !configPropertyDescriptor.set) {
-        const instancePrototype = Object.getPrototypeOf(instance);
+      subParentRegistrationHistory.push(registration);
 
-        throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
+      if (!dependencies) {
+        return;
       }
 
-      instance.config = config;
-    }
+      for (let dependencyIndex = 0; dependencyIndex < dependencies.length; dependencyIndex++) {
 
+        const originalDependencyKey = dependencies[dependencyIndex];
+        const originalDependencyKeyRegistration = this.registrations[originalDependencyKey];
 
-    _cacheInstance(key: any, instance: any, injectionArgs: Array<any>, config: any) {
+        const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, originalDependencyKey);
 
-      if (!this.instances[key]) {
-        this.instances[key] = {};
-      }
-      if (!this.instances[key][config]) {
-        this.instances[key][config] = {};
-      }
+        if (!originalDependencyKeyRegistration) {
 
-      if (!this.instances[key][config][injectionArgs]) {
-        this.instances[key][config][injectionArgs] = [];
-      }
-
-      this.instances[key][config][injectionArgs].push(instance);
-    }
-
-
-    _getConfig(key: any) {
-
-      const config = this.registrations[key].settings.config;
-
-      const resolvedConfig = this._resolveConfig(key, config);
-
-      if (!resolvedConfig) {
-        return undefined;
-      }
-
-      return resolvedConfig;
-    }
-
-
-    _resolveConfig(key: any, config: any) {
-
-      const registration = this.registrations[key];
-
-      let resolvedConfig;
-
-      const configType = typeof config;
-
-      if (configType === 'function') {
-        resolvedConfig = config(key);
-
-        if (!resolvedConfig) {
-          throw new Error(`The specified config function for registration key ${registration.settings.key} returned undefined.`);
+          errors.push(`Registration for '${originalDependencyKey}' overwritten with '${dependencyKeyOverwritten}' declared on registered for key '${registration.settings.key}' is missing.`);
         }
 
-      } else if (configType === 'object') {
-        resolvedConfig = config;
+        const dependencyRegistration = this.registrations[dependencyKeyOverwritten];
 
-        if (!resolvedConfig) {
-          throw new Error(`The specified config for registration key ${registration.settings.key} is undefined.`);
-        }
+        if (!dependencyRegistration) {
 
-      } else if (configType === 'string') {
+          if (originalDependencyKey !== dependencyKeyOverwritten) {
 
-        if (typeof this.externalConfigProvider !== 'function' || this.externalConfigProvider === null) {
-          throw new Error(`The specified config for registration key ${registration.settings.key} is null.`);
-        }
+            errors.push(`Dependency '${originalDependencyKey}' overwritten with key '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
+          } else {
 
-        resolvedConfig = this.externalConfigProvider(config, registration);
-
-        if (!resolvedConfig) {
-          throw new Error(`The specified config for registration key ${registration.settings.key} is null.`);
-        }
-
-      } else {
-
-        resolvedConfig = undefined;
-      }
-
-      return resolvedConfig;
-    }
-
-
-    validateDependencies(optionalKey: any) {
-
-      let registrationKeys;
-
-      if (Array.isArray(optionalKey)) {
-
-        registrationKeys = optionalKey;
-
-      } else if (typeof optionalKey !== 'undefined') {
-
-        registrationKeys = [optionalKey];
-
-      } else {
-
-        registrationKeys = Object.keys(this.registrations);
-      }
-
-      const errors = this._validateDependencies(registrationKeys);
-
-      if (errors.length > 0) {
-        throw new Error(`Errors during validation of dependencies:
-          ${errors.toString()}`);
-      }
-    }
-
-
-    _validateDependencies(registrationKeys: Array<any>, parentRegistrationHistory: TypeRegistration[]) {
-      const errors = [];
-
-      registrationKeys.forEach((registrationKey) => {
-
-        const registration = this.registrations[registrationKey];
-        const dependencies = registration.settings.dependencies;
-
-        if (!parentRegistrationHistory) {
-
-          parentRegistrationHistory = [];
-
-        } else if (parentRegistrationHistory.indexOf(registration) >= 0) {
-
-          errors.push(`Circular dependency on key '${registrationKey}' detected.`);
-          return;
-        }
-
-        const subParentRegistrationHistory = [];
-        Array.prototype.push.apply(subParentRegistrationHistory, parentRegistrationHistory);
-
-        subParentRegistrationHistory.push(registration);
-
-        if (!dependencies) {
-          return;
-        }
-
-        for (let dependencyIndex = 0; dependencyIndex < dependencies.length; dependencyIndex++) {
-
-          const originalDependencyKey = dependencies[dependencyIndex];
-          const originalDependencyKeyRegistration = this.registrations[originalDependencyKey];
-
-          const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, originalDependencyKey);
-
-          if (!originalDependencyKeyRegistration) {
-
-            errors.push(`Registration for '${originalDependencyKey}' overwritten with '${dependencyKeyOverwritten}' declared on registered for key '${registration.settings.key}' is missing.`);
+            errors.push(`Dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
           }
 
-          const dependencyRegistration = this.registrations[dependencyKeyOverwritten];
+        } else if (dependencyRegistration.settings.dependencies) {
 
-          if (!dependencyRegistration) {
+          const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration);
+          Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
 
-            if (originalDependencyKey !== dependencyKeyOverwritten) {
+          const circularBreakFound = this._historyHasCircularBreak(subParentRegistrationHistory, dependencyRegistration);
 
-              errors.push(`Dependency '${originalDependencyKey}' overwritten with key '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
-            } else {
+          if (!circularBreakFound) {
+            const deepErrors = this._validateDependencies([dependencyRegistration.settings.key], subParentRegistrationHistory);
 
-              errors.push(`Dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
-            }
+            if (deepErrors.length > 0) {
 
-          } else if (dependencyRegistration.settings.dependencies) {
-
-            const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration);
-            Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
-
-            const circularBreakFound = this._historyHasCircularBreak(subParentRegistrationHistory, dependencyRegistration);
-
-            if (!circularBreakFound) {
-              const deepErrors = this._validateDependencies([dependencyRegistration.settings.key], subParentRegistrationHistory);
-
-              if (deepErrors.length > 0) {
-
-                errors.push(`Inner dependency errors for dependency '${dependencyKeyOverwritten}':
+              errors.push(`Inner dependency errors for dependency '${dependencyKeyOverwritten}':
                   ${deepErrors.toString()}`);
-              }
             }
           }
         }
-      });
+      }
+    });
 
-      return errors;
-    }
+    return errors;
+  }
 
-    _historyHasCircularBreak(parentRegistrationHistory: TypeRegistration[], dependencyRegistration: TypeRegistration) {
+  private _historyHasCircularBreak(parentRegistrationHistory: TypeRegistration[], dependencyRegistration: TypeRegistration) {
 
-      return parentRegistrationHistory.some((parentRegistration) => {
+    return parentRegistrationHistory.some((parentRegistration) => {
 
-        const parentSettings = parentRegistration.settings;
+      const parentSettings = parentRegistration.settings;
 
-        if (this.config.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
-          return true;
-        }
-
-        if (this.config.circularDependencyCanIncludeLazy && parentSettings.isLazy) {
-
-          if (parentSettings.lazyKeys.length === 0 ||
-            parentSettings.lazyKeys.indexOf(dependencyRegistration.settings.key) >= 0) {
-
-            return true;
-          }
-        }
-      });
-    }
-
-    _validateOverwrittenKeys(registration: TypeRegistration) {
-
-      const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
-
-      const errors = [];
-
-      overwrittenKeys.forEach((overwrittenKey) => {
-
-        this._validateOverwrittenKey(registration, overwrittenKey, errors);
-      });
-
-      return errors;
-    }
-
-    _validateOverwrittenKey(registration: TypeRegistration, overwrittenKey: any, errors: string[]) {
-
-      if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
-
-        errors.push(`No dependency for overwritten key '${overwrittenKey}' has been declared on registration for key '${registration.settings.key}'.`);
+      if (this.config.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
+        return true;
       }
 
-      const overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
-      const overwrittenKeyRegistration = this._getRegistration(overwrittenKeyValue);
+      if (this.config.circularDependencyCanIncludeLazy && parentSettings.isLazy) {
 
-      if (!overwrittenKeyRegistration) {
-
-        errors.push(`Registration for overwritten key '${overwrittenKey}' declared on registration for key '${registration.settings.key}' is missing.`);
-      }
-    }
-
-    _squashArgumentsToArray(args: Array<any>) {
-
-      const allArgs = [];
-
-      args.forEach((arg) => {
-        if (Array.isArray(arg)) {
-
-          Array.prototype.push.apply(allArgs, arg);
-
-        } else if (typeof arg === 'string') {
-
-          allArgs.push(arg);
-        }
-      });
-
-      return allArgs;
-    }
-
-
-    getKeysByTags() {
-
-      const args = Array.prototype.slice.call(arguments);
-      const allTags = this._squashArgumentsToArray(args);
-
-      const foundKeys = [];
-
-      const registrationKeys = Object.keys(this.registrations);
-
-      registrationKeys.forEach((registrationKey) => {
-
-        const registration = this.registrations[registrationKey];
-
-        if (registration._hasTags(allTags)) {
-
-          foundKeys.push(registration.settings.key);
-        }
-      });
-
-      return foundKeys;
-    }
-
-
-    getKeysByAttributes(attributes: Array<any>) {
-
-      const foundKeys = [];
-
-      const attributeKeys = Object.keys(attributes);
-
-      const registrationKeys = this.getKeysByTags(attributeKeys);
-
-      registrationKeys.forEach((registrationKey) => {
-
-        const registration = this._getRegistration(registrationKey);
-
-        const registrationHasAttributes = registration._hasAttributes(attributes);
-
-        if (registrationHasAttributes) {
-
-          foundKeys.push(registration.settings.key);
-        }
-      });
-
-      return foundKeys;
-    }
-
-    isRegistered(key: any) {
-
-      const registrationKeys = Object.keys(this.registrations);
-
-      const found = registrationKeys.some((registrationKey) => {
-
-        if (registrationKey == key) {
+        if (parentSettings.lazyKeys.length === 0 ||
+          parentSettings.lazyKeys.indexOf(dependencyRegistration.settings.key) >= 0) {
 
           return true;
         }
-      });
+      }
+    });
+  }
 
-      return found;
+  private _validateOverwrittenKeys(registration: TypeRegistration) {
+
+    const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
+
+    const errors = [];
+
+    overwrittenKeys.forEach((overwrittenKey) => {
+
+      this._validateOverwrittenKey(registration, overwrittenKey, errors);
+    });
+
+    return errors;
+  }
+
+  private _validateOverwrittenKey(registration: TypeRegistration, overwrittenKey: any, errors: string[]) {
+
+    if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
+
+      errors.push(`No dependency for overwritten key '${overwrittenKey}' has been declared on registration for key '${registration.settings.key}'.`);
     }
+
+    const overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
+    const overwrittenKeyRegistration = this._getRegistration(overwrittenKeyValue);
+
+    if (!overwrittenKeyRegistration) {
+
+      errors.push(`Registration for overwritten key '${overwrittenKey}' declared on registration for key '${registration.settings.key}' is missing.`);
+    }
+  }
+
+  private _squashArgumentsToArray(args: Array<any>) {
+
+    const allArgs = [];
+
+    args.forEach((arg) => {
+      if (Array.isArray(arg)) {
+
+        Array.prototype.push.apply(allArgs, arg);
+
+      } else if (typeof arg === 'string') {
+
+        allArgs.push(arg);
+      }
+    });
+
+    return allArgs;
+  }
+
+  public getKeysByTags() {
+
+    const args = Array.prototype.slice.call(arguments);
+    const allTags = this._squashArgumentsToArray(args);
+
+    const foundKeys = [];
+
+    const registrationKeys = Object.keys(this.registrations);
+
+    registrationKeys.forEach((registrationKey) => {
+
+      const registration = this.registrations[registrationKey];
+
+      if (registration._hasTags(allTags)) {
+
+        foundKeys.push(registration.settings.key);
+      }
+    });
+
+    return foundKeys;
+  }
+
+  public getKeysByAttributes(attributes: Array<any>) {
+
+    const foundKeys = [];
+
+    const attributeKeys = Object.keys(attributes);
+
+    const registrationKeys = this.getKeysByTags(attributeKeys);
+
+    registrationKeys.forEach((registrationKey) => {
+
+      const registration = this._getRegistration(registrationKey);
+
+      const registrationHasAttributes = registration._hasAttributes(attributes);
+
+      if (registrationHasAttributes) {
+
+        foundKeys.push(registration.settings.key);
+      }
+    });
+
+    return foundKeys;
+  }
+
+  public isRegistered(key: any) {
+
+    const registrationKeys = Object.keys(this.registrations);
+
+    const found = registrationKeys.some((registrationKey) => {
+
+      if (registrationKey == key) {
+
+        return true;
+      }
+    });
+
+    return found;
+  }
 }
