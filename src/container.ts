@@ -1,13 +1,15 @@
 import {TypeRegistration} from './type_registration';
-import {ITypeRegistrationSettings, IDependencyInjectionContainerConfig, IProvideConfig} from './interfaces';
+import {IRegistrations, IInstances, ITypeRegistrationSettings, IDependencyInjectionContainerConfig, IProvideConfig} from './interfaces';
 
 export class DependencyInjectionContainer {
 
-  private _registrations: any = {};
-  private _instances: any = {};
+  private _config: IDependencyInjectionContainerConfig = undefined;
+  private _registrations: IRegistrations = {};
+  private _instances: IInstances = {};
   private _externalConfigProvider: IProvideConfig = undefined;
 
-  constructor(public config: IDependencyInjectionContainerConfig) {
+  constructor(config: IDependencyInjectionContainerConfig) {
+    this._config = config;
     this._initializeRegistrationDeclarations();
     this._initializeBaseRegistrations();
   }
@@ -19,11 +21,15 @@ export class DependencyInjectionContainer {
     this._initializeBaseRegistrations();
   }
 
-  get registrations(): any {
+  get config(): IDependencyInjectionContainerConfig {
+    return this._config;
+  }
+
+  get registrations(): IRegistrations {
     return this._registrations;
   }
 
-  get instances(): any {
+  get instances(): IInstances {
     return this._instances;
   }
 
@@ -78,7 +84,7 @@ export class DependencyInjectionContainer {
     return typeof settingValue === 'boolean';
   }
 
-  public register(key: any, type: any): TypeRegistration {
+  public register(key: string, type: any): TypeRegistration {
 
     const keyType = typeof key;
 
@@ -98,7 +104,7 @@ export class DependencyInjectionContainer {
     return currentRegistration;
   }
 
-  public unregister(key: any) {
+  public unregister(key: string) {
 
     if (this.registrations[key]) {
 
@@ -110,7 +116,7 @@ export class DependencyInjectionContainer {
     }
   }
 
-  private _registerTypeByKey(key: any, type: any) {
+  private _registerTypeByKey(key: string, type: any) {
 
     if (!key) {
       throw new Error(`No key specified for registration of type '${type}'`);
@@ -120,32 +126,23 @@ export class DependencyInjectionContainer {
       throw new Error(`No type specified for registration of key '${key}'`);
     }
 
-    return TypeRegistration.create({
-      defaults: this.config.registrationDefaults,
-      key: key,
-      type: type
-    });
+    return new TypeRegistration(this.config.registrationDefaults, key, type);
   }
 
-  public registerFactory(key: any, factoryMethod: any) {
+  public registerFactory(key: string, factoryMethod: any) {
 
     if (typeof key !== 'string') {
       throw new Error(`No key specified for registration of factory function '${factoryMethod}'`);
     }
 
-    const currentRegistration = TypeRegistration.create({
-      defaults: this.config.registrationDefaults,
-      key: key,
-      type: factoryMethod,
-      isFactory: true
-    });
+    const currentRegistration = new TypeRegistration(this.config.registrationDefaults, key, factoryMethod, true);
 
     this.registrations[key] = currentRegistration;
 
     return currentRegistration;
   }
 
-  public registerObject(key: any, object: any) {
+  public registerObject(key: string, object: any) {
 
     const keyType = typeof key;
 
@@ -201,7 +198,7 @@ export class DependencyInjectionContainer {
         You can start a registration by calling the 'register' method.`);
   }
 
-  private _getRegistration(key: any) {
+  private _getRegistration(key: string) {
 
     const registration = this.registrations[key];
 
@@ -212,11 +209,11 @@ export class DependencyInjectionContainer {
     throw new Error(`There is no registration created for key '${key}'.`);
   }
 
-  public resolve(key: any, injectionArgs: Array<any>, config: any) {
+  public resolve(key: string, injectionArgs: Array<any>, config: any) {
     return this._resolve(key, injectionArgs, config);
   }
 
-  private _resolve(key: any, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
+  private _resolve(key: string, injectionArgs: Array<any>, config: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
 
     if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
       throw new Error(`Injection args must be of type 'Array'.`);
@@ -238,7 +235,7 @@ export class DependencyInjectionContainer {
     return this._resolveInstance(registration, injectionArgs, config, resolvedKeyHistory, isLazy);
   }
 
-  private _resolveInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>, isLazy: boolean) {
+  private _resolveInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
 
     if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
       throw new Error(`Circular dependency on key '${registration.settings.key}' detected.`);
@@ -312,7 +309,7 @@ export class DependencyInjectionContainer {
       return this._getNewInstance(registration, injectionArgs, config);
     }
 
-    instances = this.instances[registration.settings.key][config][injectionArgs];
+    instances = this.instances[registration.settings.key][config][<any>injectionArgs];
 
     if (Array.isArray(instances)) {
 
@@ -329,7 +326,7 @@ export class DependencyInjectionContainer {
     return instance;
   }
 
-  private _getKeysForInstanceConfigurationsByKey(key: any) {
+  private _getKeysForInstanceConfigurationsByKey(key: string) {
 
     const instance = this.instances[key];
 
@@ -340,7 +337,7 @@ export class DependencyInjectionContainer {
     return Object.keys(instance);
   }
 
-  private _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key: any, config: any) {
+  private _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key: string, config: any) {
 
     const instance = this.instances[key][config];
 
@@ -351,7 +348,7 @@ export class DependencyInjectionContainer {
     return Object.keys(instance);
   }
 
-  private _getAllInstances(key: any, config: any, injectionArgs: Array<any>) {
+  private _getAllInstances(key: string, config?: any, injectionArgs?: Array<any>) {
 
     const configKeys = [];
 
@@ -388,7 +385,7 @@ export class DependencyInjectionContainer {
     return allInstances;
   }
 
-  private _getNewInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory: Array<any>) {
+  private _getNewInstance(registration: TypeRegistration, injectionArgs?: Array<any>, config?: any, resolvedKeyHistory?: Array<any>) {
 
     const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
 
@@ -441,14 +438,14 @@ export class DependencyInjectionContainer {
     });
   }
 
-  public resolveDependencies(key: any) {
+  public resolveDependencies(key: string) {
 
     const registration = this._getRegistration(key);
 
     return this._resolveDependencies(registration);
   }
 
-  private _resolveDependencies(registration: any, resolvedKeyHistory: Array<any>) {
+  private _resolveDependencies(registration: any, resolvedKeyHistory?: Array<any>) {
 
     const resolvedDependencies = [];
 
@@ -632,7 +629,7 @@ export class DependencyInjectionContainer {
     return this._getPropertyDescriptor(prototype, key);
   }
 
-  private _injectDependenciesIntoFunction(instance: any, targetFunction: string, argumentsToBeInjected: Array<any>) {
+  private _injectDependenciesIntoFunction(instance: any, targetFunction: any, argumentsToBeInjected: Array<any>) {
     targetFunction.apply(targetFunction, argumentsToBeInjected);
   }
 
@@ -640,7 +637,7 @@ export class DependencyInjectionContainer {
     instance[property] = argumentsToBeInjected;
   }
 
-  private _getSubscriberRegistrations(key: any, subscriptionKey: string) {
+  private _getSubscriberRegistrations(key: string, subscriptionKey: string) {
 
     const subscribers = [];
 
@@ -663,7 +660,7 @@ export class DependencyInjectionContainer {
     return subscribers;
   }
 
-  private _getSubscriptionFromRegistrationByKey(registration: TypeRegistration, subscriptionKey: string, key: any) {
+  private _getSubscriptionFromRegistrationByKey(registration: TypeRegistration, subscriptionKey: string, key: string) {
 
     let resultSubscription = null;
     registration.settings.subscriptions[subscriptionKey].some((subscription) => {
@@ -741,7 +738,7 @@ export class DependencyInjectionContainer {
     instance.config = config;
   }
 
-  private _cacheInstance(key: any, instance: any, injectionArgs: Array<any>, config: any) {
+  private _cacheInstance(key: string, instance: any, injectionArgs: Array<any>, config: any) {
 
     if (!this.instances[key]) {
       this.instances[key] = {};
@@ -750,14 +747,14 @@ export class DependencyInjectionContainer {
       this.instances[key][config] = {};
     }
 
-    if (!this.instances[key][config][injectionArgs]) {
-      this.instances[key][config][injectionArgs] = [];
+    if (!this.instances[key][config][<any>injectionArgs]) {
+      this.instances[key][config][<any>injectionArgs] = [];
     }
 
-    this.instances[key][config][injectionArgs].push(instance);
+    this.instances[key][config][<any>injectionArgs].push(instance);
   }
 
-  private _getConfig(key: any) {
+  private _getConfig(key: string) {
 
     const config = this.registrations[key].settings.config;
 
@@ -770,7 +767,7 @@ export class DependencyInjectionContainer {
     return resolvedConfig;
   }
 
-  private _resolveConfig(key: any, config: any) {
+  private _resolveConfig(key: string, config: any) {
 
     const registration = this.registrations[key];
 
@@ -837,7 +834,7 @@ export class DependencyInjectionContainer {
     }
   }
 
-  private _validateDependencies(registrationKeys: Array<any>, parentRegistrationHistory: TypeRegistration[]) {
+  private _validateDependencies(registrationKeys: Array<any>, parentRegistrationHistory?: TypeRegistration[]) {
     const errors = [];
 
     registrationKeys.forEach((registrationKey) => {
@@ -946,7 +943,7 @@ export class DependencyInjectionContainer {
     return errors;
   }
 
-  private _validateOverwrittenKey(registration: TypeRegistration, overwrittenKey: any, errors: string[]) {
+  private _validateOverwrittenKey(registration: TypeRegistration, overwrittenKey: string, errors: string[]) {
 
     if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
 
@@ -980,9 +977,8 @@ export class DependencyInjectionContainer {
     return allArgs;
   }
 
-  public getKeysByTags() {
+  public getKeysByTags(...args) {
 
-    const args = Array.prototype.slice.call(arguments);
     const allTags = this._squashArgumentsToArray(args);
 
     const foundKeys = [];
@@ -993,7 +989,7 @@ export class DependencyInjectionContainer {
 
       const registration = this.registrations[registrationKey];
 
-      if (registration._hasTags(allTags)) {
+      if (registration.hasTags(allTags)) {
 
         foundKeys.push(registration.settings.key);
       }
@@ -1014,7 +1010,7 @@ export class DependencyInjectionContainer {
 
       const registration = this._getRegistration(registrationKey);
 
-      const registrationHasAttributes = registration._hasAttributes(attributes);
+      const registrationHasAttributes = registration.hasAttributes(attributes);
 
       if (registrationHasAttributes) {
 
@@ -1025,7 +1021,7 @@ export class DependencyInjectionContainer {
     return foundKeys;
   }
 
-  public isRegistered(key: any) {
+  public isRegistered(key: string) {
 
     const registrationKeys = Object.keys(this.registrations);
 

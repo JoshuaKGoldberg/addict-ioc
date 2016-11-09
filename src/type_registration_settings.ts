@@ -1,51 +1,118 @@
-import {ITypeRegistrationSettings} from './interfaces';
+import {ITypeRegistrationSettings, IHookSubscriptions} from './interfaces';
 
 export class TypeRegistrationSettings implements ITypeRegistrationSettings {
 
-  public defaults: ITypeRegistrationSettings = undefined;
-  public key: any = undefined;
-  public type: any = undefined;
-  public dependencies: string|Array<string> = undefined;
-  public tags: any = undefined;
-  public config: any = undefined;
-  public injectInto: string = undefined;
-  public functionsToBind: string|Array<string> = undefined;
-  public lazyKeys: string|Array<string> = undefined;
-  public overwrittenKeys: string|Array<string> = undefined;
-
+  private _defaults: ITypeRegistrationSettings = undefined;
+  private _key: string = undefined;
+  private _type: any = undefined;
+  private _dependencies: string | Array<string> = undefined;
+  private _config: any = undefined;
+  private _tags: any = undefined;
+  private _injectInto: string = undefined;
+  private _functionsToBind: string|Array<string> = undefined;
+  private _lazyKeys: string|Array<string> = undefined;
+  private _overwrittenKeys: string|Array<string> = undefined;
   private _isSingleton: boolean = undefined;
   private _wantsInjection: boolean = undefined;
   private _isLazy: boolean = undefined;
   private _bindFunctions: boolean = undefined;
-  private _subscriptions: any = undefined;
+  private _subscriptions: IHookSubscriptions = undefined;
   private _isFactory: boolean = undefined;
-  private _isRequire: boolean = undefined;
+  private _isObject: boolean = undefined;
   private _autoCreateMissingSubscribers: boolean = undefined;
 
-  constructor(defaults: ITypeRegistrationSettings, key: any, type: any, isFactory: boolean, isRequire: boolean) {
+  constructor(defaults: ITypeRegistrationSettings, key: string, type: any, isFactory?: boolean, isObject?: boolean) {
 
     this._subscriptions = {
       newInstance: []
     };
 
-    this.defaults = defaults;
-    this.key = key;
-    this.type = type;
+    this._defaults = defaults;
+    this._key = key;
+    this._type = type;
 
-    this._isFactory = isFactory;
-    this._isRequire = isRequire;
+    this._isFactory = isFactory || false;
+    this._isObject = isObject || false;
+  }
+
+  get defaults(): ITypeRegistrationSettings {
+    return this._defaults;
+  }
+
+  get key(): any {
+    return this._key;
+  }
+
+  get type(): any {
+    return this._type;
+  }
+
+  get dependencies(): string | Array<string> {
+    return this._dependencies;
+  }
+
+  set dependencies(value: string | Array<string>) {
+    this._dependencies = value;
+  }
+
+  get config(): any {
+    return this._config;
+  }
+
+  set config(value: any) {
+    this._config = value;
+  }
+
+  get tags(): any {
+    return this._tags;
+  }
+
+  set tags(value: any) {
+    this._tags = value;
+  }
+
+  get injectInto() {
+    return this._injectInto;
+  }
+
+  set injectInto(value: string) {
+    this._injectInto = value;
+  }
+
+  get functionsToBind(): string | Array<string> {
+    return this._functionsToBind;
+  }
+
+  set functionsToBind(value: string | Array<string>) {
+    this._functionsToBind = value;
+  }
+
+  get lazyKeys(): string | Array<string> {
+    return this._lazyKeys;
+  }
+
+  set lazyKeys(value: string | Array<string>) {
+    this._lazyKeys = value;
+  }
+
+  get overwrittenKeys(): string | Array<string> {
+    return this._overwrittenKeys;
+  }
+
+  set overwrittenKeys(value: string | Array<string>) {
+    this._overwrittenKeys = value;
   }
 
   get isFactory(): boolean {
-    return typeof this._isFactory !== 'undefined' ? this._isFactory : false;
+    return this.getSettingOrDefault('isFactory');
   }
 
-  get subscriptions(): any {
+  get subscriptions(): IHookSubscriptions {
     return this._subscriptions;
   }
 
   get isSingleton(): boolean {
-    return typeof this._isSingleton !== 'undefined' ? this._isSingleton : this.defaults.isSingleton;
+    return this.getSettingOrDefault('isSingleton');
   }
 
   set isSingleton(value: boolean) {
@@ -53,7 +120,7 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   }
 
   get wantsInjection(): boolean {
-    return typeof this._wantsInjection !== 'undefined' ? this._wantsInjection : this.defaults.wantsInjection;
+    return this.getSettingOrDefault('wantsInjection');
   }
 
   set wantsInjection(value: boolean) {
@@ -61,7 +128,7 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   }
 
   get isLazy(): boolean {
-    return this._isLazy !== 'undefined' ? this._isLazy : this.defaults.isLazy;
+    return this.getSettingOrDefault('isLazy');
   }
 
   set isLazy(value: boolean) {
@@ -69,7 +136,7 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   }
 
   get bindFunctions(): boolean {
-    return this._bindFunctions !== 'undefined' ? this._bindFunctions : this.defaults.bindFunctions;
+    return this.getSettingOrDefault('bindFunctions');
   }
 
   set bindFunctions(value: boolean) {
@@ -77,18 +144,22 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   }
 
   get autoCreateMissingSubscribers(): boolean {
-    return this._autoCreateMissingSubscribers ? this._autoCreateMissingSubscribers : this.defaults.autoCreateMissingSubscribers;
+    return this.getSettingOrDefault('autoCreateMissingSubscribers');
   }
 
   set autoCreateMissingSubscribers(value: boolean) {
     this._autoCreateMissingSubscribers = value;
   }
 
-  get isRequire(): boolean {
-    return typeof this._isRequire !== 'undefined' ? this._isRequire : false;
+  get isObject(): boolean {
+    return this._isObject;
   }
 
-  set isRequire(value: boolean) {
-    this._isRequire = value;
+  set isObject(value: boolean) {
+    this._isObject = value;
+  }
+
+  private getSettingOrDefault(key) {
+    return typeof this[`_${key}`] !== 'undefined' ? this[`_${key}`] : this.defaults[key];
   }
 }

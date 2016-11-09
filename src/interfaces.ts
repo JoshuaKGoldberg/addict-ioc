@@ -1,14 +1,15 @@
+import {TypeRegistration} from './type_registration';
 
-interface IProvideConfig {
+export interface IProvideConfig {
   get: (config: string) => any;
 }
 
-interface ITypeRegistrationSettings {
+export interface ITypeRegistrationSettings {
   defaults: ITypeRegistrationSettings;
-  key: any;
+  key: string;
   type: any;
   isFactory: boolean;
-  isRequire: boolean;
+  isObject: boolean;
   dependencies: string|Array<string>;
   tags: any;
   config: any;
@@ -21,11 +22,29 @@ interface ITypeRegistrationSettings {
   lazyKeys: string|Array<string>;
   overwrittenKeys: string|Array<string>;
   autoCreateMissingSubscribers: boolean;
+  subscriptions: IHookSubscriptions;
 }
 
-interface IDependencyInjectionContainerConfig {
+export interface IHookSubscriptions {
+  [hook: string]: Array<IHookSubscription>;
+}
+
+export interface IHookSubscription {
+  key: string;
+  method: string;
+}
+
+export interface IDependencyInjectionContainerConfig {
   registrationDefaults: ITypeRegistrationSettings;
   injectContainerKey: string;
   circularDependencyCanIncludeSingleton: boolean;
   circularDependencyCanIncludeLazy: boolean;
+}
+
+export interface IRegistrations {
+  [key: string]: TypeRegistration;
+}
+
+export interface IInstances {
+  [key: string]: any;
 }

@@ -19,7 +19,7 @@ describe('Type Registration With Tags Test', function describeCallback() {
     const registration = container.register(key, TestType)
       .tags(tag1, tag2);
 
-    const result = registration._hasTags([tag1, tag2]);
+    const result = registration.hasTags([tag1, tag2]);
 
     should(result).be.true();
   });
@@ -31,7 +31,7 @@ describe('Type Registration With Tags Test', function describeCallback() {
     const registration = container.register(key, TestType)
       .tags(tag1);
 
-    const result = registration._hasTags([tag1, tag2]);
+    const result = registration.hasTags([tag1, tag2]);
 
     should(result).be.false();
   });
