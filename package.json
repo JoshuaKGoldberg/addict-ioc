@@ -5,8 +5,8 @@
   },
   "version": "1.1.2",
   "description": "A fluent IoC container for JavaScript.",
-  "main": "dist/commonjs/addict-ioc.js",
-  "typings": "dist/addict-ioc.d.ts",
+  "main": "dist/commonjs/index.js",
+  "typings": "dist/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/5minds/addict-ioc#readme",
   "devDependencies": {
-    "@5minds/gulptraum": "^1.0.0",
+    "gulptraum": "^1.2.0",
     "eslint": "^3.9.1",
     "eslint-config-5minds": "0.0.5",
     "eslint-plugin-import": "^1.16.0",

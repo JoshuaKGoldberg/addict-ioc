@@ -7,11 +7,11 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   private _type: any = undefined;
   private _dependencies: string | Array<string> = undefined;
   private _config: any = undefined;
-  private _tags: any = undefined;
+  private _tags: any = {};
   private _injectInto: string = undefined;
   private _functionsToBind: string|Array<string> = undefined;
   private _lazyKeys: string|Array<string> = undefined;
-  private _overwrittenKeys: string|Array<string> = undefined;
+  private _overwrittenKeys: any = {};
   private _isSingleton: boolean = undefined;
   private _wantsInjection: boolean = undefined;
   private _isLazy: boolean = undefined;

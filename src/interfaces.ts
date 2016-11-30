@@ -5,24 +5,24 @@ export interface IProvideConfig {
 }
 
 export interface ITypeRegistrationSettings {
-  defaults: ITypeRegistrationSettings;
-  key: string;
-  type: any;
-  isFactory: boolean;
-  isObject: boolean;
-  dependencies: string|Array<string>;
-  tags: any;
-  config: any;
-  isSingleton: boolean;
-  wantsInjection: boolean;
-  injectInto: string;
-  isLazy: boolean;
-  bindFunctions: boolean;
-  functionsToBind: string|Array<string>;
-  lazyKeys: string|Array<string>;
-  overwrittenKeys: string|Array<string>;
-  autoCreateMissingSubscribers: boolean;
-  subscriptions: IHookSubscriptions;
+  defaults?: ITypeRegistrationSettings;
+  key?: string;
+  type?: any;
+  isFactory?: boolean;
+  isObject?: boolean;
+  dependencies?: string|Array<string>;
+  tags?: any;
+  config?: any;
+  isSingleton?: boolean;
+  wantsInjection?: boolean;
+  injectInto?: string;
+  isLazy?: boolean;
+  bindFunctions?: boolean;
+  functionsToBind?: string|Array<string>;
+  lazyKeys?: string|Array<string>;
+  overwrittenKeys?: string|Array<string>;
+  autoCreateMissingSubscribers?: boolean;
+  subscriptions?: IHookSubscriptions;
 }
 
 export interface IHookSubscriptions {

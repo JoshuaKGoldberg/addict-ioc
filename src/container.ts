@@ -9,9 +9,27 @@ export class DependencyInjectionContainer {
   private _externalConfigProvider: IProvideConfig = undefined;
 
   constructor(config: IDependencyInjectionContainerConfig) {
-    this._config = config;
+
+    const configuration = config || this._getDefaultConfiguration();
+
+    this._config = configuration;
     this._initializeRegistrationDeclarations();
     this._initializeBaseRegistrations();
+  }
+
+  private _getDefaultConfiguration() {
+    return {
+      registrationDefaults: {
+        isSingleton: false,
+        wantsInjection: true,
+        isLazy: false,
+        bindFunctions: false,
+        autoCreateMissingSubscribers: true
+      },
+      injectContainerKey: 'container',
+      circularDependencyCanIncludeSingleton: true,
+      circularDependencyCanIncludeLazy: true
+    };
   }
 
   public clear() {
@@ -209,11 +227,11 @@ export class DependencyInjectionContainer {
     throw new Error(`There is no registration created for key '${key}'.`);
   }
 
-  public resolve(key: string, injectionArgs: Array<any>, config: any) {
+  public resolve(key: string, injectionArgs?: Array<any>, config?: any) {
     return this._resolve(key, injectionArgs, config);
   }
 
-  private _resolve(key: string, injectionArgs: Array<any>, config: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
+  private _resolve(key: string, injectionArgs?: Array<any>, config?: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
 
     if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
       throw new Error(`Injection args must be of type 'Array'.`);
@@ -708,7 +726,7 @@ export class DependencyInjectionContainer {
   }
 
   private _callSubscriber(subscribedRegistration: TypeRegistration, subscriptionKey: string, subscriberRegistration: TypeRegistration, subscribedInstance: any,
-                          params: Array<any>) {
+    params: Array<any>) {
 
     if (!Array.isArray(params)) {
       params = [params];
@@ -729,7 +747,7 @@ export class DependencyInjectionContainer {
 
     const configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
 
-    if (configPropertyDescriptor === undefined || !configPropertyDescriptor.set) {
+    if (configPropertyDescriptor === undefined || !configPropertyDescriptor.writable) {
       const instancePrototype = Object.getPrototypeOf(instance);
 
       throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
