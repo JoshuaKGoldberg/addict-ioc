@@ -1,9 +1,12 @@
+import { TypeRegistration } from './type_registration';
+import { IRegistrations, IInstances, ITypeRegistrationSettings, IDependencyInjectionContainerConfig, IProvideConfig } from './interfaces';
 export declare class DependencyInjectionContainer {
     private _config;
     private _registrations;
     private _instances;
     private _externalConfigProvider;
     constructor(config: IDependencyInjectionContainerConfig);
+    private _getDefaultConfiguration();
     clear(): void;
     readonly config: IDependencyInjectionContainerConfig;
     readonly registrations: IRegistrations;
@@ -17,13 +20,13 @@ export declare class DependencyInjectionContainer {
     unregister(key: string): void;
     private _registerTypeByKey(key, type);
     registerFactory(key: string, factoryMethod: any): TypeRegistration;
-    registerObject(key: string, object: any): any;
+    registerObject(key: string, object: any): TypeRegistration;
     private _initializeBaseRegistrations();
     private _initializeRegistrationDeclarations();
     private _ensureRegistrationStarted(declaration);
     private _getRegistration(key);
-    resolve(key: string, injectionArgs: Array<any>, config: any): any;
-    private _resolve(key, injectionArgs, config, resolvedKeyHistory?, isLazy?);
+    resolve(key: string, injectionArgs?: Array<any>, config?: any): any;
+    private _resolve(key, injectionArgs?, config?, resolvedKeyHistory?, isLazy?);
     private _resolveInstance(registration, injectionArgs, config, resolvedKeyHistory?, isLazy?);
     private _mergeArguments(baseArgs, additionalArgs);
     private _mergeConfig(baseConfig, additionalConfig);
@@ -64,104 +67,4 @@ export declare class DependencyInjectionContainer {
     getKeysByTags(...args: any[]): any[];
     getKeysByAttributes(attributes: Array<any>): any[];
     isRegistered(key: string): boolean;
-}
-export interface IProvideConfig {
-    get: (config: string) => any;
-}
-export interface ITypeRegistrationSettings {
-    defaults: ITypeRegistrationSettings;
-    key: string;
-    type: any;
-    isFactory: boolean;
-    isObject: boolean;
-    dependencies: string | Array<string>;
-    tags: any;
-    config: any;
-    isSingleton: boolean;
-    wantsInjection: boolean;
-    injectInto: string;
-    isLazy: boolean;
-    bindFunctions: boolean;
-    functionsToBind: string | Array<string>;
-    lazyKeys: string | Array<string>;
-    overwrittenKeys: string | Array<string>;
-    autoCreateMissingSubscribers: boolean;
-    subscriptions: IHookSubscriptions;
-}
-export interface IHookSubscriptions {
-    [hook: string]: Array<IHookSubscription>;
-}
-export interface IHookSubscription {
-    key: string;
-    method: string;
-}
-export interface IDependencyInjectionContainerConfig {
-    registrationDefaults: ITypeRegistrationSettings;
-    injectContainerKey: string;
-    circularDependencyCanIncludeSingleton: boolean;
-    circularDependencyCanIncludeLazy: boolean;
-}
-export interface IRegistrations {
-    [key: string]: TypeRegistration;
-}
-export interface IInstances {
-    [key: string]: any;
-}
-export declare class TypeRegistration {
-    private _settings;
-    constructor(defaults: ITypeRegistrationSettings, key: string, type: any, isFactory?: boolean);
-    settings: ITypeRegistrationSettings;
-    dependencies(...args: any[]): this;
-    configure(config: any): this;
-    singleton(isSingleton: boolean): this;
-    noInjection(injectionDisabled: boolean): this;
-    injectInto(targetFunction: string): this;
-    injectLazy(): this;
-    onNewInstance(key: string, targetFunction: string): this;
-    bindFunctions(): this;
-    tags(tagOrTags: string | string[]): this;
-    setAttribute(tag: string, value: any): this;
-    hasTags(tags: string | Array<string>): boolean;
-    hasAttributes(attributes: any): boolean;
-    overwrite(originalKey: string, overwrittenKey: string): this;
-}
-export declare class TypeRegistrationSettings implements ITypeRegistrationSettings {
-    private _defaults;
-    private _key;
-    private _type;
-    private _dependencies;
-    private _config;
-    private _tags;
-    private _injectInto;
-    private _functionsToBind;
-    private _lazyKeys;
-    private _overwrittenKeys;
-    private _isSingleton;
-    private _wantsInjection;
-    private _isLazy;
-    private _bindFunctions;
-    private _subscriptions;
-    private _isFactory;
-    private _isObject;
-    private _autoCreateMissingSubscribers;
-    constructor(defaults: ITypeRegistrationSettings, key: string, type: any, isFactory?: boolean, isObject?: boolean);
-    readonly defaults: ITypeRegistrationSettings;
-    readonly key: any;
-    readonly type: any;
-    dependencies: string | Array<string>;
-    config: any;
-    tags: any;
-    injectInto: string;
-    functionsToBind: string | Array<string>;
-    lazyKeys: string | Array<string>;
-    overwrittenKeys: string | Array<string>;
-    readonly isFactory: boolean;
-    readonly subscriptions: IHookSubscriptions;
-    isSingleton: boolean;
-    wantsInjection: boolean;
-    isLazy: boolean;
-    bindFunctions: boolean;
-    autoCreateMissingSubscribers: boolean;
-    isObject: boolean;
-    private getSettingOrDefault(key);
 }

@@ -10,7 +10,7 @@ export interface ITypeRegistrationSettings {
   type?: any;
   isFactory?: boolean;
   isObject?: boolean;
-  dependencies?: string|Array<string>;
+  dependencies?: Array<string>;
   tags?: any;
   config?: any;
   isSingleton?: boolean;
@@ -18,9 +18,9 @@ export interface ITypeRegistrationSettings {
   injectInto?: string;
   isLazy?: boolean;
   bindFunctions?: boolean;
-  functionsToBind?: string|Array<string>;
-  lazyKeys?: string|Array<string>;
-  overwrittenKeys?: string|Array<string>;
+  functionsToBind?: Array<string>;
+  lazyKeys?: Array<string>;
+  overwrittenKeys?: any;
   autoCreateMissingSubscribers?: boolean;
   subscriptions?: IHookSubscriptions;
 }

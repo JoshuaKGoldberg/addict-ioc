@@ -408,7 +408,8 @@ export class DependencyInjectionContainer {
     const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
 
     const instance = this._createInstance(registration, dependencies, injectionArgs);
-
+    console.log(registration.settings.key);
+console.log(config);
     this._configureInstance(instance, config);
 
     this._callSubscribers(registration, 'newInstance', instance);
@@ -426,7 +427,7 @@ export class DependencyInjectionContainer {
       return;
     }
 
-    let instanceKeys;
+    let instanceKeys: Array<string>;
 
     if (registration.settings.functionsToBind.length > 0) {
 
@@ -592,7 +593,7 @@ export class DependencyInjectionContainer {
   }
 
   private _createInstanceByConstructorWithInjection(type, argumentsToBeInjected) {
-    const instance = new (Function.prototype.bind.apply(type, [null].concat(argumentsToBeInjected)))();
+    const instance = new type(...argumentsToBeInjected);
     return instance;
   }
 

@@ -5,12 +5,12 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   private _defaults: ITypeRegistrationSettings = undefined;
   private _key: string = undefined;
   private _type: any = undefined;
-  private _dependencies: string | Array<string> = undefined;
+  private _dependencies: Array<string> = [];
   private _config: any = undefined;
   private _tags: any = {};
   private _injectInto: string = undefined;
-  private _functionsToBind: string|Array<string> = undefined;
-  private _lazyKeys: string|Array<string> = undefined;
+  private _functionsToBind: Array<string> = [];
+  private _lazyKeys: Array<string> = [];
   private _overwrittenKeys: any = {};
   private _isSingleton: boolean = undefined;
   private _wantsInjection: boolean = undefined;
@@ -47,11 +47,11 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
     return this._type;
   }
 
-  get dependencies(): string | Array<string> {
+  get dependencies(): Array<string> {
     return this._dependencies;
   }
 
-  set dependencies(value: string | Array<string>) {
+  set dependencies(value: Array<string>) {
     this._dependencies = value;
   }
 
@@ -79,28 +79,24 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
     this._injectInto = value;
   }
 
-  get functionsToBind(): string | Array<string> {
+  get functionsToBind(): Array<string> {
     return this._functionsToBind;
   }
 
-  set functionsToBind(value: string | Array<string>) {
+  set functionsToBind(value: Array<string>) {
     this._functionsToBind = value;
   }
 
-  get lazyKeys(): string | Array<string> {
+  get lazyKeys(): Array<string> {
     return this._lazyKeys;
   }
 
-  set lazyKeys(value: string | Array<string>) {
+  set lazyKeys(value: Array<string>) {
     this._lazyKeys = value;
   }
 
-  get overwrittenKeys(): string | Array<string> {
+  get overwrittenKeys(): any {
     return this._overwrittenKeys;
-  }
-
-  set overwrittenKeys(value: string | Array<string>) {
-    this._overwrittenKeys = value;
   }
 
   get isFactory(): boolean {

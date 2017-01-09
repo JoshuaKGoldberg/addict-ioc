@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "./type_registration"], function (require, exports, type_registration_1) {
     "use strict";
     var DependencyInjectionContainer = (function () {
         function DependencyInjectionContainer(config) {
@@ -6,10 +6,25 @@ define(["require", "exports"], function (require, exports) {
             this._registrations = {};
             this._instances = {};
             this._externalConfigProvider = undefined;
-            this._config = config;
+            var configuration = config || this._getDefaultConfiguration();
+            this._config = configuration;
             this._initializeRegistrationDeclarations();
             this._initializeBaseRegistrations();
         }
+        DependencyInjectionContainer.prototype._getDefaultConfiguration = function () {
+            return {
+                registrationDefaults: {
+                    isSingleton: false,
+                    wantsInjection: true,
+                    isLazy: false,
+                    bindFunctions: false,
+                    autoCreateMissingSubscribers: true
+                },
+                injectContainerKey: 'container',
+                circularDependencyCanIncludeSingleton: true,
+                circularDependencyCanIncludeLazy: true
+            };
+        };
         DependencyInjectionContainer.prototype.clear = function () {
             this._registrations = {};
             this._instances = {};
@@ -104,13 +119,13 @@ define(["require", "exports"], function (require, exports) {
             if (!type) {
                 throw new Error("No type specified for registration of key '" + key + "'");
             }
-            return new TypeRegistration(this.config.registrationDefaults, key, type);
+            return new type_registration_1.TypeRegistration(this.config.registrationDefaults, key, type);
         };
         DependencyInjectionContainer.prototype.registerFactory = function (key, factoryMethod) {
             if (typeof key !== 'string') {
                 throw new Error("No key specified for registration of factory function '" + factoryMethod + "'");
             }
-            var currentRegistration = new TypeRegistration(this.config.registrationDefaults, key, factoryMethod, true);
+            var currentRegistration = new type_registration_1.TypeRegistration(this.config.registrationDefaults, key, factoryMethod, true);
             this.registrations[key] = currentRegistration;
             return currentRegistration;
         };
@@ -121,7 +136,7 @@ define(["require", "exports"], function (require, exports) {
                 if (!key) {
                     throw new Error("No key specified for registration of type '" + keyType + "'");
                 }
-                currentRegistration = new TypeRegistration(this.config.registrationDefaults, key, object);
+                currentRegistration = new type_registration_1.TypeRegistration(this.config.registrationDefaults, key, object);
             }
             else {
                 throw new Error("The key type '" + key + "' is not supported.");
@@ -279,6 +294,8 @@ define(["require", "exports"], function (require, exports) {
         DependencyInjectionContainer.prototype._getNewInstance = function (registration, injectionArgs, config, resolvedKeyHistory) {
             var dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
             var instance = this._createInstance(registration, dependencies, injectionArgs);
+            console.log(registration.settings.key);
+            console.log(config);
             this._configureInstance(instance, config);
             this._callSubscribers(registration, 'newInstance', instance);
             this._bindFunctionsToInstance(registration, instance);
@@ -397,7 +414,7 @@ define(["require", "exports"], function (require, exports) {
             return instance;
         };
         DependencyInjectionContainer.prototype._createInstanceByConstructorWithInjection = function (type, argumentsToBeInjected) {
-            var instance = new (Function.prototype.bind.apply(type, [null].concat(argumentsToBeInjected)))();
+            var instance = new (type.bind.apply(type, [void 0].concat(argumentsToBeInjected)))();
             return instance;
         };
         DependencyInjectionContainer.prototype._injectDependenciesIntoInstance = function (registration, instance, argumentsToBeInjected) {
@@ -499,7 +516,7 @@ define(["require", "exports"], function (require, exports) {
                 return;
             }
             var configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
-            if (configPropertyDescriptor === undefined || !configPropertyDescriptor.set) {
+            if (configPropertyDescriptor === undefined || !configPropertyDescriptor.writable) {
                 var instancePrototype = Object.getPrototypeOf(instance);
                 throw new Error("The setter for the config property on type '" + instancePrototype.constructor.name + "' is missing.");
             }
@@ -710,353 +727,6 @@ define(["require", "exports"], function (require, exports) {
         return DependencyInjectionContainer;
     }());
     exports.DependencyInjectionContainer = DependencyInjectionContainer;
-    var TypeRegistration = (function () {
-        function TypeRegistration(defaults, key, type, isFactory) {
-            this._settings = undefined;
-            this._settings = new TypeRegistrationSettings(defaults, key, type, isFactory);
-        }
-        Object.defineProperty(TypeRegistration.prototype, "settings", {
-            get: function () {
-                return this._settings;
-            },
-            set: function (value) {
-                this._settings = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        TypeRegistration.prototype.dependencies = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            var resolvedDepedencyConfigurations = [];
-            args.forEach(function (currentDependencyConfiguration) {
-                var dependencyType = typeof currentDependencyConfiguration;
-                if (Array.isArray(currentDependencyConfiguration)) {
-                    Array.prototype.push.apply(resolvedDepedencyConfigurations, currentDependencyConfiguration);
-                }
-                else if (dependencyType === 'string' || dependencyType === 'function') {
-                    resolvedDepedencyConfigurations.push(currentDependencyConfiguration);
-                }
-                else {
-                    throw new Error("The type '" + dependencyType + "' of your dependencies declaration is not yet supported.\n                Supported types: 'Array', 'String', 'Function(Type)'");
-                }
-            });
-            this.settings.dependencies = resolvedDepedencyConfigurations;
-            return this;
-        };
-        TypeRegistration.prototype.configure = function (config) {
-            var configType = typeof config;
-            if (configType !== 'function' && configType !== 'object' && configType !== 'string') {
-                throw new Error("The type '" + configType + "' of your dependencies declaration is not yet supported.\n              Supported types: 'Function', 'Object'");
-            }
-            this.settings.config = config;
-            return this;
-        };
-        TypeRegistration.prototype.singleton = function (isSingleton) {
-            this.settings.isSingleton = !!isSingleton ? isSingleton : true;
-            return this;
-        };
-        TypeRegistration.prototype.noInjection = function (injectionDisabled) {
-            if (this.settings.injectInto) {
-                throw new Error("'noInjection' induces a conflict to the 'injectInto' declaration.");
-            }
-            if (this.settings.isLazy) {
-                throw new Error("'noInjection' induces a conflict to the 'injectLazy' declaration.");
-            }
-            this.settings.wantsInjection = !!injectionDisabled ? !injectionDisabled : false;
-            return this;
-        };
-        TypeRegistration.prototype.injectInto = function (targetFunction) {
-            if (!this.settings.wantsInjection) {
-                throw new Error("'injectInto' induces a conflict to the 'noInjection' declaration.");
-            }
-            this.settings.injectInto = targetFunction;
-            return this;
-        };
-        TypeRegistration.prototype.injectLazy = function () {
-            if (!this.settings.wantsInjection) {
-                throw new Error("'injectLazy' induces a conflict to the 'noInjection' declaration.");
-            }
-            this.settings.isLazy = true;
-            if (arguments.length > 0) {
-                Array.prototype.push.apply(this.settings.lazyKeys, arguments);
-            }
-            return this;
-        };
-        TypeRegistration.prototype.onNewInstance = function (key, targetFunction) {
-            var subscription = {
-                key: key,
-                method: targetFunction
-            };
-            this.settings.subscriptions['newInstance'].push(subscription);
-            return this;
-        };
-        TypeRegistration.prototype.bindFunctions = function () {
-            this.settings.bindFunctions = true;
-            if (arguments.length > 0) {
-                Array.prototype.push.apply(this.settings.functionsToBind, arguments);
-            }
-            return this;
-        };
-        TypeRegistration.prototype.tags = function (tagOrTags) {
-            var _this = this;
-            for (var argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
-                var argument = arguments[argumentIndex];
-                var argumentType = typeof argument;
-                if (Array.isArray(argument)) {
-                    argument.forEach(function (tag) {
-                        _this.settings.tags[tag] = {};
-                    });
-                }
-                else if (argumentType === 'string') {
-                    this.settings.tags[argument] = {};
-                }
-                else {
-                    throw new Error("The type '" + argumentType + "' of your tags declaration is not yet supported.\n                Supported types: 'Array', 'String'");
-                }
-            }
-            return this;
-        };
-        TypeRegistration.prototype.setAttribute = function (tag, value) {
-            if (!tag) {
-                throw new Error("You have to specify a tag for your attribute.");
-            }
-            this.settings.tags[tag] = value;
-            return this;
-        };
-        TypeRegistration.prototype.hasTags = function (tags) {
-            var declaredTags = Object.keys(this.settings.tags);
-            if (!Array.isArray(tags)) {
-                tags = [tags];
-            }
-            var isTagMissing = tags.some(function (tag) {
-                if (declaredTags.indexOf(tag) < 0) {
-                    return true;
-                }
-            });
-            return !isTagMissing;
-        };
-        TypeRegistration.prototype.hasAttributes = function (attributes) {
-            var _this = this;
-            var attributeKeys = Object.keys(attributes);
-            var attributeMissing = attributeKeys.some(function (attribute) {
-                var attributeValue = _this.settings.tags[attribute];
-                if (attributeValue !== attributes[attribute]) {
-                    return true;
-                }
-            });
-            return !attributeMissing;
-        };
-        TypeRegistration.prototype.overwrite = function (originalKey, overwrittenKey) {
-            if (this.settings.dependencies.indexOf(originalKey) < 0) {
-                throw new Error("there is no dependency declared for original key '" + originalKey + "'.");
-            }
-            this.settings.overwrittenKeys[originalKey] = overwrittenKey;
-            return this;
-        };
-        return TypeRegistration;
-    }());
-    exports.TypeRegistration = TypeRegistration;
-    var TypeRegistrationSettings = (function () {
-        function TypeRegistrationSettings(defaults, key, type, isFactory, isObject) {
-            this._defaults = undefined;
-            this._key = undefined;
-            this._type = undefined;
-            this._dependencies = undefined;
-            this._config = undefined;
-            this._tags = undefined;
-            this._injectInto = undefined;
-            this._functionsToBind = undefined;
-            this._lazyKeys = undefined;
-            this._overwrittenKeys = undefined;
-            this._isSingleton = undefined;
-            this._wantsInjection = undefined;
-            this._isLazy = undefined;
-            this._bindFunctions = undefined;
-            this._subscriptions = undefined;
-            this._isFactory = undefined;
-            this._isObject = undefined;
-            this._autoCreateMissingSubscribers = undefined;
-            this._subscriptions = {
-                newInstance: []
-            };
-            this._defaults = defaults;
-            this._key = key;
-            this._type = type;
-            this._isFactory = isFactory || false;
-            this._isObject = isObject || false;
-        }
-        Object.defineProperty(TypeRegistrationSettings.prototype, "defaults", {
-            get: function () {
-                return this._defaults;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "key", {
-            get: function () {
-                return this._key;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "type", {
-            get: function () {
-                return this._type;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "dependencies", {
-            get: function () {
-                return this._dependencies;
-            },
-            set: function (value) {
-                this._dependencies = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "config", {
-            get: function () {
-                return this._config;
-            },
-            set: function (value) {
-                this._config = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "tags", {
-            get: function () {
-                return this._tags;
-            },
-            set: function (value) {
-                this._tags = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "injectInto", {
-            get: function () {
-                return this._injectInto;
-            },
-            set: function (value) {
-                this._injectInto = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "functionsToBind", {
-            get: function () {
-                return this._functionsToBind;
-            },
-            set: function (value) {
-                this._functionsToBind = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "lazyKeys", {
-            get: function () {
-                return this._lazyKeys;
-            },
-            set: function (value) {
-                this._lazyKeys = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "overwrittenKeys", {
-            get: function () {
-                return this._overwrittenKeys;
-            },
-            set: function (value) {
-                this._overwrittenKeys = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "isFactory", {
-            get: function () {
-                return this.getSettingOrDefault('isFactory');
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "subscriptions", {
-            get: function () {
-                return this._subscriptions;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "isSingleton", {
-            get: function () {
-                return this.getSettingOrDefault('isSingleton');
-            },
-            set: function (value) {
-                this._isSingleton = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "wantsInjection", {
-            get: function () {
-                return this.getSettingOrDefault('wantsInjection');
-            },
-            set: function (value) {
-                this._wantsInjection = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "isLazy", {
-            get: function () {
-                return this.getSettingOrDefault('isLazy');
-            },
-            set: function (value) {
-                this._isLazy = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "bindFunctions", {
-            get: function () {
-                return this.getSettingOrDefault('bindFunctions');
-            },
-            set: function (value) {
-                this._bindFunctions = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "autoCreateMissingSubscribers", {
-            get: function () {
-                return this.getSettingOrDefault('autoCreateMissingSubscribers');
-            },
-            set: function (value) {
-                this._autoCreateMissingSubscribers = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(TypeRegistrationSettings.prototype, "isObject", {
-            get: function () {
-                return this._isObject;
-            },
-            set: function (value) {
-                this._isObject = value;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        TypeRegistrationSettings.prototype.getSettingOrDefault = function (key) {
-            return typeof this[("_" + key)] !== 'undefined' ? this[("_" + key)] : this.defaults[key];
-        };
-        return TypeRegistrationSettings;
-    }());
-    exports.TypeRegistrationSettings = TypeRegistrationSettings;
 });
+
+//# sourceMappingURL=container.js.map

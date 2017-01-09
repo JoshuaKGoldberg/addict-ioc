@@ -1,12 +1,28 @@
+import { TypeRegistration } from './type_registration';
 export class DependencyInjectionContainer {
     constructor(config) {
         this._config = undefined;
         this._registrations = {};
         this._instances = {};
         this._externalConfigProvider = undefined;
-        this._config = config;
+        const configuration = config || this._getDefaultConfiguration();
+        this._config = configuration;
         this._initializeRegistrationDeclarations();
         this._initializeBaseRegistrations();
+    }
+    _getDefaultConfiguration() {
+        return {
+            registrationDefaults: {
+                isSingleton: false,
+                wantsInjection: true,
+                isLazy: false,
+                bindFunctions: false,
+                autoCreateMissingSubscribers: true
+            },
+            injectContainerKey: 'container',
+            circularDependencyCanIncludeSingleton: true,
+            circularDependencyCanIncludeLazy: true
+        };
     }
     clear() {
         this._registrations = {};
@@ -258,6 +274,8 @@ export class DependencyInjectionContainer {
     _getNewInstance(registration, injectionArgs, config, resolvedKeyHistory) {
         const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
         const instance = this._createInstance(registration, dependencies, injectionArgs);
+        console.log(registration.settings.key);
+        console.log(config);
         this._configureInstance(instance, config);
         this._callSubscribers(registration, 'newInstance', instance);
         this._bindFunctionsToInstance(registration, instance);
@@ -376,7 +394,7 @@ export class DependencyInjectionContainer {
         return instance;
     }
     _createInstanceByConstructorWithInjection(type, argumentsToBeInjected) {
-        const instance = new (Function.prototype.bind.apply(type, [null].concat(argumentsToBeInjected)))();
+        const instance = new type(...argumentsToBeInjected);
         return instance;
     }
     _injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected) {
@@ -476,7 +494,7 @@ export class DependencyInjectionContainer {
             return;
         }
         const configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
-        if (configPropertyDescriptor === undefined || !configPropertyDescriptor.set) {
+        if (configPropertyDescriptor === undefined || !configPropertyDescriptor.writable) {
             const instancePrototype = Object.getPrototypeOf(instance);
             throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
         }
@@ -678,269 +696,5 @@ export class DependencyInjectionContainer {
         return found;
     }
 }
-export class TypeRegistration {
-    constructor(defaults, key, type, isFactory) {
-        this._settings = undefined;
-        this._settings = new TypeRegistrationSettings(defaults, key, type, isFactory);
-    }
-    get settings() {
-        return this._settings;
-    }
-    set settings(value) {
-        this._settings = value;
-    }
-    dependencies(...args) {
-        const resolvedDepedencyConfigurations = [];
-        args.forEach((currentDependencyConfiguration) => {
-            const dependencyType = typeof currentDependencyConfiguration;
-            if (Array.isArray(currentDependencyConfiguration)) {
-                Array.prototype.push.apply(resolvedDepedencyConfigurations, currentDependencyConfiguration);
-            }
-            else if (dependencyType === 'string' || dependencyType === 'function') {
-                resolvedDepedencyConfigurations.push(currentDependencyConfiguration);
-            }
-            else {
-                throw new Error(`The type '${dependencyType}' of your dependencies declaration is not yet supported.
-                Supported types: 'Array', 'String', 'Function(Type)'`);
-            }
-        });
-        this.settings.dependencies = resolvedDepedencyConfigurations;
-        return this;
-    }
-    configure(config) {
-        const configType = typeof config;
-        if (configType !== 'function' && configType !== 'object' && configType !== 'string') {
-            throw new Error(`The type '${configType}' of your dependencies declaration is not yet supported.
-              Supported types: 'Function', 'Object'`);
-        }
-        this.settings.config = config;
-        return this;
-    }
-    singleton(isSingleton) {
-        this.settings.isSingleton = !!isSingleton ? isSingleton : true;
-        return this;
-    }
-    noInjection(injectionDisabled) {
-        if (this.settings.injectInto) {
-            throw new Error(`'noInjection' induces a conflict to the 'injectInto' declaration.`);
-        }
-        if (this.settings.isLazy) {
-            throw new Error(`'noInjection' induces a conflict to the 'injectLazy' declaration.`);
-        }
-        this.settings.wantsInjection = !!injectionDisabled ? !injectionDisabled : false;
-        return this;
-    }
-    injectInto(targetFunction) {
-        if (!this.settings.wantsInjection) {
-            throw new Error(`'injectInto' induces a conflict to the 'noInjection' declaration.`);
-        }
-        this.settings.injectInto = targetFunction;
-        return this;
-    }
-    injectLazy() {
-        if (!this.settings.wantsInjection) {
-            throw new Error(`'injectLazy' induces a conflict to the 'noInjection' declaration.`);
-        }
-        this.settings.isLazy = true;
-        if (arguments.length > 0) {
-            Array.prototype.push.apply(this.settings.lazyKeys, arguments);
-        }
-        return this;
-    }
-    onNewInstance(key, targetFunction) {
-        const subscription = {
-            key: key,
-            method: targetFunction
-        };
-        this.settings.subscriptions['newInstance'].push(subscription);
-        return this;
-    }
-    bindFunctions() {
-        this.settings.bindFunctions = true;
-        if (arguments.length > 0) {
-            Array.prototype.push.apply(this.settings.functionsToBind, arguments);
-        }
-        return this;
-    }
-    tags(tagOrTags) {
-        for (let argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
-            const argument = arguments[argumentIndex];
-            const argumentType = typeof argument;
-            if (Array.isArray(argument)) {
-                argument.forEach((tag) => {
-                    this.settings.tags[tag] = {};
-                });
-            }
-            else if (argumentType === 'string') {
-                this.settings.tags[argument] = {};
-            }
-            else {
-                throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
-                Supported types: 'Array', 'String'`);
-            }
-        }
-        return this;
-    }
-    setAttribute(tag, value) {
-        if (!tag) {
-            throw new Error(`You have to specify a tag for your attribute.`);
-        }
-        this.settings.tags[tag] = value;
-        return this;
-    }
-    hasTags(tags) {
-        const declaredTags = Object.keys(this.settings.tags);
-        if (!Array.isArray(tags)) {
-            tags = [tags];
-        }
-        const isTagMissing = tags.some((tag) => {
-            if (declaredTags.indexOf(tag) < 0) {
-                return true;
-            }
-        });
-        return !isTagMissing;
-    }
-    hasAttributes(attributes) {
-        const attributeKeys = Object.keys(attributes);
-        const attributeMissing = attributeKeys.some((attribute) => {
-            const attributeValue = this.settings.tags[attribute];
-            if (attributeValue !== attributes[attribute]) {
-                return true;
-            }
-        });
-        return !attributeMissing;
-    }
-    overwrite(originalKey, overwrittenKey) {
-        if (this.settings.dependencies.indexOf(originalKey) < 0) {
-            throw new Error(`there is no dependency declared for original key '${originalKey}'.`);
-        }
-        this.settings.overwrittenKeys[originalKey] = overwrittenKey;
-        return this;
-    }
-}
-export class TypeRegistrationSettings {
-    constructor(defaults, key, type, isFactory, isObject) {
-        this._defaults = undefined;
-        this._key = undefined;
-        this._type = undefined;
-        this._dependencies = undefined;
-        this._config = undefined;
-        this._tags = undefined;
-        this._injectInto = undefined;
-        this._functionsToBind = undefined;
-        this._lazyKeys = undefined;
-        this._overwrittenKeys = undefined;
-        this._isSingleton = undefined;
-        this._wantsInjection = undefined;
-        this._isLazy = undefined;
-        this._bindFunctions = undefined;
-        this._subscriptions = undefined;
-        this._isFactory = undefined;
-        this._isObject = undefined;
-        this._autoCreateMissingSubscribers = undefined;
-        this._subscriptions = {
-            newInstance: []
-        };
-        this._defaults = defaults;
-        this._key = key;
-        this._type = type;
-        this._isFactory = isFactory || false;
-        this._isObject = isObject || false;
-    }
-    get defaults() {
-        return this._defaults;
-    }
-    get key() {
-        return this._key;
-    }
-    get type() {
-        return this._type;
-    }
-    get dependencies() {
-        return this._dependencies;
-    }
-    set dependencies(value) {
-        this._dependencies = value;
-    }
-    get config() {
-        return this._config;
-    }
-    set config(value) {
-        this._config = value;
-    }
-    get tags() {
-        return this._tags;
-    }
-    set tags(value) {
-        this._tags = value;
-    }
-    get injectInto() {
-        return this._injectInto;
-    }
-    set injectInto(value) {
-        this._injectInto = value;
-    }
-    get functionsToBind() {
-        return this._functionsToBind;
-    }
-    set functionsToBind(value) {
-        this._functionsToBind = value;
-    }
-    get lazyKeys() {
-        return this._lazyKeys;
-    }
-    set lazyKeys(value) {
-        this._lazyKeys = value;
-    }
-    get overwrittenKeys() {
-        return this._overwrittenKeys;
-    }
-    set overwrittenKeys(value) {
-        this._overwrittenKeys = value;
-    }
-    get isFactory() {
-        return this.getSettingOrDefault('isFactory');
-    }
-    get subscriptions() {
-        return this._subscriptions;
-    }
-    get isSingleton() {
-        return this.getSettingOrDefault('isSingleton');
-    }
-    set isSingleton(value) {
-        this._isSingleton = value;
-    }
-    get wantsInjection() {
-        return this.getSettingOrDefault('wantsInjection');
-    }
-    set wantsInjection(value) {
-        this._wantsInjection = value;
-    }
-    get isLazy() {
-        return this.getSettingOrDefault('isLazy');
-    }
-    set isLazy(value) {
-        this._isLazy = value;
-    }
-    get bindFunctions() {
-        return this.getSettingOrDefault('bindFunctions');
-    }
-    set bindFunctions(value) {
-        this._bindFunctions = value;
-    }
-    get autoCreateMissingSubscribers() {
-        return this.getSettingOrDefault('autoCreateMissingSubscribers');
-    }
-    set autoCreateMissingSubscribers(value) {
-        this._autoCreateMissingSubscribers = value;
-    }
-    get isObject() {
-        return this._isObject;
-    }
-    set isObject(value) {
-        this._isObject = value;
-    }
-    getSettingOrDefault(key) {
-        return typeof this[`_${key}`] !== 'undefined' ? this[`_${key}`] : this.defaults[key];
-    }
-}
+
+//# sourceMappingURL=container.js.map
