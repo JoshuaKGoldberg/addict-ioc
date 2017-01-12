@@ -196,14 +196,20 @@ define(["require", "exports", "./type_registration"], function (require, exports
         };
         DependencyInjectionContainer.prototype._resolveInstance = function (registration, injectionArgs, config, resolvedKeyHistory, isLazy) {
             var _this = this;
-            if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
-                throw new Error("Circular dependency on key '" + registration.settings.key + "' detected.");
-            }
             var resolvedRegistrationConfig = this._getConfig(registration.settings.key);
             var resolvedRuntimeConfig = this._resolveConfig(registration.settings.key, config);
             var configUsed = this._mergeConfig(resolvedRegistrationConfig, resolvedRuntimeConfig);
             if (registration.settings.isSingleton) {
-                return this._getInstance(registration, injectionArgs, configUsed);
+                if (isLazy) {
+                    return function (lazyInjectionArgs, lazyConfig) {
+                        var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
+                        var lazyConfigUsed = _this._mergeConfig(configUsed, lazyConfig);
+                        return _this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+                    };
+                }
+                else {
+                    return this._getInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+                }
             }
             if (isLazy) {
                 return function (lazyInjectionArgs, lazyConfig) {
@@ -236,11 +242,11 @@ define(["require", "exports", "./type_registration"], function (require, exports
             var finalConfig = Object.assign(configUsed, additionalConfig);
             return finalConfig;
         };
-        DependencyInjectionContainer.prototype._getInstance = function (registration, injectionArgs, config) {
+        DependencyInjectionContainer.prototype._getInstance = function (registration, injectionArgs, config, resolvedKeyHistory) {
             var instances = this.instances[registration.settings.key];
             var instance = null;
             if (typeof instances === 'undefined') {
-                return this._getNewInstance(registration, injectionArgs, config);
+                return this._getNewInstance(registration, injectionArgs, config, resolvedKeyHistory);
             }
             instances = this.instances[registration.settings.key][config][injectionArgs];
             if (Array.isArray(instances)) {
@@ -292,6 +298,9 @@ define(["require", "exports", "./type_registration"], function (require, exports
             return allInstances;
         };
         DependencyInjectionContainer.prototype._getNewInstance = function (registration, injectionArgs, config, resolvedKeyHistory) {
+            if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
+                throw new Error("Circular dependency on key '" + registration.settings.key + "' detected.");
+            }
             var dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
             var instance = this._createInstance(registration, dependencies, injectionArgs);
             console.log(registration.settings.key);

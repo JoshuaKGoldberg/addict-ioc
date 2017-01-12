@@ -255,10 +255,6 @@ export class DependencyInjectionContainer {
 
   private _resolveInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
 
-    if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
-      throw new Error(`Circular dependency on key '${registration.settings.key}' detected.`);
-    }
-
     const resolvedRegistrationConfig = this._getConfig(registration.settings.key);
 
     const resolvedRuntimeConfig = this._resolveConfig(registration.settings.key, config);
@@ -267,7 +263,20 @@ export class DependencyInjectionContainer {
 
     if (registration.settings.isSingleton) {
 
-      return this._getInstance(registration, injectionArgs, configUsed);
+      if (isLazy) {
+
+        return (lazyInjectionArgs, lazyConfig) => {
+
+          const injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
+
+          const lazyConfigUsed = this._mergeConfig(configUsed, lazyConfig);
+
+          return this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+        };
+      } else {
+
+        return this._getInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+      }
     }
 
     if (isLazy) {
@@ -317,14 +326,14 @@ export class DependencyInjectionContainer {
     return finalConfig;
   }
 
-  private _getInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any) {
+  private _getInstance(registration: TypeRegistration, injectionArgs: Array<any>, config: any, resolvedKeyHistory?: Array<any>) {
 
     let instances = this.instances[registration.settings.key];
     let instance = null;
 
     if (typeof instances === 'undefined') {
 
-      return this._getNewInstance(registration, injectionArgs, config);
+      return this._getNewInstance(registration, injectionArgs, config, resolvedKeyHistory);
     }
 
     instances = this.instances[registration.settings.key][config][<any>injectionArgs];
@@ -404,6 +413,12 @@ export class DependencyInjectionContainer {
   }
 
   private _getNewInstance(registration: TypeRegistration, injectionArgs?: Array<any>, config?: any, resolvedKeyHistory?: Array<any>) {
+
+    if (Array.isArray(resolvedKeyHistory) && resolvedKeyHistory.indexOf(registration.settings.key) >= 0) {
+      // if (!isLazy) {
+        throw new Error(`Circular dependency on key '${registration.settings.key}' detected.`);
+      // }
+    }
 
     const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
 

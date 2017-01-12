@@ -30,7 +30,7 @@ export declare class DependencyInjectionContainer {
     private _resolveInstance(registration, injectionArgs, config, resolvedKeyHistory?, isLazy?);
     private _mergeArguments(baseArgs, additionalArgs);
     private _mergeConfig(baseConfig, additionalConfig);
-    private _getInstance(registration, injectionArgs, config);
+    private _getInstance(registration, injectionArgs, config, resolvedKeyHistory?);
     private _getKeysForInstanceConfigurationsByKey(key);
     private _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key, config);
     private _getAllInstances(key, config?, injectionArgs?);
