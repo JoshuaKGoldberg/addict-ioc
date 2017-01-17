@@ -204,7 +204,7 @@ define(["require", "exports", "./type_registration"], function (require, exports
                     return function (lazyInjectionArgs, lazyConfig) {
                         var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
                         var lazyConfigUsed = _this._mergeConfig(configUsed, lazyConfig);
-                        return _this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+                        return _this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
                     };
                 }
                 else {
@@ -215,7 +215,7 @@ define(["require", "exports", "./type_registration"], function (require, exports
                 return function (lazyInjectionArgs, lazyConfig) {
                     var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
                     var lazyConfigUsed = _this._mergeConfig(configUsed, lazyConfig);
-                    return _this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+                    return _this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
                 };
             }
             return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
@@ -697,7 +697,7 @@ define(["require", "exports", "./type_registration"], function (require, exports
             var _this = this;
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
+                args[_i] = arguments[_i];
             }
             var allTags = this._squashArgumentsToArray(args);
             var foundKeys = [];

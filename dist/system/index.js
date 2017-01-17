@@ -4,8 +4,7 @@ System.register(["./container", "./type_registration", "./type_registration_sett
     function exportStar_1(m) {
         var exports = {};
         for (var n in m) {
-            if (n !== "default")
-                exports[n] = m[n];
+            if (n !== "default") exports[n] = m[n];
         }
         exports_1(exports);
     }

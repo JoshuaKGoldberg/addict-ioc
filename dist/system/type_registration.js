@@ -27,7 +27,7 @@ System.register(["./type_registration_settings"], function (exports_1, context_1
                 TypeRegistration.prototype.dependencies = function () {
                     var args = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i - 0] = arguments[_i];
+                        args[_i] = arguments[_i];
                     }
                     var resolvedDepedencyConfigurations = [];
                     args.forEach(function (currentDependencyConfiguration) {

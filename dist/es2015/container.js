@@ -185,7 +185,7 @@ export class DependencyInjectionContainer {
                 return (lazyInjectionArgs, lazyConfig) => {
                     const injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                     const lazyConfigUsed = this._mergeConfig(configUsed, lazyConfig);
-                    return this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+                    return this._getInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
                 };
             }
             else {
@@ -196,7 +196,7 @@ export class DependencyInjectionContainer {
             return (lazyInjectionArgs, lazyConfig) => {
                 const injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                 const lazyConfigUsed = this._mergeConfig(configUsed, lazyConfig);
-                return this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, resolvedKeyHistory);
+                return this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
             };
         }
         return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);

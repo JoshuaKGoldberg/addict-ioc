@@ -20,7 +20,7 @@ export declare class DependencyInjectionContainer {
     unregister(key: string): void;
     private _registerTypeByKey(key, type);
     registerFactory(key: string, factoryMethod: any): TypeRegistration;
-    registerObject(key: string, object: any): TypeRegistration;
+    registerObject(key: string, object: any): any;
     private _initializeBaseRegistrations();
     private _initializeRegistrationDeclarations();
     private _ensureRegistrationStarted(declaration);
