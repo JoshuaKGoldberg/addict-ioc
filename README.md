@@ -4,7 +4,7 @@ Addict IoC is a lightweight IoC container with a fluent declaration syntax easin
 
 It is designed to be easily extensible for your own needs without complicating the architecture by abstractions.
 
-[![Build Status](https://jenkins.mindassist.net/job/Addict.IoC/badge/icon)](https://jenkins.mindassist.net/job/Addict.IoC/?style=plastic)
+[![Build Status](http://jenkins.mindassist.net/buildStatus/icon?job=Addict.IoC)](https://jenkins.mindassist.net/job/Addict.IoC)
 
 # Features
 
