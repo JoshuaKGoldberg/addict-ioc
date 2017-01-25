@@ -1,8 +1,5 @@
 {
   "name": "addict-ioc",
-  "publishConfig": {
-    "registry": "https://www.npmjs.com"
-  },
   "version": "1.0.0",
   "description": "A fluent IoC container for JavaScript.",
   "main": "dist/commonjs/index.js",
@@ -12,10 +9,6 @@
   },
   "scripts": {
     "test": "mocha test/**/*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/5minds/addict-ioc.git"
   },
   "keywords": [
     "ioc",
