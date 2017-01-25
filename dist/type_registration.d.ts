@@ -13,7 +13,7 @@ export declare class TypeRegistration {
     bindFunctions(): this;
     tags(tagOrTags: string | string[]): this;
     setAttribute(tag: string, value: any): this;
-    hasTags(tags: string | Array<string>): boolean;
+    hasTags(tagOrTags: string | Array<string>): boolean;
     hasAttributes(attributes: any): boolean;
     overwrite(originalKey: string, overwrittenKey: string): this;
 }

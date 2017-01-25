@@ -62,7 +62,7 @@ export class TypeRegistration {
 
   public singleton(isSingleton: boolean) {
 
-    this.settings.isSingleton = !!isSingleton ? isSingleton : true;
+    this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
 
     return this;
   }
@@ -172,13 +172,11 @@ export class TypeRegistration {
     return this;
   }
 
-  public hasTags(tags: string | Array<string>) {
+  public hasTags(tagOrTags: string | Array<string>) {
 
     const declaredTags = Object.keys(this.settings.tags);
 
-    if (!Array.isArray(tags)) {
-      tags = [tags];
-    }
+    const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
 
     const isTagMissing = (<Array<string>>tags).some((tag) => {
 

@@ -303,8 +303,6 @@ define(["require", "exports", "./type_registration"], function (require, exports
             }
             var dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
             var instance = this._createInstance(registration, dependencies, injectionArgs);
-            console.log(registration.settings.key);
-            console.log(config);
             this._configureInstance(instance, config);
             this._callSubscribers(registration, 'newInstance', instance);
             this._bindFunctionsToInstance(registration, instance);

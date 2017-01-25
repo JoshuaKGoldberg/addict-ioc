@@ -45,7 +45,7 @@ var TypeRegistration = (function () {
         return this;
     };
     TypeRegistration.prototype.singleton = function (isSingleton) {
-        this.settings.isSingleton = !!isSingleton ? isSingleton : true;
+        this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
         return this;
     };
     TypeRegistration.prototype.noInjection = function (injectionDisabled) {
@@ -116,11 +116,9 @@ var TypeRegistration = (function () {
         this.settings.tags[tag] = value;
         return this;
     };
-    TypeRegistration.prototype.hasTags = function (tags) {
+    TypeRegistration.prototype.hasTags = function (tagOrTags) {
         var declaredTags = Object.keys(this.settings.tags);
-        if (!Array.isArray(tags)) {
-            tags = [tags];
-        }
+        var tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
         var isTagMissing = tags.some(function (tag) {
             if (declaredTags.indexOf(tag) < 0) {
                 return true;

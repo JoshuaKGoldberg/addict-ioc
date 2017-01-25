@@ -38,7 +38,7 @@ export class TypeRegistration {
         return this;
     }
     singleton(isSingleton) {
-        this.settings.isSingleton = !!isSingleton ? isSingleton : true;
+        this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
         return this;
     }
     noInjection(injectionDisabled) {
@@ -109,11 +109,9 @@ export class TypeRegistration {
         this.settings.tags[tag] = value;
         return this;
     }
-    hasTags(tags) {
+    hasTags(tagOrTags) {
         const declaredTags = Object.keys(this.settings.tags);
-        if (!Array.isArray(tags)) {
-            tags = [tags];
-        }
+        const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
         const isTagMissing = tags.some((tag) => {
             if (declaredTags.indexOf(tag) < 0) {
                 return true;

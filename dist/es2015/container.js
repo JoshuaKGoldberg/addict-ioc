@@ -283,8 +283,6 @@ export class DependencyInjectionContainer {
         }
         const dependencies = this._resolveDependencies(registration, resolvedKeyHistory);
         const instance = this._createInstance(registration, dependencies, injectionArgs);
-        console.log(registration.settings.key);
-        console.log(config);
         this._configureInstance(instance, config);
         this._callSubscribers(registration, 'newInstance', instance);
         this._bindFunctionsToInstance(registration, instance);
