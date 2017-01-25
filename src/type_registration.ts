@@ -1,31 +1,27 @@
-'use strict';
+import {TypeRegistrationSettings} from './type_registration_settings';
+import {ITypeRegistrationSettings} from './interfaces';
 
-const TypeRegistrationSettings = require('./registration_settings');
+export class TypeRegistration {
 
-class TypeRegistration {
+  private _settings: ITypeRegistrationSettings = undefined;
 
-  constructor(defaults, key, type, isFactory, isRequire) {
-    this._settings = new TypeRegistrationSettings(defaults, key, type, isFactory, isRequire);
+  constructor(defaults: ITypeRegistrationSettings, key: string, type: any, isFactory?: boolean) {
+    this._settings = new TypeRegistrationSettings(defaults, key, type, isFactory);
   }
 
   get settings() {
     return this._settings;
   }
 
-  set settings(value) {
+  set settings(value: ITypeRegistrationSettings) {
     this._settings = value;
   }
 
-
-  dependencies() {
+  public dependencies(...args) {
 
     const resolvedDepedencyConfigurations = [];
 
-    const argumentKeys = Object.keys(arguments);
-
-    argumentKeys.forEach((argumentKey) => {
-
-      const currentDependencyConfiguration = arguments[argumentKey];
+    args.forEach((currentDependencyConfiguration) => {
 
       const dependencyType = typeof currentDependencyConfiguration;
 
@@ -49,8 +45,7 @@ class TypeRegistration {
     return this;
   }
 
-
-  configure(config) {
+  public configure(config: any) {
 
     const configType = typeof config;
 
@@ -65,16 +60,14 @@ class TypeRegistration {
     return this;
   }
 
+  public singleton(isSingleton: boolean) {
 
-  singleton(isSingleton) {
-
-    this.settings.isSingleton = !!isSingleton ? isSingleton : true;
+    this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
 
     return this;
   }
 
-
-  noInjection(injectionDisabled) {
+  public noInjection(injectionDisabled: boolean) {
 
     if (this.settings.injectInto) {
       throw new Error(`'noInjection' induces a conflict to the 'injectInto' declaration.`);
@@ -89,8 +82,7 @@ class TypeRegistration {
     return this;
   }
 
-
-  injectInto(targetFunction) {
+  public injectInto(targetFunction: string) {
 
     if (!this.settings.wantsInjection) {
       throw new Error(`'injectInto' induces a conflict to the 'noInjection' declaration.`);
@@ -101,8 +93,7 @@ class TypeRegistration {
     return this;
   }
 
-
-  injectLazy() {
+  public injectLazy() {
 
     if (!this.settings.wantsInjection) {
       throw new Error(`'injectLazy' induces a conflict to the 'noInjection' declaration.`);
@@ -118,21 +109,19 @@ class TypeRegistration {
     return this;
   }
 
-
-  onNewInstance(keyOrType, targetFunction) {
+  public onNewInstance(key: string, targetFunction: string) {
 
     const subscription = {
-      key: keyOrType,
+      key: key,
       method: targetFunction
     };
 
-    this.settings.subscriptions.newInstance.push(subscription);
+    this.settings.subscriptions['newInstance'].push(subscription);
 
     return this;
   }
 
-
-  bindFunctions() {
+  public bindFunctions() {
 
     this.settings.bindFunctions = true;
 
@@ -144,7 +133,7 @@ class TypeRegistration {
     return this;
   }
 
-  tags(tagOrTags) {
+  public tags(tagOrTags: string | string[]) {
 
     for (let argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
 
@@ -172,7 +161,7 @@ class TypeRegistration {
     return this;
   }
 
-  setAttribute(tag, value) {
+  public setAttribute(tag: string, value: any) {
 
     if (!tag) {
       throw new Error(`You have to specify a tag for your attribute.`);
@@ -183,11 +172,13 @@ class TypeRegistration {
     return this;
   }
 
-  _hasTags(tags) {
+  public hasTags(tagOrTags: string | Array<string>) {
 
     const declaredTags = Object.keys(this.settings.tags);
 
-    const isTagMissing = tags.some((tag) => {
+    const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
+
+    const isTagMissing = (<Array<string>>tags).some((tag) => {
 
       if (declaredTags.indexOf(tag) < 0) {
 
@@ -198,7 +189,7 @@ class TypeRegistration {
     return !isTagMissing;
   }
 
-  _hasAttributes(attributes) {
+  public hasAttributes(attributes: any) {
 
     const attributeKeys = Object.keys(attributes);
 
@@ -215,7 +206,7 @@ class TypeRegistration {
     return !attributeMissing;
   }
 
-  overwrite(originalKey, overwrittenKey) {
+  public overwrite(originalKey: string, overwrittenKey: string) {
 
     if (this.settings.dependencies.indexOf(originalKey) < 0) {
       throw new Error(`there is no dependency declared for original key '${originalKey}'.`);
@@ -226,10 +217,3 @@ class TypeRegistration {
     return this;
   }
 }
-
-function create(options) {
-  return new TypeRegistration(options.defaults, options.key, options.type, options.isFactory, options.isRequire);
-}
-
-module.exports = TypeRegistration;
-module.exports.create = create;

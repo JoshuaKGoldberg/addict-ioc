@@ -23,7 +23,7 @@ describe('Type Registration With Tags Test', function describeCallback() {
     const attributeQuery = {};
     attributeQuery[testAttribute.key] = testAttribute.value;
 
-    const result = registration._hasAttributes(attributeQuery);
+    const result = registration.hasAttributes(attributeQuery);
 
     should(result).be.true();
   });
@@ -38,7 +38,7 @@ describe('Type Registration With Tags Test', function describeCallback() {
     const attributeQuery = {};
     attributeQuery[testAttribute.key] = testAttribute.value;
 
-    const result = registration._hasAttributes(attributeQuery);
+    const result = registration.hasAttributes(attributeQuery);
 
     should(result).be.false();
   });
@@ -54,7 +54,7 @@ describe('Type Registration With Tags Test', function describeCallback() {
     const attributeQuery = {};
     attributeQuery[testAttribute.key] = testAttribute.value;
 
-    const result = registration._hasAttributes(attributeQuery);
+    const result = registration.hasAttributes(attributeQuery);
 
     should(result).be.false();
   });
