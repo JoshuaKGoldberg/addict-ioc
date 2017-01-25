@@ -56,26 +56,26 @@ container.setDefaults({
 For a regular dependency injection you just need to register one or more classes on the container. As soon as a class is registered, it can be referenced within another registrations `dependencies` declaration. When a class registered with dependencies gets instantiated by the container, its dependencies are injected into the constructor by default.
 
 ```javascript
-class SomeClass {}
+class SomeUserRepository {}
 
-container.register('First', SomeClass);
+container.register('UserRepo', SomeUserRepository);
 
-class SomeOtherClass {}
+class SomeEmailService {}
 
-container.register('Second', SomeOtherClass);
+container.register('EmailService', SomeEmailService);
 
-class YetAnotherClass {
+class MyUserNotifier {
 
-  constructor(some, someOther) {
-    this._someClass = some;
-    this._someOtherClass = someOther;
+  constructor(userRepository, emailService) {
+    this._userRepository = userRepository;
+    this._emailService = emailService;
   }
 }
 
-container.register('Third', YetAnotherClass)
-  .dependencies('First', 'Second');
+container.register('UserNotifier', MyUserNotifier)
+  .dependencies('UserRepo', 'EmailService');
 
-const yetAnotherClassInstance = container.resolve('Third');
+const myUserNotifierInstance = container.resolve('UserNotifier');
 // now the constructor has been called with the two dependency instances
 // the instances of 'First' and 'Second' are created before the 'Third' instance
 ```
@@ -93,13 +93,13 @@ Consider the following example of the file test_class.js as an `ANTI`-pattern:
 ```javascript
 const container = require('addict-ioc');
 
-class TestClass {
-// ...  
+class MyUserRepository {
+// ...
 }
 
-container.register('TestClass', TestClass);
+container.register('UserRepo', MyUserRepository);
 
-module.exports = TestClass;
+module.exports = MyUserRepository;
 ```
 
 Let's consider a more modular approach where your application consists of several self-contained modules. Each of the modules should know how the dependencies of its inner classes interact and which external dependencies it has.
@@ -108,9 +108,9 @@ Now if we take a closer look at those external dependencies, the self-contained 
 
 The easiest way to achieve this is to let each self-contained module expose a function that takes the container instance used for registration as a parameter and registers all dependencies on that instance.
 
-modules/user/ioc_module.js
 
 ```javascript
+// modules/user/ioc_module.js
 
 function registerInContainer(container) {
 
@@ -119,11 +119,11 @@ function registerInContainer(container) {
   ItemIocModule.registerInContainer(container);
 
 
-  container.register('UserRepository')
+  container.register('UserRepo')
     .singleton();
 
   container.register('UserService')
-    .dependencies('UserRepository', 'ItemService')
+    .dependencies('UserRepo', 'ItemService')
     .singleton();
 
 }
@@ -133,41 +133,29 @@ module.exports.registerInContainer = registerInContainer;
 
 The following folder structure shows how functional modules can consist of several layers, in this case `service` and `repository` layers. Every module defines its dependencies via an `ioc_module.js` and can reference other modules' ioc modules as well like in the above example.
 
-- modules
-
-  - user
-
-    - modules
-
-      - user_service
-
-        - lib
-
-          - user_service.js
-
-      - user_repository
-
-        - lib
-
-          - user_repository.js
-
-    - index.js
-    - ioc_module.js
-    - package.json
-
-  - item
-
-    - modules
-
-      - ...
-
-    - index.js
-    - ioc_module.js
-    - package.json
-
-- index.js
-- ioc_module.js
-- package.json
+```
+modules/
+  user/
+    modules/
+      user_service/
+        lib/
+          user_service.js
+      user_repository/
+        lib/
+          user_repository.js
+    index.js
+    ioc_module.js
+    package.json
+  item/
+    modules/
+      ...
+    index.js
+    ioc_module.js
+    package.json
+index.js
+ioc_module.js
+package.json
+````
 
 ## Registration
 
@@ -178,9 +166,9 @@ The `register` method is used to register classes on the container and creates a
 _Note: The IoC container registers itself to the key `container` by default. You can adjust this by setting `container.config.injectContainerKey` to whatever key you'd like and calling the method `clear` afterwards (this also clears all registrations so you best do it before registering your components)._
 
 ```javascript
-class SomeClass {}
+class MyUserRepository {}
 
-container.register('SomeClassKeyName', SomeClass);
+container.register('UserRepo', MyUserRepository);
 ```
 
 ### As Factory Functions
@@ -220,31 +208,31 @@ In this case extension points mean we have a component that uses the container t
 So for the discovery to work we need something to discover things by. Names would be one option, but not a very specific one and therefore likely to produce errors. The IoC container offers a fluent declaration to attach `tags` to registrations. These tags are just strings, but they are solely used for discovery and will not get mixed with registration keys.
 
 ```javascript
-class TestClass {}
+class RedisImplementation {}
 
-container.registerObject('TestClass', TestClass)
-  .tags('discover-me');
+container.registerObject('Redis', RedisImplementation)
+  .tags('caching');
 
-class AnotherTestClass {}
+class MemcachedImplementation {}
 
-container.registerObject('AnotherTestClass', AnotherTestClass)
-  .tags('discover-me');
+container.registerObject('Memcached', MemcachedImplementation)
+  .tags('caching');
 ```
 
-Both of our test classes are tagged with the same string `discover-me`. Now let's take a look at how to discover them:
+Both of our test classes are tagged with the same string `caching`. Now let's take a look at how to discover them:
 
 ```javascript
 
-const discoveredKeys = container.getKeysByTags('discover-me');
+const discoveredKeys = container.getKeysByTags('caching');
 
 console.log(discoveredKeys);
-// 'TestClass'
-// 'AnotherTestClass'
+// 'RedisImplementation'
+// 'MemcachedImplementation'
 ```
 
 By calling the `getKeysByTags`-method we can retrieve all keys tagged with what we are looking for.
 
-A real world example to this would be an express API that can discover router implementations this way, instantiate them and hook them up to the API.
+Another example of this would be an express API that can discover router implementations this way, instantiate them and hook them up to the API.
 
 ### Attributes
 
@@ -256,9 +244,9 @@ Values can be any object and will be matched for full equality (===) by default.
 
 ```javascript
 
-class TestType {}
+class MyGenericRouter {}
 
-container.register('TestType', TestType)
+container.register('Router', MyGenericRouter)
   .setAttribute('someTag', 'someValue')
   .setAttribute('someOtherTag', {
     'some-complex': 'value'
@@ -267,7 +255,7 @@ container.register('TestType', TestType)
 container.getKeysByAttributes({
   someTag: 'someValue'
 });
-// ['TestType']
+// ['Router']
 
 container.getKeysByAttributes({
   someTag: 'someValue',
@@ -275,7 +263,7 @@ container.getKeysByAttributes({
     'some-complex': 'value'
   }
 });
-// ['TestType']
+// ['Router']
 
 container.getKeysByAttributes({
   aMissingTag: 'this-will-not-match',
@@ -292,19 +280,19 @@ That means you can not only match against attributes with the method `getKeysByA
 
 ```javascript
 
-class TestType {}
+class MyCustomCurrencyType {}
 
-container.register('TestType', TestType)
+container.register('CurrencyType', MyCustomCurrencyType)
   .setAttribute('someTag', 'someValue')
   .setAttribute('someOtherTag', {
     'some-complex': 'value'
   });
 
 container.getKeysByTags('someTag');
-// ['TestType']
+// ['CurrencyType']
 
 container.getKeysByTags('someTag', 'someOtherTag');
-// ['TestType']
+// ['CurrencyType']
 
 container.getKeysByTags('someMissingTag', 'someTag');
 // []
@@ -316,24 +304,25 @@ container.getKeysByTags('someMissingTag', 'someTag');
 The `dependencies` declaration adds dependencies that have to be resolved before the registered class gets instantiated.
 
 ```javascript
-class SomeClass {}
 
-container.register('SomeClassKeyName', SomeClass);
+class SomeUserRepository {}
 
-class SomeOtherClass {}
+container.register('UserRepo', SomeUserRepository);
 
-container.register('SomeOtherClassKeyName', SomeOtherClass);
+class SomeEmailService {}
 
-class YetAnotherClass {
+container.register('EmailService', SomeEmailService);
 
-  constructor(something, somethingOther) {
-    this._someClass = something;
-    this._someOtherClass = somethingOther;
+class MyUserNotifier {
+
+  constructor(userRepository, emailService) {
+    this._userRepository = userRepository;
+    this._emailService = emailService;
   }
 }
 
-container.register(YetAnotherClass)
-  .dependencies('SomeClassKeyName', 'SomeOtherClassKeyName');
+container.register('UserNotifier', MyUserNotifier)
+  .dependencies('UserRepo', 'EmailService');
 ```
 
 ### Overwrite
@@ -341,22 +330,22 @@ container.register(YetAnotherClass)
 In special cases you might want to overwrite a registration without side effects to other registrations. For this scenario the IoC container offers the fluent declaration `overwrite`. You can use this multiple times on the same registration, once for every overwritten key. If you overwrite a key that means that if a dependency with the key you overwrite is to be resolved, instead of taking the original key to resolve the dependency, the overwritten key is used.
 
 ```javascript
-class SomeClass {}
+class MyEmailValidator {}
 
-container.register('SomeClassKeyName', SomeClass);
+container.register('EmailValidation', MyEmailValidator);
 
-class SomeOtherClass {}
+class MyMuchBetterEmailValidator {}
 
-container.register('SomeOtherClassKeyName', SomeOtherClass);
+container.register('BetterEmailValidation', MyMuchBetterEmailValidator);
 
-class YetAnotherClass {}
+class MyEmailService {}
 
-container.register('YetAnotherClassKeyName', YetAnotherClass)
-  .dependencies('SomeClassKeyName')
-  .overwrite('SomeClassKeyName', 'SomeOtherClassKeyName');
+container.register('EmailService', MyEmailService)
+  .dependencies('EmailValidation')
+  .overwrite('EmailValidation', 'BetterEmailValidation');
 ```
 
-In this example you can see that we have declared the dependency on `SomeClassKeyName`, but overwrite it with `SomeOtherClassKeyName`. So when `YetAnotherClass` is instantiated, no instance of `SomeClass` gets instantiated as a dependency. Currently this only applies to dependencies directly declared on the registration containing the overwritten keys. In the future this might be extended to support the `overwrite`-feature for the whole dependency tree.
+In this example you can see that we have declared the dependency on `EmailValidation`, but overwrite it with `BetterEmailValidation`. So when `EmailService` is instantiated, no instance of `MyEmailValidator` gets instantiated as a dependency. Currently this only applies to dependencies directly declared on the registration containing the overwritten keys. In the future this might be extended to support the `overwrite`-feature for the whole dependency tree.
 
 ## Multiplicity
 
@@ -448,7 +437,7 @@ class TestType {
   methodTwo() {
     console.log(this.testString);
   }
-  methodThree() {    
+  methodThree() {
     console.log(this.testString);
   }
 }
