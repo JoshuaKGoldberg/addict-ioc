@@ -10,6 +10,7 @@ export declare class TypeRegistrationSettings implements ITypeRegistrationSettin
     private _functionsToBind;
     private _lazyKeys;
     private _overwrittenKeys;
+    private _optionalDependencies;
     private _isSingleton;
     private _wantsInjection;
     private _isLazy;
@@ -29,6 +30,7 @@ export declare class TypeRegistrationSettings implements ITypeRegistrationSettin
     functionsToBind: Array<string>;
     lazyKeys: Array<string>;
     readonly overwrittenKeys: any;
+    readonly optionalDependencies: any;
     readonly isFactory: boolean;
     readonly subscriptions: IHookSubscriptions;
     isSingleton: boolean;

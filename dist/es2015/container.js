@@ -151,21 +151,23 @@ export class DependencyInjectionContainer {
         throw new Error(`There is no registration present to use '${declaration}'.
         You can start a registration by calling the 'register' method.`);
     }
-    _getRegistration(key) {
+    _getRegistration(key, isOptional) {
         const registration = this.registrations[key];
         if (registration) {
             return registration;
         }
-        throw new Error(`There is no registration created for key '${key}'.`);
+        if (!isOptional) {
+            throw new Error(`There is no registration created for key '${key}'.`);
+        }
     }
     resolve(key, injectionArgs, config) {
         return this._resolve(key, injectionArgs, config);
     }
-    _resolve(key, injectionArgs, config, resolvedKeyHistory, isLazy) {
+    _resolve(key, injectionArgs, config, resolvedKeyHistory, isLazy, isOptional) {
         if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
             throw new Error(`Injection args must be of type 'Array'.`);
         }
-        const registration = this._getRegistration(key);
+        const registration = this._getRegistration(key, isOptional);
         if (registration.settings.isObject) {
             if (isLazy) {
                 return () => {
@@ -340,8 +342,9 @@ export class DependencyInjectionContainer {
         resolvedKeyHistory.push(registration.settings.key);
         dependencies.forEach((dependency) => {
             const isLazy = this._isDependencyLazy(registration, dependency);
+            const isOptional = this._isDependencyOptional(registration, dependency);
             const dependencyKey = this._getDependencyKeyOverwritten(registration, dependency);
-            const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy);
+            const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy, isOptional);
             resolvedDependencies.push(dependencyInstance);
         });
         return resolvedDependencies;
@@ -349,6 +352,10 @@ export class DependencyInjectionContainer {
     _isDependencyLazy(registration, dependency) {
         const isLazy = registration.settings.isLazy && (registration.settings.lazyKeys.length === 0 || registration.settings.lazyKeys.indexOf(dependency) >= 0);
         return isLazy;
+    }
+    _isDependencyOptional(registration, dependency) {
+        const isOptional = registration.settings.optionalDependencies.indexOf(dependency) >= 0;
+        return isOptional;
     }
     _getDependencyKeyOverwritten(registration, dependency) {
         let dependencyKey = dependency;

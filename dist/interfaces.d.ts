@@ -19,6 +19,7 @@ export interface ITypeRegistrationSettings {
     functionsToBind?: Array<string>;
     lazyKeys?: Array<string>;
     overwrittenKeys?: any;
+    optionalDependencies?: Array<string>;
     autoCreateMissingSubscribers?: boolean;
     subscriptions?: IHookSubscriptions;
 }

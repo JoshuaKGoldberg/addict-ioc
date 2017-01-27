@@ -216,7 +216,7 @@ export class DependencyInjectionContainer {
         You can start a registration by calling the 'register' method.`);
   }
 
-  private _getRegistration(key: string) {
+  private _getRegistration(key: string, isOptional?: boolean) {
 
     const registration = this.registrations[key];
 
@@ -224,20 +224,22 @@ export class DependencyInjectionContainer {
       return registration;
     }
 
-    throw new Error(`There is no registration created for key '${key}'.`);
+    if (!isOptional) {
+      throw new Error(`There is no registration created for key '${key}'.`);
+    }
   }
 
   public resolve(key: string, injectionArgs?: Array<any>, config?: any) {
     return this._resolve(key, injectionArgs, config);
   }
 
-  private _resolve(key: string, injectionArgs?: Array<any>, config?: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean) {
+  private _resolve(key: string, injectionArgs?: Array<any>, config?: any, resolvedKeyHistory?: Array<any>, isLazy?: boolean, isOptional?: boolean) {
 
     if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
       throw new Error(`Injection args must be of type 'Array'.`);
     }
 
-    const registration = this._getRegistration(key);
+    const registration = this._getRegistration(key, isOptional);
 
     if (registration.settings.isObject) {
 
@@ -515,9 +517,11 @@ export class DependencyInjectionContainer {
 
       const isLazy = this._isDependencyLazy(registration, dependency);
 
+      const isOptional = this._isDependencyOptional(registration, dependency);
+
       const dependencyKey = this._getDependencyKeyOverwritten(registration, dependency);
 
-      const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy);
+      const dependencyInstance = this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy, isOptional);
 
       resolvedDependencies.push(dependencyInstance);
     });
@@ -530,6 +534,13 @@ export class DependencyInjectionContainer {
     const isLazy = registration.settings.isLazy && (registration.settings.lazyKeys.length === 0 || registration.settings.lazyKeys.indexOf(dependency) >= 0);
 
     return isLazy;
+  }
+
+  private _isDependencyOptional(registration: TypeRegistration, dependency: string) {
+
+    const isOptional = registration.settings.optionalDependencies.indexOf(dependency) >= 0;
+
+    return isOptional;
   }
 
   private _getDependencyKeyOverwritten(registration: TypeRegistration, dependency: string) {

@@ -83,7 +83,22 @@ export class TypeRegistration {
         }
         return this;
     }
-    tags(tagOrTags) {
+    tags(...tags) {
+        tags.forEach((tag) => {
+            const argumentType = typeof tag;
+            if (Array.isArray(tag)) {
+                tag.forEach((tag) => {
+                    this.settings.tags[tag] = {};
+                });
+            }
+            else if (argumentType === 'string') {
+                this.settings.tags[tag] = {};
+            }
+            else {
+                throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
+            }
+        });
         for (let argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
             const argument = arguments[argumentIndex];
             const argumentType = typeof argument;
@@ -109,12 +124,29 @@ export class TypeRegistration {
         this.settings.tags[tag] = value;
         return this;
     }
-    hasTags(tagOrTags) {
+    hasTags(...tags) {
         const declaredTags = Object.keys(this.settings.tags);
-        const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
         const isTagMissing = tags.some((tag) => {
-            if (declaredTags.indexOf(tag) < 0) {
-                return true;
+            const argumentType = typeof tag;
+            if (Array.isArray(tag)) {
+                const isInnerTagMissing = tag.some((tag) => {
+                    const hasTags = this.hasTags(tag);
+                    if (!hasTags) {
+                        return true;
+                    }
+                });
+                if (isInnerTagMissing) {
+                    return true;
+                }
+            }
+            else if (argumentType === 'string') {
+                if (declaredTags.indexOf(tag) < 0) {
+                    return true;
+                }
+            }
+            else {
+                throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
             }
         });
         return !isTagMissing;
@@ -134,6 +166,24 @@ export class TypeRegistration {
             throw new Error(`there is no dependency declared for original key '${originalKey}'.`);
         }
         this.settings.overwrittenKeys[originalKey] = overwrittenKey;
+        return this;
+    }
+    optionalDependencies(...optionalDependencyKeys) {
+        optionalDependencyKeys.forEach((optionalDependencyKey) => {
+            const argumentType = typeof optionalDependencyKey;
+            if (Array.isArray(optionalDependencyKey)) {
+                this.optionalDependencies(optionalDependencyKey);
+            }
+            else if (argumentType === 'string') {
+                if (this.settings.optionalDependencies.indexOf(optionalDependencyKey) < 0) {
+                    this.settings.optionalDependencies.push(optionalDependencyKey);
+                }
+            }
+            else {
+                throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
+            }
+        });
         return this;
     }
 }

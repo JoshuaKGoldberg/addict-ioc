@@ -90,8 +90,26 @@ define(["require", "exports", "./type_registration_settings"], function (require
             }
             return this;
         };
-        TypeRegistration.prototype.tags = function (tagOrTags) {
+        TypeRegistration.prototype.tags = function () {
             var _this = this;
+            var tags = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                tags[_i] = arguments[_i];
+            }
+            tags.forEach(function (tag) {
+                var argumentType = typeof tag;
+                if (Array.isArray(tag)) {
+                    tag.forEach(function (tag) {
+                        _this.settings.tags[tag] = {};
+                    });
+                }
+                else if (argumentType === 'string') {
+                    _this.settings.tags[tag] = {};
+                }
+                else {
+                    throw new Error("The type '" + argumentType + "' of your tags declaration is not yet supported.\n                Supported types: 'Array', 'String'");
+                }
+            });
             for (var argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
                 var argument = arguments[argumentIndex];
                 var argumentType = typeof argument;
@@ -116,12 +134,33 @@ define(["require", "exports", "./type_registration_settings"], function (require
             this.settings.tags[tag] = value;
             return this;
         };
-        TypeRegistration.prototype.hasTags = function (tagOrTags) {
+        TypeRegistration.prototype.hasTags = function () {
+            var _this = this;
+            var tags = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                tags[_i] = arguments[_i];
+            }
             var declaredTags = Object.keys(this.settings.tags);
-            var tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
             var isTagMissing = tags.some(function (tag) {
-                if (declaredTags.indexOf(tag) < 0) {
-                    return true;
+                var argumentType = typeof tag;
+                if (Array.isArray(tag)) {
+                    var isInnerTagMissing = tag.some(function (tag) {
+                        var hasTags = _this.hasTags(tag);
+                        if (!hasTags) {
+                            return true;
+                        }
+                    });
+                    if (isInnerTagMissing) {
+                        return true;
+                    }
+                }
+                else if (argumentType === 'string') {
+                    if (declaredTags.indexOf(tag) < 0) {
+                        return true;
+                    }
+                }
+                else {
+                    throw new Error("The type '" + argumentType + "' of your tags declaration is not yet supported.\n                Supported types: 'Array', 'String'");
                 }
             });
             return !isTagMissing;
@@ -142,6 +181,28 @@ define(["require", "exports", "./type_registration_settings"], function (require
                 throw new Error("there is no dependency declared for original key '" + originalKey + "'.");
             }
             this.settings.overwrittenKeys[originalKey] = overwrittenKey;
+            return this;
+        };
+        TypeRegistration.prototype.optionalDependencies = function () {
+            var _this = this;
+            var optionalDependencyKeys = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                optionalDependencyKeys[_i] = arguments[_i];
+            }
+            optionalDependencyKeys.forEach(function (optionalDependencyKey) {
+                var argumentType = typeof optionalDependencyKey;
+                if (Array.isArray(optionalDependencyKey)) {
+                    _this.optionalDependencies(optionalDependencyKey);
+                }
+                else if (argumentType === 'string') {
+                    if (_this.settings.optionalDependencies.indexOf(optionalDependencyKey) < 0) {
+                        _this.settings.optionalDependencies.push(optionalDependencyKey);
+                    }
+                }
+                else {
+                    throw new Error("The type '" + argumentType + "' of your tags declaration is not yet supported.\n                Supported types: 'Array', 'String'");
+                }
+            });
             return this;
         };
         return TypeRegistration;

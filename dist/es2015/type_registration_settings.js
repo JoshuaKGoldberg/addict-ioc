@@ -10,6 +10,7 @@ export class TypeRegistrationSettings {
         this._functionsToBind = [];
         this._lazyKeys = [];
         this._overwrittenKeys = {};
+        this._optionalDependencies = [];
         this._isSingleton = undefined;
         this._wantsInjection = undefined;
         this._isLazy = undefined;
@@ -74,6 +75,9 @@ export class TypeRegistrationSettings {
     }
     get overwrittenKeys() {
         return this._overwrittenKeys;
+    }
+    get optionalDependencies() {
+        return this._optionalDependencies;
     }
     get isFactory() {
         return this.getSettingOrDefault('isFactory');

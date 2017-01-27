@@ -17,7 +17,7 @@ export class TypeRegistration {
     this._settings = value;
   }
 
-  public dependencies(...args) {
+  public dependencies(...args): TypeRegistration {
 
     const resolvedDepedencyConfigurations = [];
 
@@ -45,7 +45,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public configure(config: any) {
+  public configure(config: any): TypeRegistration {
 
     const configType = typeof config;
 
@@ -60,14 +60,14 @@ export class TypeRegistration {
     return this;
   }
 
-  public singleton(isSingleton: boolean) {
+  public singleton(isSingleton: boolean): TypeRegistration {
 
     this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
 
     return this;
   }
 
-  public noInjection(injectionDisabled: boolean) {
+  public noInjection(injectionDisabled: boolean): TypeRegistration {
 
     if (this.settings.injectInto) {
       throw new Error(`'noInjection' induces a conflict to the 'injectInto' declaration.`);
@@ -82,7 +82,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public injectInto(targetFunction: string) {
+  public injectInto(targetFunction: string): TypeRegistration {
 
     if (!this.settings.wantsInjection) {
       throw new Error(`'injectInto' induces a conflict to the 'noInjection' declaration.`);
@@ -93,7 +93,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public injectLazy() {
+  public injectLazy(): TypeRegistration {
 
     if (!this.settings.wantsInjection) {
       throw new Error(`'injectLazy' induces a conflict to the 'noInjection' declaration.`);
@@ -109,7 +109,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public onNewInstance(key: string, targetFunction: string) {
+  public onNewInstance(key: string, targetFunction: string): TypeRegistration {
 
     const subscription = {
       key: key,
@@ -121,7 +121,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public bindFunctions() {
+  public bindFunctions(): TypeRegistration {
 
     this.settings.bindFunctions = true;
 
@@ -133,7 +133,29 @@ export class TypeRegistration {
     return this;
   }
 
-  public tags(tagOrTags: string | string[]) {
+  public tags(...tags: Array<string|Array<string>>): TypeRegistration {
+
+    tags.forEach((tag) => {
+
+      const argumentType = typeof tag;
+
+      if (Array.isArray(tag)) {
+
+        tag.forEach((tag) => {
+
+          this.settings.tags[tag] = {};
+        });
+
+      } else if (argumentType === 'string') {
+
+        this.settings.tags[tag] = {};
+
+      } else {
+
+        throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
+      }
+    });
 
     for (let argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
 
@@ -161,7 +183,7 @@ export class TypeRegistration {
     return this;
   }
 
-  public setAttribute(tag: string, value: any) {
+  public setAttribute(tag: string, value: any): TypeRegistration {
 
     if (!tag) {
       throw new Error(`You have to specify a tag for your attribute.`);
@@ -172,17 +194,40 @@ export class TypeRegistration {
     return this;
   }
 
-  public hasTags(tagOrTags: string | Array<string>) {
+  public hasTags(...tags: Array<string|Array<string>>) {
 
     const declaredTags = Object.keys(this.settings.tags);
 
-    const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
+    const isTagMissing = tags.some((tag) => {
 
-    const isTagMissing = (<Array<string>>tags).some((tag) => {
+      const argumentType = typeof tag;
 
-      if (declaredTags.indexOf(tag) < 0) {
+      if (Array.isArray(tag)) {
 
-        return true;
+        const isInnerTagMissing = tag.some((tag) => {
+          
+          const hasTags = this.hasTags(tag);
+
+          if (!hasTags) {
+            return true;
+          }
+        });
+
+        if (isInnerTagMissing) {
+          return true;
+        }
+
+      } else if (argumentType === 'string') {
+
+        if (declaredTags.indexOf(tag) < 0) {
+
+          return true;
+        }
+
+      } else {
+
+        throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
       }
     });
 
@@ -206,13 +251,39 @@ export class TypeRegistration {
     return !attributeMissing;
   }
 
-  public overwrite(originalKey: string, overwrittenKey: string) {
+  public overwrite(originalKey: string, overwrittenKey: string): TypeRegistration {
 
     if (this.settings.dependencies.indexOf(originalKey) < 0) {
       throw new Error(`there is no dependency declared for original key '${originalKey}'.`);
     }
 
     this.settings.overwrittenKeys[originalKey] = overwrittenKey;
+
+    return this;
+  }
+
+  public optionalDependencies(...optionalDependencyKeys: Array<string|Array<string>>): TypeRegistration {
+
+    optionalDependencyKeys.forEach((optionalDependencyKey) => {
+
+      const argumentType = typeof optionalDependencyKey;
+
+      if (Array.isArray(optionalDependencyKey)) {
+
+        this.optionalDependencies(optionalDependencyKey);
+
+      } else if (argumentType === 'string') {
+
+        if (this.settings.optionalDependencies.indexOf(optionalDependencyKey) < 0) {
+          this.settings.optionalDependencies.push(optionalDependencyKey);
+        }
+
+      } else {
+
+        throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
+                Supported types: 'Array', 'String'`);
+      }
+    });
 
     return this;
   }

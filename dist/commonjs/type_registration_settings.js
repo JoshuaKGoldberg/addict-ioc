@@ -11,6 +11,7 @@ var TypeRegistrationSettings = (function () {
         this._functionsToBind = [];
         this._lazyKeys = [];
         this._overwrittenKeys = {};
+        this._optionalDependencies = [];
         this._isSingleton = undefined;
         this._wantsInjection = undefined;
         this._isLazy = undefined;
@@ -112,6 +113,13 @@ var TypeRegistrationSettings = (function () {
     Object.defineProperty(TypeRegistrationSettings.prototype, "overwrittenKeys", {
         get: function () {
             return this._overwrittenKeys;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(TypeRegistrationSettings.prototype, "optionalDependencies", {
+        get: function () {
+            return this._optionalDependencies;
         },
         enumerable: true,
         configurable: true

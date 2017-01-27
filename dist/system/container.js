@@ -178,21 +178,23 @@ System.register(["./type_registration"], function (exports_1, context_1) {
                 DependencyInjectionContainer.prototype._ensureRegistrationStarted = function (declaration) {
                     throw new Error("There is no registration present to use '" + declaration + "'.\n        You can start a registration by calling the 'register' method.");
                 };
-                DependencyInjectionContainer.prototype._getRegistration = function (key) {
+                DependencyInjectionContainer.prototype._getRegistration = function (key, isOptional) {
                     var registration = this.registrations[key];
                     if (registration) {
                         return registration;
                     }
-                    throw new Error("There is no registration created for key '" + key + "'.");
+                    if (!isOptional) {
+                        throw new Error("There is no registration created for key '" + key + "'.");
+                    }
                 };
                 DependencyInjectionContainer.prototype.resolve = function (key, injectionArgs, config) {
                     return this._resolve(key, injectionArgs, config);
                 };
-                DependencyInjectionContainer.prototype._resolve = function (key, injectionArgs, config, resolvedKeyHistory, isLazy) {
+                DependencyInjectionContainer.prototype._resolve = function (key, injectionArgs, config, resolvedKeyHistory, isLazy, isOptional) {
                     if (typeof injectionArgs !== 'undefined' && !Array.isArray(injectionArgs)) {
                         throw new Error("Injection args must be of type 'Array'.");
                     }
-                    var registration = this._getRegistration(key);
+                    var registration = this._getRegistration(key, isOptional);
                     if (registration.settings.isObject) {
                         if (isLazy) {
                             return function () {
@@ -369,8 +371,9 @@ System.register(["./type_registration"], function (exports_1, context_1) {
                     resolvedKeyHistory.push(registration.settings.key);
                     dependencies.forEach(function (dependency) {
                         var isLazy = _this._isDependencyLazy(registration, dependency);
+                        var isOptional = _this._isDependencyOptional(registration, dependency);
                         var dependencyKey = _this._getDependencyKeyOverwritten(registration, dependency);
-                        var dependencyInstance = _this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy);
+                        var dependencyInstance = _this._resolve(dependencyKey, undefined, undefined, resolvedKeyHistory, isLazy, isOptional);
                         resolvedDependencies.push(dependencyInstance);
                     });
                     return resolvedDependencies;
@@ -378,6 +381,10 @@ System.register(["./type_registration"], function (exports_1, context_1) {
                 DependencyInjectionContainer.prototype._isDependencyLazy = function (registration, dependency) {
                     var isLazy = registration.settings.isLazy && (registration.settings.lazyKeys.length === 0 || registration.settings.lazyKeys.indexOf(dependency) >= 0);
                     return isLazy;
+                };
+                DependencyInjectionContainer.prototype._isDependencyOptional = function (registration, dependency) {
+                    var isOptional = registration.settings.optionalDependencies.indexOf(dependency) >= 0;
+                    return isOptional;
                 };
                 DependencyInjectionContainer.prototype._getDependencyKeyOverwritten = function (registration, dependency) {
                     var dependencyKey = dependency;

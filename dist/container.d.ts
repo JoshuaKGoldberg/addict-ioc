@@ -24,9 +24,9 @@ export declare class DependencyInjectionContainer {
     private _initializeBaseRegistrations();
     private _initializeRegistrationDeclarations();
     private _ensureRegistrationStarted(declaration);
-    private _getRegistration(key);
+    private _getRegistration(key, isOptional?);
     resolve(key: string, injectionArgs?: Array<any>, config?: any): any;
-    private _resolve(key, injectionArgs?, config?, resolvedKeyHistory?, isLazy?);
+    private _resolve(key, injectionArgs?, config?, resolvedKeyHistory?, isLazy?, isOptional?);
     private _resolveInstance(registration, injectionArgs, config, resolvedKeyHistory?, isLazy?);
     private _mergeArguments(baseArgs, additionalArgs);
     private _mergeConfig(baseConfig, additionalConfig);
@@ -39,6 +39,7 @@ export declare class DependencyInjectionContainer {
     resolveDependencies(key: string): any[];
     private _resolveDependencies(registration, resolvedKeyHistory?);
     private _isDependencyLazy(registration, dependency);
+    private _isDependencyOptional(registration, dependency);
     private _getDependencyKeyOverwritten(registration, dependency);
     private _createInstance(registration, dependencies, injectionArgs);
     private _createInstanceByFactory(type);

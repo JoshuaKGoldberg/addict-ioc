@@ -17,6 +17,7 @@ System.register([], function (exports_1, context_1) {
                     this._functionsToBind = [];
                     this._lazyKeys = [];
                     this._overwrittenKeys = {};
+                    this._optionalDependencies = [];
                     this._isSingleton = undefined;
                     this._wantsInjection = undefined;
                     this._isLazy = undefined;
@@ -118,6 +119,13 @@ System.register([], function (exports_1, context_1) {
                 Object.defineProperty(TypeRegistrationSettings.prototype, "overwrittenKeys", {
                     get: function () {
                         return this._overwrittenKeys;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
+                Object.defineProperty(TypeRegistrationSettings.prototype, "optionalDependencies", {
+                    get: function () {
+                        return this._optionalDependencies;
                     },
                     enumerable: true,
                     configurable: true

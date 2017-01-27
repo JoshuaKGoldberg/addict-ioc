@@ -12,6 +12,7 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
   private _functionsToBind: Array<string> = [];
   private _lazyKeys: Array<string> = [];
   private _overwrittenKeys: any = {};
+  private _optionalDependencies: Array<string> = [];
   private _isSingleton: boolean = undefined;
   private _wantsInjection: boolean = undefined;
   private _isLazy: boolean = undefined;
@@ -97,6 +98,10 @@ export class TypeRegistrationSettings implements ITypeRegistrationSettings {
 
   get overwrittenKeys(): any {
     return this._overwrittenKeys;
+  }
+
+  get optionalDependencies(): any {
+    return this._optionalDependencies;
   }
 
   get isFactory(): boolean {
