@@ -10,25 +10,25 @@ It is designed to be easily extensible for your own needs without complicating t
 
 ```
 * Fluent Declaration Syntax
-* Fully covered by Unit Tests
-* Written in Vanilla ES6 JavaScript
+* Fully covered by unit tests
+* Written in TypeScript (typings included)
   * Lightweight
   * Well structured, easily understandable code
   * Without external dependencies
-* Dependency Injection into
+* Dependency injection into
   * Constructor
   * Properties
   * Methods
 * Discovery by Tags and Key/Value Matching
-* Singleton or Transient Instantiation
+* Singleton or transient instantiation
 * Injection with lazy instantiation
 * Support for factory functions
-* Circular Dependency Detection
-* Configuration Injection
+* Circular dependency detection
+* Configuration injection
 * Subscribe to instances created before they get injected
 * Optional auto-bind methods (e.g.: EventHandler) to instance
 * Validation of registered dependencies
-* Service Locator
+* Service locator
 ```
 
 # Basic Usage
@@ -226,8 +226,8 @@ Both of our test classes are tagged with the same string `caching`. Now let's ta
 const discoveredKeys = container.getKeysByTags('caching');
 
 console.log(discoveredKeys);
-// 'RedisImplementation'
-// 'MemcachedImplementation'
+// 'Redis'
+// 'Memcached'
 ```
 
 By calling the `getKeysByTags`-method we can retrieve all keys tagged with what we are looking for.
@@ -558,6 +558,32 @@ container.resolve('first');
 container.resolve('first');
 // test
 // test
+```
+
+## Optional Dependencies
+
+The `optionalDependencies` declaration allows you to specify registration keys you declared as a dependency to be optional. If an optional dependency cannot be found no error will be thrown - instead `undefined` is injected as a value instead of the dependency instance.
+
+```javascript
+class ExampleType {
+  constructor(specialFeature) {
+    console.log(specialFeature);
+  }
+}
+
+container.register('example', ExampleType)
+  .dependencies('specialFeature')
+  .optionalDependencies('specialFeature');
+
+container.resolve('example');
+// undefined
+
+class SpecialFeature {}
+
+container.register('specialFeature', SpecialFeature);
+
+container.resolve('example');
+// SpecialFeature...
 ```
 
 ## Configuration
