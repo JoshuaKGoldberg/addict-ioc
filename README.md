@@ -9,38 +9,63 @@ It is designed to be easily extensible for your own needs without complicating t
 # Features
 
 ```
-* Fluent Declaration Syntax
-* Fully covered by Unit Tests
-* Written in Vanilla ES6 JavaScript
+* Fluent declaration syntax
+* Fully covered by unit tests
+* Written in vanilla ES6 JavaScript - now ported to TypeScript
   * Lightweight
   * Well structured, easily understandable code
   * Without external dependencies
+  * Typings included
 * Dependency Injection into
   * Constructor
   * Properties
   * Methods
-* Discovery by Tags and Key/Value Matching
-* Singleton or Transient Instantiation
+* Discovery by tags and key/value matching
+* Singleton or transient instantiation
 * Injection with lazy instantiation
 * Support for factory functions
-* Circular Dependency Detection
-* Configuration Injection
+* Circular dependency detection
+* Configuration injection
 * Subscribe to instances created before they get injected
 * Optional auto-bind methods (e.g.: EventHandler) to instance
 * Validation of registered dependencies
-* Service Locator
+* Supports service locator pattern
 ```
 
 # Basic Usage
 
 ## Import Package
 
-The package exports a singleton container to be used all over your application.
+The package exports a the container class under the key `DependencyInjectionContainer`. Ideally you want to instantiate the container only a single time to be used all over your application.
+
+If you`re using the `commonjs` module system this looks like the following:
+
+```javascript
+const DependencyInjectionContainer = require('addict-ioc').DependencyInjectionContainer;
+
+const container = new DependencyInjectionContainer();
+```
+
+If you´re using the `es6` module system it looks like this:
+
+```javascript
+import { DependencyInjectionContainer } from 'addict-ioc');
+
+const container = new DependencyInjectionContainer();
+```
+
+## Customizing Default settings
+
+All of the following settings are there for you without the need to set them manually.
+
+You only need to do this if you want to customize the default settings.
 
 The following example shows how you can override the default settings if needed and what the default settings are.
 
 ```javascript
-const container = require('addict-ioc');
+const DependencyInjectionContainer = require('addict-ioc').DependencyInjectionContainer;
+
+const container = new DependencyInjectionContainer();
 
 container.setDefaults({
   isSingleton: false,
