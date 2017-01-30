@@ -208,7 +208,8 @@ define(["require", "exports", "./type_registration"], function (require, exports
                     };
                 }
                 else {
-                    return this._getInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+                    var newResolvedKeyHistory_1 = resolvedKeyHistory ? resolvedKeyHistory.concat([]) : [];
+                    return this._getInstance(registration, injectionArgs, configUsed, newResolvedKeyHistory_1);
                 }
             }
             if (isLazy) {
@@ -218,7 +219,8 @@ define(["require", "exports", "./type_registration"], function (require, exports
                     return _this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
                 };
             }
-            return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+            var newResolvedKeyHistory = resolvedKeyHistory ? resolvedKeyHistory.concat([]) : [];
+            return this._getNewInstance(registration, injectionArgs, configUsed, newResolvedKeyHistory);
         };
         DependencyInjectionContainer.prototype._mergeArguments = function (baseArgs, additionalArgs) {
             if (additionalArgs && !Array.isArray(additionalArgs)) {

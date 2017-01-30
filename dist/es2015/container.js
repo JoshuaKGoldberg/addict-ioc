@@ -189,7 +189,8 @@ export class DependencyInjectionContainer {
                 };
             }
             else {
-                return this._getInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+                const newResolvedKeyHistory = resolvedKeyHistory ? resolvedKeyHistory.concat([]) : [];
+                return this._getInstance(registration, injectionArgs, configUsed, newResolvedKeyHistory);
             }
         }
         if (isLazy) {
@@ -199,7 +200,8 @@ export class DependencyInjectionContainer {
                 return this._getNewInstance(registration, injectionArgsUsed, lazyConfigUsed, []);
             };
         }
-        return this._getNewInstance(registration, injectionArgs, configUsed, resolvedKeyHistory);
+        const newResolvedKeyHistory = resolvedKeyHistory ? resolvedKeyHistory.concat([]) : [];
+        return this._getNewInstance(registration, injectionArgs, configUsed, newResolvedKeyHistory);
     }
     _mergeArguments(baseArgs, additionalArgs) {
         if (additionalArgs && !Array.isArray(additionalArgs)) {
