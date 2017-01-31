@@ -1,6 +1,6 @@
 {
   "name": "addict-ioc",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A fluent IoC container for JavaScript.",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
@@ -17,7 +17,12 @@
     "fluent",
     "addict"
   ],
-  "author": "Sebastian Meier <sebastian.meier@5minds.de>",
+  "author": "5Minds IT-Solutions GmbH & Co. KG <info@5minds.de>",
+  "maintainer": "Sebastian Meier <sebastian.meier@5minds.de>",
+  "contributors": [
+    "HUF Secure Mobile <info@hufsm.com>",
+    "Martin Möllenbeck <martin.moellenbeck@5minds.de>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/5minds/addict-ioc/issues"
