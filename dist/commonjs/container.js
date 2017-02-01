@@ -525,7 +525,7 @@ var DependencyInjectionContainer = (function () {
             return;
         }
         var configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
-        if (configPropertyDescriptor === undefined || !configPropertyDescriptor.writable) {
+        if (configPropertyDescriptor === undefined || (!configPropertyDescriptor.writable && !configPropertyDescriptor.set)) {
             var instancePrototype = Object.getPrototypeOf(instance);
             throw new Error("The setter for the config property on type '" + instancePrototype.constructor.name + "' is missing.");
         }

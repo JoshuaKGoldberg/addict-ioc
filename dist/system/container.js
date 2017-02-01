@@ -534,7 +534,7 @@ System.register(["./type_registration"], function (exports_1, context_1) {
                         return;
                     }
                     var configPropertyDescriptor = this._getPropertyDescriptor(instance, 'config');
-                    if (configPropertyDescriptor === undefined || !configPropertyDescriptor.writable) {
+                    if (configPropertyDescriptor === undefined || (!configPropertyDescriptor.writable && !configPropertyDescriptor.set)) {
                         var instancePrototype = Object.getPrototypeOf(instance);
                         throw new Error("The setter for the config property on type '" + instancePrototype.constructor.name + "' is missing.");
                     }
