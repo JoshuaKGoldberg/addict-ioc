@@ -706,3 +706,7 @@ The method will throw an error if the validation fails, but it won't stop the va
 _Note: The IoC container validates a circular dependency if there is a `singleton` dependency in the tree. You can adjust this by setting `container.config.circularDependencyCanIncludeSingleton` to false so that the validation fails even if it is no strictly defined circular dependency._
 
 _Note: The IoC container validates a circular dependency if there is a `lazy` dependency in the tree. You can adjust this by setting `container.config.circularDependencyCanIncludeLazy` to false so that the validation fails even if it is no strictly defined circular dependency._
+
+# Supported by
+
+![logo](https://raw.githubusercontent.com/5minds/addict-ioc/master/logo_huf.png)
