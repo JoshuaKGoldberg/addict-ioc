@@ -1,219 +1,35 @@
-import {TypeRegistrationSettings} from './type_registration_settings';
-import {ITypeRegistrationSettings} from './interfaces';
+import {RegistrationKey, Type, ITypeRegistrationSettings, ITypeRegistration} from './interfaces';
 
-export class TypeRegistration {
+export class TypeRegistration<T> implements ITypeRegistration<T> {
 
-  private _settings: ITypeRegistrationSettings = undefined;
+  private _settings: ITypeRegistrationSettings<T>;
 
-  constructor(defaults: ITypeRegistrationSettings, key: string, type: any, isFactory?: boolean) {
-    this._settings = new TypeRegistrationSettings(defaults, key, type, isFactory);
+  constructor(settings: ITypeRegistrationSettings<T>) {
+    this._settings = settings;
   }
 
-  get settings() {
+  public get settings(): ITypeRegistrationSettings<T> {
     return this._settings;
   }
 
-  set settings(value: ITypeRegistrationSettings) {
-    this._settings = value;
-  }
-
-  public dependencies(...args) {
-
-    const resolvedDepedencyConfigurations = [];
-
-    args.forEach((currentDependencyConfiguration) => {
-
-      const dependencyType = typeof currentDependencyConfiguration;
-
-      if (Array.isArray(currentDependencyConfiguration)) {
-
-        Array.prototype.push.apply(resolvedDepedencyConfigurations, currentDependencyConfiguration);
-
-      } else if (dependencyType === 'string' || dependencyType === 'function') {
-
-        resolvedDepedencyConfigurations.push(currentDependencyConfiguration);
-
-      } else {
-
-        throw new Error(`The type '${dependencyType}' of your dependencies declaration is not yet supported.
-                Supported types: 'Array', 'String', 'Function(Type)'`);
-      }
-    });
-
-    this.settings.dependencies = resolvedDepedencyConfigurations;
-
-    return this;
-  }
-
-  public configure(config: any) {
-
-    const configType = typeof config;
-
-    if (configType !== 'function' && configType !== 'object' && configType !== 'string') {
-
-      throw new Error(`The type '${configType}' of your dependencies declaration is not yet supported.
-              Supported types: 'Function', 'Object'`);
-    }
-
+  public configure(config: any): ITypeRegistration<T> {
     this.settings.config = config;
-
     return this;
   }
 
-  public singleton(isSingleton: boolean) {
-
-    this.settings.isSingleton = typeof isSingleton === 'boolean' ? isSingleton : true;
-
+  public dependencies(...dependencies: Array<RegistrationKey>): ITypeRegistration<T> {
+    this.settings.dependencies = dependencies;
     return this;
   }
 
-  public noInjection(injectionDisabled: boolean) {
-
-    if (this.settings.injectInto) {
-      throw new Error(`'noInjection' induces a conflict to the 'injectInto' declaration.`);
-    }
-
-    if (this.settings.isLazy) {
-      throw new Error(`'noInjection' induces a conflict to the 'injectLazy' declaration.`);
-    }
-
-    this.settings.wantsInjection = !!injectionDisabled ? !injectionDisabled : false;
-
+  public singleton(isSingleton: boolean = true): ITypeRegistration<T> {
+    this.settings.isSingleton = isSingleton;
     return this;
   }
 
-  public injectInto(targetFunction: string) {
-
-    if (!this.settings.wantsInjection) {
-      throw new Error(`'injectInto' induces a conflict to the 'noInjection' declaration.`);
-    }
-
-    this.settings.injectInto = targetFunction;
-
+  public injectLazy(...lazyDependencies: Array<RegistrationKey>): ITypeRegistration<T> {
+    this.settings.lazyDependencies = lazyDependencies;
     return this;
   }
 
-  public injectLazy() {
-
-    if (!this.settings.wantsInjection) {
-      throw new Error(`'injectLazy' induces a conflict to the 'noInjection' declaration.`);
-    }
-
-    this.settings.isLazy = true;
-
-    if (arguments.length > 0) {
-
-      Array.prototype.push.apply(this.settings.lazyKeys, arguments);
-    }
-
-    return this;
-  }
-
-  public onNewInstance(key: string, targetFunction: string) {
-
-    const subscription = {
-      key: key,
-      method: targetFunction
-    };
-
-    this.settings.subscriptions['newInstance'].push(subscription);
-
-    return this;
-  }
-
-  public bindFunctions() {
-
-    this.settings.bindFunctions = true;
-
-    if (arguments.length > 0) {
-
-      Array.prototype.push.apply(this.settings.functionsToBind, arguments);
-    }
-
-    return this;
-  }
-
-  public tags(tagOrTags: string | string[]) {
-
-    for (let argumentIndex = 0; argumentIndex < arguments.length; argumentIndex++) {
-
-      const argument = arguments[argumentIndex];
-      const argumentType = typeof argument;
-
-      if (Array.isArray(argument)) {
-
-        argument.forEach((tag) => {
-
-          this.settings.tags[tag] = {};
-        });
-
-      } else if (argumentType === 'string') {
-
-        this.settings.tags[argument] = {};
-
-      } else {
-
-        throw new Error(`The type '${argumentType}' of your tags declaration is not yet supported.
-                Supported types: 'Array', 'String'`);
-      }
-    }
-
-    return this;
-  }
-
-  public setAttribute(tag: string, value: any) {
-
-    if (!tag) {
-      throw new Error(`You have to specify a tag for your attribute.`);
-    }
-
-    this.settings.tags[tag] = value;
-
-    return this;
-  }
-
-  public hasTags(tagOrTags: string | Array<string>) {
-
-    const declaredTags = Object.keys(this.settings.tags);
-
-    const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
-
-    const isTagMissing = (<Array<string>>tags).some((tag) => {
-
-      if (declaredTags.indexOf(tag) < 0) {
-
-        return true;
-      }
-    });
-
-    return !isTagMissing;
-  }
-
-  public hasAttributes(attributes: any) {
-
-    const attributeKeys = Object.keys(attributes);
-
-    const attributeMissing = attributeKeys.some((attribute) => {
-
-      const attributeValue = this.settings.tags[attribute];
-
-      if (attributeValue !== attributes[attribute]) {
-
-        return true;
-      }
-    });
-
-    return !attributeMissing;
-  }
-
-  public overwrite(originalKey: string, overwrittenKey: string) {
-
-    if (this.settings.dependencies.indexOf(originalKey) < 0) {
-      throw new Error(`there is no dependency declared for original key '${originalKey}'.`);
-    }
-
-    this.settings.overwrittenKeys[originalKey] = overwrittenKey;
-
-    return this;
-  }
 }

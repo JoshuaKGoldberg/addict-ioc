@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Master",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/stuff/test.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}/",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+            ],
+            "env": {
+                "NODE_ENV": "development",
+                "CONFIG_FILE": "config",
+                "DEBUG": "*,-babel"
+            },
+            "console": "internalConsole",
+            "sourceMaps": true,
+            "outDir": "${workspaceRoot}/dist"
+        }
+    ]
+}

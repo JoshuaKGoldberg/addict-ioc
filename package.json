@@ -4,6 +4,7 @@
   "description": "A fluent IoC container for JavaScript.",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
+  "ioc_module": "ioc_module.js",
   "directories": {
     "test": "test"
   },
@@ -34,5 +35,9 @@
     "eslint-config-5minds": "0.0.5",
     "eslint-plugin-import": "^1.16.0",
     "gulp": "^3.9.1"
+  },
+  "dependencies": {
+    "deepmerge": "^1.3.2",
+    "object-hash": "^1.1.8"
   }
 }

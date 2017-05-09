@@ -1,70 +1,39 @@
-import { TypeRegistration } from './type_registration';
-import { IRegistrations, IInstances, ITypeRegistrationSettings, IDependencyInjectionContainerConfig, IProvideConfig } from './interfaces';
-export declare class DependencyInjectionContainer {
-    private _config;
-    private _registrations;
-    private _instances;
-    private _externalConfigProvider;
-    constructor(config: IDependencyInjectionContainerConfig);
-    private _getDefaultConfiguration();
+import { IContainer, RegistrationKey, IContainerSettings } from './interfaces';
+import { Registry } from './registry';
+export interface IInstanceCache<T> extends Map<RegistrationKey, IInstanceWithConfigCache<T>> {
+}
+export interface IInstanceWithConfigCache<T> extends Map<string, IInstanceWithInjectionArgsCache<T>> {
+}
+export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>> {
+}
+export declare class Container extends Registry implements IContainer {
+    instances: IInstanceCache<any>;
+    parentContainer: IContainer;
+    settings: IContainerSettings;
+    constructor(parentContainer?: IContainer, settings?: IContainerSettings);
     clear(): void;
-    readonly config: IDependencyInjectionContainerConfig;
-    readonly registrations: IRegistrations;
-    readonly instances: IInstances;
-    readonly externalConfigProvider: IProvideConfig;
-    setConfigProvider(configProvider: IProvideConfig): void;
-    setDefaults(registrationDefaults: ITypeRegistrationSettings): void;
-    private _setDefault(settingKey, value);
-    private _isValidBoolean(settingValue);
-    register(key: string, type: any): TypeRegistration;
-    unregister(key: string): void;
-    private _registerTypeByKey(key, type);
-    registerFactory(key: string, factoryMethod: any): TypeRegistration;
-    registerObject(key: string, object: any): any;
-    private _initializeBaseRegistrations();
-    private _initializeRegistrationDeclarations();
-    private _ensureRegistrationStarted(declaration);
-    private _getRegistration(key);
-    resolve(key: string, injectionArgs?: Array<any>, config?: any): any;
-    private _resolve(key, injectionArgs?, config?, resolvedKeyHistory?, isLazy?);
-    private _resolveInstance(registration, injectionArgs, config, resolvedKeyHistory?, isLazy?);
-    private _mergeArguments(baseArgs, additionalArgs);
-    private _mergeConfig(baseConfig, additionalConfig);
-    private _getInstance(registration, injectionArgs, config, resolvedKeyHistory?);
-    private _getKeysForInstanceConfigurationsByKey(key);
-    private _getKeysForInstanceInjectionArgumentsByKeyAndConfig(key, config);
-    private _getAllInstances(key, config?, injectionArgs?);
-    private _getNewInstance(registration, injectionArgs?, config?, resolvedKeyHistory?);
-    private _bindFunctionsToInstance(registration, instance);
-    resolveDependencies(key: string): any[];
-    private _resolveDependencies(registration, resolvedKeyHistory?);
-    private _isDependencyLazy(registration, dependency);
-    private _getDependencyKeyOverwritten(registration, dependency);
-    private _createInstance(registration, dependencies, injectionArgs);
-    private _createInstanceByFactory(type);
-    private _createInstanceByFactoryWithInjection(type, argumentsToBeInjected);
-    private _createInstanceByConstructor(type);
-    private _createInstanceByConstructorWithInjection(type, argumentsToBeInjected);
-    private _injectDependenciesIntoInstance(registration, instance, argumentsToBeInjected);
-    private _getPropertyDescriptor(type, key);
-    private _injectDependenciesIntoFunction(instance, targetFunction, argumentsToBeInjected);
-    private _injectDependenciesIntoProperty(instance, property, argumentsToBeInjected);
-    private _getSubscriberRegistrations(key, subscriptionKey);
-    private _getSubscriptionFromRegistrationByKey(registration, subscriptionKey, key);
-    private _callSubscribers(registration, subscriptionKey, params);
-    private _createMissingSubscriber(subscriberRegistration);
-    private _callSubscriber(subscribedRegistration, subscriptionKey, subscriberRegistration, subscribedInstance, params);
+    initialize(): void;
+    resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
+    private _mergeArguments(existingArgs?, newArgs?);
+    private _mergeConfigs(existingConfig, newConfig);
+    private _resolve<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveLazy<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveConfig<T>(registration, config);
+    private _resolveInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getNewInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getNewInstanceResolutionContext<T>(registration, resolutionContext);
+    private _cloneResolutionContext<T>(resolutionContext);
+    private _validateResolutionContext<T>(resolutionContext);
+    private _resolveDependencies<T>(registration, resolutionContext);
+    private _resolveDependency<T>(registration, dependencyKey, resolutionContext);
+    private _isDependencyLazy<T>(registration, dependencyKey);
+    private _createInstance<T>(registration, dependencies, injectionArgs?);
+    private _getResolver<T>(registration);
     private _configureInstance(instance, config);
-    private _cacheInstance(key, instance, injectionArgs, config);
-    private _getConfig(key);
-    private _resolveConfig(key, config);
-    validateDependencies(key?: any): void;
-    private _validateDependencies(registrationKeys, parentRegistrationHistory?);
-    private _historyHasCircularBreak(parentRegistrationHistory, dependencyRegistration);
-    private _validateOverwrittenKeys(registration);
-    private _validateOverwrittenKey(registration, overwrittenKey, errors);
-    private _squashArgumentsToArray(args);
-    getKeysByTags(...args: any[]): any[];
-    getKeysByAttributes(attributes: Array<any>): any[];
-    isRegistered(key: string): boolean;
+    private _getCachedInstances<T>(registration, injectionArgs, config);
+    private _cacheInstance<T>(registration, instance, injectionArgs, config);
+    private _hashConfig(config);
+    private _hashInjectionArgs(injectionArgs);
+    private _hashObject(object);
 }

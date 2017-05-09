@@ -3,7 +3,10 @@
 const gulptraum = require('gulptraum');
 
 const buildSystemConfig = {
-  packageName: 'addict-ioc'
+  packageName: 'addict-ioc',
+  // paths: {
+  //   source: 'src/',
+  // },
 };
 
 const buildSystem = new gulptraum.BuildSystem(buildSystemConfig);
