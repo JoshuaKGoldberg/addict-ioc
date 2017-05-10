@@ -223,3 +223,34 @@ export class Resolver implements ITypeResolver {
   }
 
 }
+
+export class WebpackResolver extends Resolver {
+
+  public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
+
+    const type = registration.settings.type;
+
+    if (type) {
+      return type;
+    }
+
+    try {
+
+      if (!registration.settings.module) {
+        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
+      }
+
+      const module = require(`${registration.settings.module}.js`);
+
+      if (!module) {
+        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
+      }
+
+      return this._extractTypeFromModule(module, registration);
+
+    } catch (error) {
+
+      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
+    }
+  }
+}

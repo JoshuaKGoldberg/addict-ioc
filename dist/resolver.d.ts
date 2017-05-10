@@ -25,3 +25,6 @@ export declare class Resolver implements ITypeResolver {
     protected _injectDependenciesIntoFunction(instance: any, targetFunction: any, argumentsToBeInjected: Array<any>): void;
     protected _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>): void;
 }
+export declare class WebpackResolver extends Resolver {
+    resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
+}

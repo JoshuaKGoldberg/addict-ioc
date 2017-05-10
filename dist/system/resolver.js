@@ -1,5 +1,10 @@
 System.register(["./utils"], function (exports_1, context_1) {
     "use strict";
+    var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
     var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
         return new (P || (P = Promise))(function (resolve, reject) {
             function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -36,7 +41,7 @@ System.register(["./utils"], function (exports_1, context_1) {
         }
     };
     var __moduleName = context_1 && context_1.id;
-    var utils_1, Resolver;
+    var utils_1, Resolver, WebpackResolver;
     return {
         setters: [
             function (utils_1_1) {
@@ -204,6 +209,33 @@ System.register(["./utils"], function (exports_1, context_1) {
                 return Resolver;
             }());
             exports_1("Resolver", Resolver);
+            WebpackResolver = (function (_super) {
+                __extends(WebpackResolver, _super);
+                function WebpackResolver() {
+                    return _super !== null && _super.apply(this, arguments) || this;
+                }
+                WebpackResolver.prototype.resolveType = function (container, registration) {
+                    var type = registration.settings.type;
+                    if (type) {
+                        return type;
+                    }
+                    try {
+                        if (!registration.settings.module) {
+                            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": module is missing");
+                        }
+                        var module_3 = require(registration.settings.module + ".js");
+                        if (!module_3) {
+                            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": could not load module");
+                        }
+                        return this._extractTypeFromModule(module_3, registration);
+                    }
+                    catch (error) {
+                        throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": " + error);
+                    }
+                };
+                return WebpackResolver;
+            }(Resolver));
+            exports_1("WebpackResolver", WebpackResolver);
         }
     };
 });
