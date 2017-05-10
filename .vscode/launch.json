@@ -5,7 +5,7 @@
             "name": "Launch Master",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/stuff/test.js",
+            "program": "${workspaceRoot}/stuff/inject.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}/",

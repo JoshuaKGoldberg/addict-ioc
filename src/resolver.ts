@@ -1,25 +1,91 @@
-import {IContainer, ITypeRegistration, IRegistrationSettings, Type, TypeConfig, ITypeResolver} from './interfaces';
+import {IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, ITypeResolver} from './interfaces';
 import {getPropertyDescriptor} from './utils';
 
-// export class AsyncResolver implements ITypeResolver {
-
-//   public async resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>> {
-//     const module = await import(registration.settings.module);
-//     return module[registration.settings.key];
-//   }
-// }
+// we need this workaround until TypeScript supports async import() syntax
+declare global {
+  interface System {
+    import (request: string): Promise<any>
+  }
+  var System: System
+}
 
 export class Resolver implements ITypeResolver {
 
   public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
-    return registration.settings.type;
+
+    const type = registration.settings.type;
+
+    if (type) {
+      return type;
+    }
+
+    try {
+
+      if (!registration.settings.module) {
+        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
+      }
+
+      const module = require(registration.settings.module);
+
+      if (!module) {
+        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
+      }
+
+      return this._extractTypeFromModule(module, registration);
+
+    } catch (error) {
+
+      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
+    }
+  }
+
+  public async resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>> {
+
+    if (registration.settings.type) {
+
+      return registration.settings.type;
+
+    } else {
+      
+      try {
+
+        if (!registration.settings.module) {
+          throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
+        }
+
+        const module = await System.import(registration.settings.module);
+
+        if (!module) {
+          throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
+        }
+        
+        return this._extractTypeFromModule(module, registration);
+
+      } catch (error) {
+
+        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
+      }
+    }
   }
 
   public resolveConfig(config: TypeConfig): any {
     return config;
   }
 
-  private _configureInstance(instance: any, config: any) {
+  protected _extractTypeFromModule<T>(module: any, registration: ITypeRegistration<T>): Type<T> {
+
+    const type = module[registration.settings.key];
+
+    if (!type) {
+      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: type not found in module`);
+    }
+
+    registration.settings.type = type;
+    
+    return type;
+  }
+
+  protected _configureInstance(instance: any, config: any) {
 
     if (!config) {
       return;
@@ -36,78 +102,85 @@ export class Resolver implements ITypeResolver {
     instance.config = config;
   }
 
-  public createInstance<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>) {
-    return this._createInstance(registration, dependencies, injectionArgs);
+  public createObject<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    return this._createObject(registration, dependencies, injectionArgs);
   }
 
-  private _createInstance<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs: Array<any>): T {
-
-    let instance: T;
-
-    let type = registration.settings.type;
-
+  protected _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    
+    const object = registration.settings.object;
     const argumentsToBeInjected = dependencies.concat(injectionArgs);
 
-    if (typeof type !== 'function') {
+    if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+      this._injectDependenciesIntoInstance(registration.settings, object, argumentsToBeInjected);
+    }
 
-      instance = type;
+    return object;
+  }
 
-      if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+  public createFactory<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    return this._createFactory(registration, dependencies, injectionArgs);
+  }
 
-        this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
-      }
+  protected _createFactory<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    
+    const argumentsToBeInjected = dependencies.concat(injectionArgs);
 
-    } else if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-
-      if (registration.settings.isFactory) {
-
-        instance = this._createInstanceByFactoryWithInjection(type, argumentsToBeInjected);
-
-      } else {
-
-        instance = this._createInstanceByConstructorWithInjection(type, argumentsToBeInjected);
-      }
-
-    } else {
-      if (registration.settings.isFactory) {
-
-        instance = this._createInstanceByFactory(type);
-
-      } else {
-
-        instance = this._createInstanceByConstructor(type);
-      }
-
-      if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
-
-        this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
-      }
+    if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
+      return this._createInstanceByFactoryWithInjection<T>(registration.settings.factory, argumentsToBeInjected);
+    } 
+    
+    const instance = this._createInstanceByFactory<T>(registration.settings.factory);
+    
+    if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+      this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
     }
 
     return instance;
   }
 
-  private _createInstanceByFactory(type: any) {
-    const instance = type();
+  public createInstance<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    return this._createInstance(registration, dependencies, injectionArgs);
+  }
+
+  protected _createInstance<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs: Array<any>): T {
+
+    const argumentsToBeInjected = dependencies.concat(injectionArgs);
+
+    if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
+      return this._createInstanceByConstructorWithInjection<T>(registration.settings.factory, argumentsToBeInjected);
+    } 
+    
+    const instance = this._createInstanceByConstructor<T>(registration.settings.type);
+    
+    if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
+      this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
+    }
+
     return instance;
   }
 
-  private _createInstanceByFactoryWithInjection(type: any, argumentsToBeInjected: Array<any>) {
-    const instance = type.apply(undefined, argumentsToBeInjected);
+  protected _createInstanceByFactory<T>(factoryFunction: any): T {
+    const instance = factoryFunction();
     return instance;
   }
 
-  private _createInstanceByConstructor(type) {
+  protected _createInstanceByFactoryWithInjection<T>(factoryFunction: any, argumentsToBeInjected: Array<any>): T {
+    const instance = factoryFunction.apply(undefined, argumentsToBeInjected);
+    return instance;
+  }
+
+  protected _createInstanceByConstructor<T>(type): T {
     const instance = new type();
     return instance;
   }
 
-  private _createInstanceByConstructorWithInjection(type, argumentsToBeInjected) {
+  protected _createInstanceByConstructorWithInjection<T>(type, argumentsToBeInjected): T {
     const instance = new type(...argumentsToBeInjected);
     return instance;
   }
 
-  private _injectDependenciesIntoInstance(registrationSettings: IRegistrationSettings, instance: any, argumentsToBeInjected: Array<any>) {
+  protected _injectDependenciesIntoInstance(registrationSettings: IRegistrationSettings, instance: any, argumentsToBeInjected: Array<any>): void {
 
     let propertySource;
 
@@ -141,11 +214,11 @@ export class Resolver implements ITypeResolver {
     }
   }
 
-  private _injectDependenciesIntoFunction(instance: any, targetFunction: any, argumentsToBeInjected: Array<any>) {
+  protected _injectDependenciesIntoFunction(instance: any, targetFunction: any, argumentsToBeInjected: Array<any>): void {
     targetFunction.apply(targetFunction, argumentsToBeInjected);
   }
 
-  private _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>) {
+  protected _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>): void {
     instance[property] = argumentsToBeInjected;
   }
 

@@ -5,17 +5,22 @@ export interface IRegistrationsCache {
 export declare class Registry implements IRegistry {
     registrations: IRegistrationsCache;
     settings: IRegistrationSettings;
-    constructor(settings: IRegistrationSettings);
+    protected parentRegistry: IRegistry;
+    constructor(settings: IRegistrationSettings, parentRegistry?: IRegistry);
     clear(): void;
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport?: Array<RegistrationKey>): Array<IRegistrationSettings>;
     autoRegisterModules(): void;
     registerModule(moduleName: string): IRegistrator;
+    createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T>;
     registerObject(key: RegistrationKey, object: any): IRegistration;
+    registerFactory(key: RegistrationKey, factoryMethod: any): IRegistration;
     unregister<T>(key: RegistrationKey): IRegistration;
-    protected createRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
-    protected getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
+    protected createTypeRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
+    protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
+    protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
+    getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
     protected getRegistrationKeys(): Array<string>;
     protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void;
     protected deleteRegistration(key: RegistrationKey): void;

@@ -1,5 +1,6 @@
 import {IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, ITypeResolver, Type, IRegistry, IRegistrator} from './interfaces';
 import {TypeRegistration} from './type_registration';
+import {TypeRegistrationSettings} from './type_registration_settings';
 import {RegistrationContext} from './registration_context';
 
 export interface IRegistrationsCache {
@@ -10,9 +11,11 @@ export class Registry implements IRegistry {
 
   public registrations: IRegistrationsCache = {};
   public settings: IRegistrationSettings;
+  protected parentRegistry: IRegistry; 
 
-  constructor(settings: IRegistrationSettings) {
+  constructor(settings: IRegistrationSettings, parentRegistry?: IRegistry) {
     this.settings = settings;
+    this.parentRegistry = parentRegistry;
   }
 
   public clear(): void {
@@ -64,18 +67,28 @@ export class Registry implements IRegistry {
     return new RegistrationContext(this, registrationSettings);
   }
 
+  public createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator {
+    return new RegistrationContext(this, registrationSettings);
+  }
+
   public register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T> {
-    const registration = this.createRegistration<T>(key, type);
+    const registration = this.createTypeRegistration<T>(key, type);
     this.cacheRegistration(key, registration);
     return registration;
   }
 
   public registerObject(key: RegistrationKey, object: any): IRegistration {
     const registrationSettings = Object.assign({}, this.settings.defaults);
-    Object.assign(registrationSettings, {
-      isObject: true
-    })
-    const registration = this.createRegistration(key, object, registrationSettings);
+    registrationSettings.isObject = true;
+    const registration = this.createObjectRegistration(key, object, registrationSettings);
+    this.cacheRegistration(key, registration);
+    return registration;
+  }  
+  
+  public registerFactory(key: RegistrationKey, factoryMethod: any): IRegistration {
+    const registrationSettings = Object.assign({}, this.settings.defaults);
+    registrationSettings.isFactory = true;
+    const registration = this.createFactoryRegistration(key, factoryMethod, registrationSettings);
     this.cacheRegistration(key, registration);
     return registration;
   }
@@ -86,16 +99,39 @@ export class Registry implements IRegistry {
     return registration;
   }
 
-  protected createRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
-    const settings: ITypeRegistrationSettings<T> = registrationSettings || Object.assign({}, this.settings.defaults);
+  protected createTypeRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
+    const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
     settings.key = key;
     settings.type = type;
     const registration = new TypeRegistration(settings);
     return registration;
   }
 
-  protected getRegistration<T>(key: RegistrationKey): ITypeRegistration<T> {
-    return this.registrations[key];
+  protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
+    const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
+    settings.key = key;
+    settings.object = object;
+    const registration = new TypeRegistration(settings);
+    return registration;
+  }
+
+  protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
+    const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
+    settings.key = key;
+    settings.factory = factoryFunction;
+    const registration = new TypeRegistration(settings);
+    return registration;
+  }
+
+  public getRegistration<T>(key: RegistrationKey): ITypeRegistration<T> {
+
+    const registration = this.registrations[key];
+
+    if (!registration && this.parentRegistry) {
+      return this.parentRegistry.getRegistration<T>(key);
+    }
+
+    return registration;
   }
 
   protected getRegistrationKeys(): Array<string> {

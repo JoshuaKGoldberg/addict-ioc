@@ -1,4 +1,4 @@
-System.register(["./container", "./default_settings", "./registration_context", "./registration_settings", "./registry", "./resolution_context", "./resolver", "./type_registration", "./utils"], function (exports_1, context_1) {
+System.register(["./container", "./default_settings", "./registration_context", "./registry", "./resolution_context", "./resolver", "./type_registration", "./type_registration_settings", "./utils"], function (exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     function exportStar_1(m) {
@@ -19,9 +19,6 @@ System.register(["./container", "./default_settings", "./registration_context", 
             function (registration_context_1_1) {
                 exportStar_1(registration_context_1_1);
             },
-            function (registration_settings_1_1) {
-                exportStar_1(registration_settings_1_1);
-            },
             function (registry_1_1) {
                 exportStar_1(registry_1_1);
             },
@@ -33,6 +30,9 @@ System.register(["./container", "./default_settings", "./registration_context", 
             },
             function (type_registration_1_1) {
                 exportStar_1(type_registration_1_1);
+            },
+            function (type_registration_settings_1_1) {
+                exportStar_1(type_registration_settings_1_1);
             },
             function (utils_1_1) {
                 exportStar_1(utils_1_1);

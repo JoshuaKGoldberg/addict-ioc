@@ -4,6 +4,7 @@ var ResolutionContext = (function () {
         this.registration = registration;
         this.history = [];
         this.owners = {};
+        this.isDependencyOwned = false;
     }
     return ResolutionContext;
 }());

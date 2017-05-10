@@ -10,6 +10,7 @@ System.register([], function (exports_1, context_1) {
                     this.registration = registration;
                     this.history = [];
                     this.owners = {};
+                    this.isDependencyOwned = false;
                 }
                 return ResolutionContext;
             }());

@@ -5,6 +5,7 @@ define(["require", "exports"], function (require, exports) {
             this.registration = registration;
             this.history = [];
             this.owners = {};
+            this.isDependencyOwned = false;
         }
         return ResolutionContext;
     }());

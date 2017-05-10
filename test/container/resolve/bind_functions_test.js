@@ -2,7 +2,9 @@
 
 const should = require('should');
 
-const container = require('./../../../lib/container');
+const Container = require('./../../../dist/commonjs').Container;
+
+const container = new Container();
 
 describe('Dependency Injection Container Bind Functions To Instance Test', function describeCallback() {
 

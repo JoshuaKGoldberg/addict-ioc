@@ -5,11 +5,11 @@ function __export(m) {
 __export(require("./container"));
 __export(require("./default_settings"));
 __export(require("./registration_context"));
-__export(require("./registration_settings"));
 __export(require("./registry"));
 __export(require("./resolution_context"));
 __export(require("./resolver"));
 __export(require("./type_registration"));
+__export(require("./type_registration_settings"));
 __export(require("./utils"));
 
 //# sourceMappingURL=index.js.map

@@ -5,11 +5,19 @@ var RegistrationContext = (function () {
     }
     RegistrationContext.prototype.register = function (key, type) {
         var registration = this.registry.register(key, type);
-        Object.assign(registration.settings, this.registrationSettings);
+        this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
+        return registration;
+    };
+    RegistrationContext.prototype.registerObject = function (key, object) {
+        var registration = this.registry.registerObject(key, object);
+        this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
         return registration;
     };
     RegistrationContext.prototype.unregister = function (key) {
         return this.registry.unregister(key);
+    };
+    RegistrationContext.prototype.applyRegistrationTemplate = function (registrationSettings, template) {
+        return Object.assign(registrationSettings, this.registrationSettings);
     };
     return RegistrationContext;
 }());

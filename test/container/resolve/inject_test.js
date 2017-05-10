@@ -2,7 +2,9 @@
 
 const should = require('should');
 
-const container = require('./../../../lib/container');
+const Container = require('./../../../dist/commonjs').Container;
+
+const container = new Container();
 
 const TestType = class TestType {
   constructor() {}
@@ -198,7 +200,7 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
   });
 });
 
-it('should inject dependencies mixed with args', function testCallback() {
+it.only('should inject dependencies mixed with args', function testCallback() {
   const key = 'test';
   const dependencyKey = 'dependency';
   const config = {
