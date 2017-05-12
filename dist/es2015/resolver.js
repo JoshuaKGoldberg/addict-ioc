@@ -1,8 +1,3 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -43,62 +38,19 @@ var Resolver = (function () {
     function Resolver() {
     }
     Resolver.prototype.resolveType = function (container, registration) {
-        var type = registration.settings.type;
-        if (type) {
-            return type;
-        }
-        try {
-            if (!registration.settings.module) {
-                throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": module is missing");
-            }
-            var module_1 = require(registration.settings.module);
-            if (!module_1) {
-                throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": could not load module");
-            }
-            return this._extractTypeFromModule(module_1, registration);
-        }
-        catch (error) {
-            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": " + error);
-        }
+        return registration.settings.type;
     };
     Resolver.prototype.resolveTypeAsync = function (container, registration) {
         return __awaiter(this, void 0, void 0, function () {
-            var module_2, error_1;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (!registration.settings.type) return [3 /*break*/, 1];
-                        return [2 /*return*/, registration.settings.type];
-                    case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        if (!registration.settings.module) {
-                            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": module is missing");
-                        }
-                        return [4 /*yield*/, System.import(registration.settings.module)];
-                    case 2:
-                        module_2 = _a.sent();
-                        if (!module_2) {
-                            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": could not load module");
-                        }
-                        return [2 /*return*/, this._extractTypeFromModule(module_2, registration)];
-                    case 3:
-                        error_1 = _a.sent();
-                        throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": " + error_1);
-                    case 4: return [2 /*return*/];
-                }
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        resolve(registration.settings.type);
+                    })];
             });
         });
     };
     Resolver.prototype.resolveConfig = function (config) {
         return config;
-    };
-    Resolver.prototype._extractTypeFromModule = function (module, registration) {
-        var type = module[registration.settings.key];
-        if (!type) {
-            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": type not found in module");
-        }
-        registration.settings.type = type;
-        return type;
     };
     Resolver.prototype._configureInstance = function (instance, config) {
         if (!config) {
@@ -199,32 +151,5 @@ var Resolver = (function () {
     return Resolver;
 }());
 export { Resolver };
-var WebpackResolver = (function (_super) {
-    __extends(WebpackResolver, _super);
-    function WebpackResolver() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    WebpackResolver.prototype.resolveType = function (container, registration) {
-        var type = registration.settings.type;
-        if (type) {
-            return type;
-        }
-        try {
-            if (!registration.settings.module) {
-                throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": module is missing");
-            }
-            var module_3 = require(registration.settings.module + ".js");
-            if (!module_3) {
-                throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": could not load module");
-            }
-            return this._extractTypeFromModule(module_3, registration);
-        }
-        catch (error) {
-            throw new Error("Cannot resolve missing type for key " + registration.settings.key + ": " + error);
-        }
-    };
-    return WebpackResolver;
-}(Resolver));
-export { WebpackResolver };
 
 //# sourceMappingURL=resolver.js.map

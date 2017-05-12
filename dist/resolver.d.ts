@@ -9,7 +9,6 @@ export declare class Resolver implements ITypeResolver {
     resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
     resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
     resolveConfig(config: TypeConfig): any;
-    protected _extractTypeFromModule<T>(module: any, registration: ITypeRegistration<T>): Type<T>;
     protected _configureInstance(instance: any, config: any): void;
     createObject<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
     protected _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
@@ -24,7 +23,4 @@ export declare class Resolver implements ITypeResolver {
     protected _injectDependenciesIntoInstance(registrationSettings: IRegistrationSettings, instance: any, argumentsToBeInjected: Array<any>): void;
     protected _injectDependenciesIntoFunction(instance: any, targetFunction: any, argumentsToBeInjected: Array<any>): void;
     protected _injectDependenciesIntoProperty(instance: any, property: string, argumentsToBeInjected: Array<any>): void;
-}
-export declare class WebpackResolver extends Resolver {
-    resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
 }

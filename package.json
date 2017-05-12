@@ -1,10 +1,9 @@
 {
   "name": "addict-ioc",
-  "version": "2.0.0-pre2",
+  "version": "2.0.0-pre3",
   "description": "A fluent IoC container for JavaScript.",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
-  "ioc_module": "ioc_module.js",
   "directories": {
     "test": "test"
   },

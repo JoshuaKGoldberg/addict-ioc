@@ -12,77 +12,17 @@ declare global {
 export class Resolver implements ITypeResolver {
 
   public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
-
-    const type = registration.settings.type;
-
-    if (type) {
-      return type;
-    }
-
-    try {
-
-      if (!registration.settings.module) {
-        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
-      }
-
-      const module = require(registration.settings.module);
-
-      if (!module) {
-        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
-      }
-
-      return this._extractTypeFromModule(module, registration);
-
-    } catch (error) {
-
-      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
-    }
+    return registration.settings.type;
   }
 
   public async resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>> {
-
-    if (registration.settings.type) {
-
-      return registration.settings.type;
-
-    } else {
-      
-      try {
-
-        if (!registration.settings.module) {
-          throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
-        }
-
-        const module = await System.import(registration.settings.module);
-
-        if (!module) {
-          throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
-        }
-        
-        return this._extractTypeFromModule(module, registration);
-
-      } catch (error) {
-
-        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
-      }
-    }
+    return new Promise<Type<T>>((resolve, reject) => {
+      resolve(registration.settings.type);
+    });
   }
 
   public resolveConfig(config: TypeConfig): any {
     return config;
-  }
-
-  protected _extractTypeFromModule<T>(module: any, registration: ITypeRegistration<T>): Type<T> {
-
-    const type = module[registration.settings.key];
-
-    if (!type) {
-      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: type not found in module`);
-    }
-
-    registration.settings.type = type;
-    
-    return type;
   }
 
   protected _configureInstance(instance: any, config: any) {
@@ -222,35 +162,4 @@ export class Resolver implements ITypeResolver {
     instance[property] = argumentsToBeInjected;
   }
 
-}
-
-export class WebpackResolver extends Resolver {
-
-  public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
-
-    const type = registration.settings.type;
-
-    if (type) {
-      return type;
-    }
-
-    try {
-
-      if (!registration.settings.module) {
-        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: module is missing`);
-      }
-
-      const module = require(`${registration.settings.module}.js`);
-
-      if (!module) {
-        throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: could not load module`);
-      }
-
-      return this._extractTypeFromModule(module, registration);
-
-    } catch (error) {
-
-      throw new Error(`Cannot resolve missing type for key ${registration.settings.key}: ${error}`);
-    }
-  }
 }
