@@ -2,7 +2,8 @@
 
 const should = require('should');
 
-const container = require('./../../lib/container');
+const Container = require('./../../dist/commonjs').Container;
+const container = new Container();
 
 class TestType {}
 
@@ -42,7 +43,7 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it('should throw error if no dependency for overwritten key is declared', function testCallback(next) {
+  it('should now throw error if original dependency is missing but overwritten dependency exists', function testCallback(next) {
 
     try {
       const key = 'test';
@@ -55,9 +56,10 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
       container.register(key, TestType)
         .overwrite(key, secondKey);
 
-    } catch (error) {
-      should(error).not.be.null();
       next();
+
+    } catch (error) {
+      next(error);
     }
   });
 
@@ -194,7 +196,7 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it('should not throw error on circular dependency that includes a singleton', function testCallback() {
+  it.only('should not throw error on circular dependency that includes a singleton', function testCallback() {
     const key = 'test';
     const secondKey = 'second';
 

@@ -5,7 +5,7 @@
             "name": "Launch Master",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/stuff/inject.js",
+            "program": "${workspaceRoot}/stuff/circular.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}/",

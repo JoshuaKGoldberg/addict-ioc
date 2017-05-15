@@ -13,9 +13,17 @@ System.register(["./resolver"], function (exports_1, context_1) {
                 defaults: {
                     isSingleton: false,
                     wantsInjection: true,
+                    dependencies: [],
+                    lazyDependencies: [],
+                    lazyPromiseDependencies: [],
+                    ownedDependencies: [],
+                    functionsToBind: [],
+                    overwrittenKeys: {}
                 },
                 resolver: new resolver_1.Resolver(),
                 containerRegistrationKey: 'container',
+                circularDependencyCanIncludeSingleton: true,
+                circularDependencyCanIncludeLazy: true,
             });
         }
     };

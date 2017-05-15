@@ -403,15 +403,166 @@ export class Container extends Registry implements IContainer {
   }
 
   public validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError> {
-    throw new Error('not implemented');
+    const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
+    const errors = this._validateDependencies(validationKeys);
+    
+    if (errors.length > 0) {
+      console.log('------------------');
+      console.log(errors);
+      console.log('------------------');
+      
+      throw new Error('fuck');
+    }
+
+    return errors;
   }
 
-  private _validateDependencies(keys: Array<RegistrationKey>): Array<IValidationError> {
-    throw new Error('not implemented');
+
+  private _validateDependencies(keys: Array<RegistrationKey>, history: Array<IRegistration> = []): Array<IValidationError> {
+    
+    const errors = [];
+
+    keys.forEach((key) => {
+
+      const registration = this.getRegistration(key);
+
+      if (history.indexOf(registration) > 0) {
+
+        const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
+        
+        const validationError = this._createValidationError(registration, history, errorMessage);
+        errors.push(validationError);
+
+        return;
+      }
+
+      history.push(registration);
+
+      if (!registration.settings.dependencies) {
+        return;
+      }
+
+      for (const dependencyKey of registration.settings.dependencies) {
+        
+        const dependency = this.getRegistration(dependencyKey);
+
+        const deepErrors = this._validateDependency(registration, dependency, history);
+        Array.prototype.push.apply(errors, deepErrors);
+      }
+
+    });
+
+    return errors;
   }
-
-
   
+
+  private _validateDependency(registration: IRegistration, dependency: IRegistration, history: Array<IRegistration>) {
+
+    const newRegistrationHistory = [];
+    Array.prototype.push.apply(newRegistrationHistory, history);
+
+    const errors = [];
+    const dependencyKey = dependency.settings.key;
+    const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependency.settings.key);
+
+    if (!dependency) {
+
+      let errorMessage;
+
+      if (dependencyKey === dependencyKeyOverwritten) {
+        errorMessage = `dependency '${dependencyKey}' overwritten with key '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`
+      } else {
+        errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`
+      }
+      
+      const validationError = this._createValidationError(registration, newRegistrationHistory, errorMessage);
+
+      errors.push(validationError);
+
+    } else if (dependency.settings.dependencies) {
+
+      const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration, newRegistrationHistory);
+      Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
+
+      const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
+
+      if (!circularBreakFound) {
+        const deepErrors = this._validateDependencies([dependency.settings.key], newRegistrationHistory);
+        Array.prototype.push.apply(errors, deepErrors);
+      }
+    }
+
+    return errors;
+  }
+
+  private _historyHasCircularBreak(history: Array<IRegistration>, dependency: IRegistration) {
+
+    return history.some((parentRegistration) => {
+
+      const parentSettings = parentRegistration.settings;
+
+      if (this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
+        return true;
+      }
+
+      if (this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies.length > 0) {
+
+        if (parentSettings.lazyDependencies.length === 0 ||
+          parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
+
+          return true;
+        }
+      }
+    });
+  }
+
+  private _createValidationError(registration: IRegistration, history: Array<IRegistration>, errorMessage: string): IValidationError {
+
+      const validationError: IValidationError = {
+        registrationStack: history,
+        currentRegistration: registration,
+        errorMessage: errorMessage
+      };
+
+      return validationError;
+  }
+
+  private _validateOverwrittenKeys(registration: IRegistration, history: Array<IRegistration>): Array<IValidationError> {
+
+    const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
+
+    const errors = [];
+
+    overwrittenKeys.forEach((overwrittenKey) => {
+      const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey, history);
+      Array.prototype.push.apply(errors, keyErrors);
+    });
+
+    return errors;
+  }
+
+  private _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey, history: Array<IRegistration>): Array<IValidationError> {
+
+    const errors = [];
+
+    if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
+      const errorMessage = `No dependency for overwritten key '${overwrittenKey}' has been declared on registration for key '${registration.settings.key}'.`;
+      const validationError = this._createValidationError(registration, history, errorMessage);
+      errors.push(validationError);
+    }
+
+    const overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
+    const overwrittenKeyRegistration = this.getRegistration(overwrittenKeyValue);
+
+    if (!overwrittenKeyRegistration) {
+      const errorMessage = `Registration for overwritten key '${overwrittenKey}' declared on registration for key '${registration.settings.key}' is missing.`;
+      const validationError = this._createValidationError(registration, history, errorMessage);
+      errors.push(validationError);
+    }
+
+    return errors;
+  }
+
 
   private _hashConfig(config: any): string {
     return this._hashObject(config);

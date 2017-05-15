@@ -1,7 +1,6 @@
 'use strict';
 
 const Container = require('./../dist/commonjs').Container;
-
 const container = new Container();
 
 const registrationSettings = [{
@@ -10,7 +9,15 @@ const registrationSettings = [{
   isSingleton: true,
 }];
 
+const template = container.createRegistrationTemplate(registrationSettings[0]);
+
+template.register()
+
 container.importRegistrations(registrationSettings);
+
+const template = container.registerModule('addict-ioc');
+  .register('Container', Container)
+  .singleton();
 
 container.resolveAsync('Container')
   .then((instance) => {

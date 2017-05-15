@@ -35,7 +35,12 @@ export declare class Container extends Registry implements IContainer {
     private _getCachedInstances<T>(registration, injectionArgs, config);
     private _cacheInstance<T>(registration, instance, injectionArgs, config);
     validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
-    private _validateDependencies(keys);
+    private _validateDependencies(keys, history?);
+    private _validateDependency(registration, dependency, history);
+    private _historyHasCircularBreak(history, dependency);
+    private _createValidationError(registration, history, errorMessage);
+    private _validateOverwrittenKeys(registration, history);
+    private _validateOverwrittenKey(registration, overwrittenKey, history);
     private _hashConfig(config);
     private _hashInjectionArgs(injectionArgs);
     private _hashObject(object);

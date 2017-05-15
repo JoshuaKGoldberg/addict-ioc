@@ -379,10 +379,117 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             for (var _i = 0; _i < arguments.length; _i++) {
                 keys[_i] = arguments[_i];
             }
-            throw new Error('not implemented');
+            var validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
+            var errors = this._validateDependencies(validationKeys);
+            if (errors.length > 0) {
+                console.log('------------------');
+                console.log(errors);
+                console.log('------------------');
+                throw new Error('fuck');
+            }
+            return errors;
         };
-        Container.prototype._validateDependencies = function (keys) {
-            throw new Error('not implemented');
+        Container.prototype._validateDependencies = function (keys, history) {
+            var _this = this;
+            if (history === void 0) { history = []; }
+            var errors = [];
+            keys.forEach(function (key) {
+                var registration = _this.getRegistration(key);
+                if (history.indexOf(registration) > 0) {
+                    var errorMessage = "circular dependency on key '" + registration.settings.key + "' detected.";
+                    var validationError = _this._createValidationError(registration, history, errorMessage);
+                    errors.push(validationError);
+                    return;
+                }
+                history.push(registration);
+                if (!registration.settings.dependencies) {
+                    return;
+                }
+                for (var _i = 0, _a = registration.settings.dependencies; _i < _a.length; _i++) {
+                    var dependencyKey = _a[_i];
+                    var dependency = _this.getRegistration(dependencyKey);
+                    var deepErrors = _this._validateDependency(registration, dependency, history);
+                    Array.prototype.push.apply(errors, deepErrors);
+                }
+            });
+            return errors;
+        };
+        Container.prototype._validateDependency = function (registration, dependency, history) {
+            var newRegistrationHistory = [];
+            Array.prototype.push.apply(newRegistrationHistory, history);
+            var errors = [];
+            var dependencyKey = dependency.settings.key;
+            var dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependency.settings.key);
+            if (!dependency) {
+                var errorMessage = void 0;
+                if (dependencyKey === dependencyKeyOverwritten) {
+                    errorMessage = "dependency '" + dependencyKey + "' overwritten with key '" + dependencyKeyOverwritten + "' declared on '" + registration.settings.key + "' is missing.";
+                }
+                else {
+                    errorMessage = "dependency '" + dependencyKeyOverwritten + "' declared on '" + registration.settings.key + "' is missing.";
+                }
+                var validationError = this._createValidationError(registration, newRegistrationHistory, errorMessage);
+                errors.push(validationError);
+            }
+            else if (dependency.settings.dependencies) {
+                var overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration, newRegistrationHistory);
+                Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
+                var circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
+                if (!circularBreakFound) {
+                    var deepErrors = this._validateDependencies([dependency.settings.key], newRegistrationHistory);
+                    Array.prototype.push.apply(errors, deepErrors);
+                }
+            }
+            return errors;
+        };
+        Container.prototype._historyHasCircularBreak = function (history, dependency) {
+            var _this = this;
+            return history.some(function (parentRegistration) {
+                var parentSettings = parentRegistration.settings;
+                if (_this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
+                    return true;
+                }
+                if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies.length > 0) {
+                    if (parentSettings.lazyDependencies.length === 0 ||
+                        parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
+                        return true;
+                    }
+                }
+            });
+        };
+        Container.prototype._createValidationError = function (registration, history, errorMessage) {
+            var validationError = {
+                registrationStack: history,
+                currentRegistration: registration,
+                errorMessage: errorMessage
+            };
+            return validationError;
+        };
+        Container.prototype._validateOverwrittenKeys = function (registration, history) {
+            var _this = this;
+            var overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
+            var errors = [];
+            overwrittenKeys.forEach(function (overwrittenKey) {
+                var keyErrors = _this._validateOverwrittenKey(registration, overwrittenKey, history);
+                Array.prototype.push.apply(errors, keyErrors);
+            });
+            return errors;
+        };
+        Container.prototype._validateOverwrittenKey = function (registration, overwrittenKey, history) {
+            var errors = [];
+            if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
+                var errorMessage = "No dependency for overwritten key '" + overwrittenKey + "' has been declared on registration for key '" + registration.settings.key + "'.";
+                var validationError = this._createValidationError(registration, history, errorMessage);
+                errors.push(validationError);
+            }
+            var overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
+            var overwrittenKeyRegistration = this.getRegistration(overwrittenKeyValue);
+            if (!overwrittenKeyRegistration) {
+                var errorMessage = "Registration for overwritten key '" + overwrittenKey + "' declared on registration for key '" + registration.settings.key + "' is missing.";
+                var validationError = this._createValidationError(registration, history, errorMessage);
+                errors.push(validationError);
+            }
+            return errors;
         };
         Container.prototype._hashConfig = function (config) {
             return this._hashObject(config);

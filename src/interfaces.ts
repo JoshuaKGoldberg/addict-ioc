@@ -20,6 +20,8 @@ export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>
 
 export interface IValidationError {
   errorMessage: string;
+  registrationStack: Array<IRegistration>;
+  currentRegistration: IRegistration;
 }
 
 export interface IRegistrator {
@@ -67,6 +69,8 @@ export type TypeConfig = string | any | IConfigResolver;
 
 export interface IContainerSettings extends IRegistrationSettings {
   containerRegistrationKey: RegistrationKey,
+  circularDependencyCanIncludeSingleton: boolean,
+  circularDependencyCanIncludeLazy: boolean,
 }
 
 export interface IRegistrationSettings {

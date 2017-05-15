@@ -4,9 +4,17 @@ define(["require", "exports", "./resolver"], function (require, exports, resolve
         defaults: {
             isSingleton: false,
             wantsInjection: true,
+            dependencies: [],
+            lazyDependencies: [],
+            lazyPromiseDependencies: [],
+            ownedDependencies: [],
+            functionsToBind: [],
+            overwrittenKeys: {}
         },
         resolver: new resolver_1.Resolver(),
         containerRegistrationKey: 'container',
+        circularDependencyCanIncludeSingleton: true,
+        circularDependencyCanIncludeLazy: true,
     };
 });
 
