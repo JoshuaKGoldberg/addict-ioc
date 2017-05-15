@@ -46,7 +46,6 @@ export interface ITypeRegistration<T> extends IRegistration {
     overwrite(originalKey: string, overwrittenKey: string): ITypeRegistration<T>;
     tags(...tags: Array<string>): IRegistration;
     setTag(tag: string, value: any): ITypeRegistration<T>;
-    hasTags(tagOrTags: string | Array<string>): boolean;
 }
 export interface IRegistration {
     settings: IRegistrationSettings;

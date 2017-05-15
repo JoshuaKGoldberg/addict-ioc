@@ -92,16 +92,6 @@ define(["require", "exports"], function (require, exports) {
             this.settings.ownedDependencies = ownedDependencies;
             return this;
         };
-        TypeRegistration.prototype.hasTags = function (tagOrTags) {
-            var declaredTags = Object.keys(this.settings.tags);
-            var tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
-            var isTagMissing = tags.some(function (tag) {
-                if (declaredTags.indexOf(tag) < 0) {
-                    return true;
-                }
-            });
-            return !isTagMissing;
-        };
         return TypeRegistration;
     }());
     exports.TypeRegistration = TypeRegistration;

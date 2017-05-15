@@ -114,19 +114,28 @@ System.register(["./type_registration", "./type_registration_settings", "./regis
                 };
                 Registry.prototype.getKeysByTags = function () {
                     var _this = this;
-                    var args = [];
+                    var tags = [];
                     for (var _i = 0; _i < arguments.length; _i++) {
-                        args[_i] = arguments[_i];
+                        tags[_i] = arguments[_i];
                     }
                     var foundKeys = [];
                     var registrationKeys = this.getRegistrationKeys();
                     registrationKeys.forEach(function (registrationKey) {
                         var registration = _this.getRegistration(registrationKey);
-                        if (registration.hasTags(args)) {
+                        if (_this._hasRegistrationTags(registration, tags)) {
                             foundKeys.push(registration.settings.key);
                         }
                     });
                     return foundKeys;
+                };
+                Registry.prototype._hasRegistrationTags = function (registration, tags) {
+                    var declaredTags = Object.keys(registration.settings.tags);
+                    var isTagMissing = tags.some(function (tag) {
+                        if (declaredTags.indexOf(tag) < 0) {
+                            return true;
+                        }
+                    });
+                    return !isTagMissing;
                 };
                 return Registry;
             }());

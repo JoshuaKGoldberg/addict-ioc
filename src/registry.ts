@@ -151,9 +151,7 @@ export class Registry implements IRegistry {
     delete this.registrations[key];
   }
 
-
-    // TODO: neu machen
-  public getKeysByTags(...args: Array<string>): Array<RegistrationKey> {
+  public getKeysByTags(...tags: Array<string>): Array<RegistrationKey> {
 
     const foundKeys = [];
 
@@ -163,7 +161,7 @@ export class Registry implements IRegistry {
 
       const registration = this.getRegistration(registrationKey);
 
-      if (registration.hasTags(args)) {
+      if (this._hasRegistrationTags(registration, tags)) {
 
         foundKeys.push(registration.settings.key);
       }
@@ -172,5 +170,17 @@ export class Registry implements IRegistry {
     return foundKeys;
   }
 
+  private _hasRegistrationTags(registration: IRegistration, tags: Array<string>): boolean {
 
+    const declaredTags = Object.keys(registration.settings.tags);
+
+    const isTagMissing = tags.some((tag) => {
+
+      if (declaredTags.indexOf(tag) < 0) {
+        return true;
+      }
+    });
+
+    return !isTagMissing;
+  }
 }

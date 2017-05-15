@@ -78,21 +78,5 @@ export class TypeRegistration<T> implements ITypeRegistration<T> {
     this.settings.ownedDependencies = ownedDependencies;
     return this;
   }
-  public hasTags(tagOrTags: string | Array<string>): boolean {
-
-    const declaredTags = Object.keys(this.settings.tags);
-
-    const tags = Array.isArray(tagOrTags) ? tagOrTags : [tagOrTags];
-
-    const isTagMissing = (<Array<string>>tags).some((tag) => {
-
-      if (declaredTags.indexOf(tag) < 0) {
-
-        return true;
-      }
-    });
-
-    return !isTagMissing;
-  }
 
 }

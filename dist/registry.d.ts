@@ -24,5 +24,6 @@ export declare class Registry implements IRegistry {
     protected getRegistrationKeys(): Array<string>;
     protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void;
     protected deleteRegistration(key: RegistrationKey): void;
-    getKeysByTags(...args: Array<string>): Array<RegistrationKey>;
+    getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
+    private _hasRegistrationTags(registration, tags);
 }
