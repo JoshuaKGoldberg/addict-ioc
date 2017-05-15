@@ -29,7 +29,7 @@ export interface IRegistrator {
 export interface IRegistry extends IRegistrator {
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport: Array<RegistrationKey>): Array<IRegistrationSettings>;
-    registerModule(moduleName: string): IRegistrator;
+    isRegistered(key: RegistrationKey): boolean;
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
 }
@@ -46,6 +46,7 @@ export interface ITypeRegistration<T> extends IRegistration {
     overwrite(originalKey: string, overwrittenKey: string): ITypeRegistration<T>;
     tags(...tags: Array<string>): IRegistration;
     setTag(tag: string, value: any): ITypeRegistration<T>;
+    hasTags(tagOrTags: string | Array<string>): boolean;
 }
 export interface IRegistration {
     settings: IRegistrationSettings;

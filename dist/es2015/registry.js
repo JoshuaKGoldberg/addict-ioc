@@ -30,14 +30,9 @@ var Registry = (function () {
     };
     Registry.prototype.autoRegisterModules = function () {
     };
-    Registry.prototype.registerModule = function (moduleName) {
-        var moduleManifest = require(moduleName + "/package.json");
-        var iocModulePath = moduleManifest['ioc_module'];
-        var iocModule = require(moduleName + "/" + iocModulePath);
-        var registrationSettings = {
-            module: moduleName
-        };
-        return new RegistrationContext(this, registrationSettings);
+    Registry.prototype.isRegistered = function (key) {
+        var registration = this.getRegistration(key);
+        return !!registration;
     };
     Registry.prototype.createRegistrationTemplate = function (registrationSettings) {
         return new RegistrationContext(this, registrationSettings);
@@ -102,6 +97,22 @@ var Registry = (function () {
     };
     Registry.prototype.deleteRegistration = function (key) {
         delete this.registrations[key];
+    };
+    Registry.prototype.getKeysByTags = function () {
+        var _this = this;
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var foundKeys = [];
+        var registrationKeys = this.getRegistrationKeys();
+        registrationKeys.forEach(function (registrationKey) {
+            var registration = _this.getRegistration(registrationKey);
+            if (registration.hasTags(args)) {
+                foundKeys.push(registration.settings.key);
+            }
+        });
+        return foundKeys;
     };
     return Registry;
 }());

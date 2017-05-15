@@ -54,17 +54,22 @@ export class Registry implements IRegistry {
 
   }
 
-  public registerModule(moduleName: string): IRegistrator {
+  // public registerModule(moduleName: string): IRegistrator {
 
-    const moduleManifest = require(`${moduleName}/package.json`);
-    const iocModulePath = moduleManifest['ioc_module'];
-    const iocModule = require(`${moduleName}/${iocModulePath}`);
+  //   const moduleManifest = require(`${moduleName}/package.json`);
+  //   const iocModulePath = moduleManifest['ioc_module'];
+  //   const iocModule = require(`${moduleName}/${iocModulePath}`);
 
-    const registrationSettings = {
-      module: moduleName
-    };
+  //   const registrationSettings = {
+  //     module: moduleName
+  //   };
 
-    return new RegistrationContext(this, registrationSettings);
+  //   return new RegistrationContext(this, registrationSettings);
+  // }
+
+  public isRegistered(key: RegistrationKey): boolean {
+    const registration = this.getRegistration(key);
+    return !!registration;
   }
 
   public createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator {
@@ -145,5 +150,27 @@ export class Registry implements IRegistry {
   protected deleteRegistration(key: RegistrationKey): void {
     delete this.registrations[key];
   }
+
+
+    // TODO: neu machen
+  public getKeysByTags(...args: Array<string>): Array<RegistrationKey> {
+
+    const foundKeys = [];
+
+    const registrationKeys = this.getRegistrationKeys();
+
+    registrationKeys.forEach((registrationKey) => {
+
+      const registration = this.getRegistration(registrationKey);
+
+      if (registration.hasTags(args)) {
+
+        foundKeys.push(registration.settings.key);
+      }
+    });
+
+    return foundKeys;
+  }
+
 
 }

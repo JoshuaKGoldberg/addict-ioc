@@ -94,8 +94,8 @@ var Resolver = (function () {
     };
     Resolver.prototype._createInstance = function (registration, dependencies, injectionArgs) {
         var argumentsToBeInjected = dependencies.concat(injectionArgs);
-        if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
-            return this._createInstanceByConstructorWithInjection(registration.settings.factory, argumentsToBeInjected);
+        if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
+            return this._createInstanceByConstructorWithInjection(registration.settings.type, argumentsToBeInjected);
         }
         var instance = this._createInstanceByConstructor(registration.settings.type);
         if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {

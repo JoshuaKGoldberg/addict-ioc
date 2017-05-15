@@ -87,8 +87,8 @@ export class Resolver implements ITypeResolver {
 
     const argumentsToBeInjected = dependencies.concat(injectionArgs);
 
-    if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
-      return this._createInstanceByConstructorWithInjection<T>(registration.settings.factory, argumentsToBeInjected);
+    if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
+      return this._createInstanceByConstructorWithInjection<T>(registration.settings.type, argumentsToBeInjected);
     } 
     
     const instance = this._createInstanceByConstructor<T>(registration.settings.type);

@@ -302,6 +302,7 @@ export class Container extends Registry implements IContainer {
   private _createInstance<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
     const type = resolver.resolveType(this, registration);
+    // TODO: types durchreichen
     const factory = resolver.createInstance(this, registration, dependencies, injectionArgs);
     return factory;
   }
@@ -505,7 +506,7 @@ export class Container extends Registry implements IContainer {
         return true;
       }
 
-      if (this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies.length > 0) {
+      if (this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies && parentSettings.lazyDependencies.length > 0) {
 
         if (parentSettings.lazyDependencies.length === 0 ||
           parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
@@ -644,7 +645,7 @@ export class Container extends Registry implements IContainer {
       return false;
     }
     
-    return registration.settings.lazyDependencies.length === 0 || registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
+    return registration.settings.lazyDependencies && registration.settings.lazyDependencies.length !== 0 && registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
   }
 
   private _isDependencyLazyAsync<T>(registration: IRegistration, dependencyKey: RegistrationKey): boolean {
@@ -653,7 +654,7 @@ export class Container extends Registry implements IContainer {
       return false;
     }
     
-    return registration.settings.lazyPromiseDependencies.length === 0 || registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
+    return registration.settings.lazyPromiseDependencies && registration.settings.lazyPromiseDependencies.length !== 0 && registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
   }
 
   private _isDependencyOwned<T>(registration: IRegistration, dependencyKey: RegistrationKey): boolean {

@@ -15,4 +15,5 @@ export declare class TypeRegistration<T> implements ITypeRegistration<T> {
     setTag(tag: string, value: any): ITypeRegistration<T>;
     overwrite(originalKey: string, overwrittenKey: string): ITypeRegistration<T>;
     owns(...ownedDependencies: any[]): ITypeRegistration<T>;
+    hasTags(tagOrTags: string | Array<string>): boolean;
 }

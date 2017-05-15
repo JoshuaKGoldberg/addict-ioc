@@ -473,7 +473,7 @@ System.register(["./registry", "./resolution_context", "./default_settings", "./
                         if (_this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
                             return true;
                         }
-                        if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies.length > 0) {
+                        if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies && parentSettings.lazyDependencies.length > 0) {
                             if (parentSettings.lazyDependencies.length === 0 ||
                                 parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
                                 return true;
@@ -572,13 +572,13 @@ System.register(["./registry", "./resolution_context", "./default_settings", "./
                     if (!registration.settings.lazyDependencies) {
                         return false;
                     }
-                    return registration.settings.lazyDependencies.length === 0 || registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
+                    return registration.settings.lazyDependencies && registration.settings.lazyDependencies.length !== 0 && registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
                 };
                 Container.prototype._isDependencyLazyAsync = function (registration, dependencyKey) {
                     if (!registration.settings.lazyPromiseDependencies) {
                         return false;
                     }
-                    return registration.settings.lazyPromiseDependencies.length === 0 || registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
+                    return registration.settings.lazyPromiseDependencies && registration.settings.lazyPromiseDependencies.length !== 0 && registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
                 };
                 Container.prototype._isDependencyOwned = function (registration, dependencyKey) {
                     if (!registration.settings.ownedDependencies) {

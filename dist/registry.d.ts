@@ -11,7 +11,7 @@ export declare class Registry implements IRegistry {
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport?: Array<RegistrationKey>): Array<IRegistrationSettings>;
     autoRegisterModules(): void;
-    registerModule(moduleName: string): IRegistrator;
+    isRegistered(key: RegistrationKey): boolean;
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T>;
     registerObject(key: RegistrationKey, object: any): IRegistration;
@@ -24,4 +24,5 @@ export declare class Registry implements IRegistry {
     protected getRegistrationKeys(): Array<string>;
     protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void;
     protected deleteRegistration(key: RegistrationKey): void;
+    getKeysByTags(...args: Array<string>): Array<RegistrationKey>;
 }
