@@ -42,13 +42,12 @@ export class Resolver implements ITypeResolver {
     instance.config = config;
   }
 
-  public createObject<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
-    return this._createObject(registration, dependencies, injectionArgs);
+  public createObject<T>(container: IContainer, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    return this._createObject(object, registration, dependencies, injectionArgs);
   }
 
-  protected _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  protected _createObject<T>(object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     
-    const object = registration.settings.object;
     const argumentsToBeInjected = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
@@ -58,7 +57,7 @@ export class Resolver implements ITypeResolver {
     return object;
   }
 
-  public createFactory<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createFactory<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     return this._createFactory(registration, dependencies, injectionArgs);
   }
 
@@ -79,19 +78,19 @@ export class Resolver implements ITypeResolver {
     return instance;
   }
 
-  public createInstance<T>(container: IContainer, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
-    return this._createInstance(registration, dependencies, injectionArgs);
+  public createInstance<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+    return this._createInstance(type, registration, dependencies, injectionArgs);
   }
 
-  protected _createInstance<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs: Array<any>): T {
+  protected _createInstance<T>(type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs: Array<any>): T {
 
     const argumentsToBeInjected = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-      return this._createInstanceByConstructorWithInjection<T>(registration.settings.type, argumentsToBeInjected);
+      return this._createInstanceByConstructorWithInjection<T>(type, argumentsToBeInjected);
     } 
     
-    const instance = this._createInstanceByConstructor<T>(registration.settings.type);
+    const instance = this._createInstanceByConstructor<T>(type);
     
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);

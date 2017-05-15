@@ -64,18 +64,17 @@ define(["require", "exports", "./utils"], function (require, exports, utils_1) {
             }
             instance.config = config;
         };
-        Resolver.prototype.createObject = function (container, registration, dependencies, injectionArgs) {
-            return this._createObject(registration, dependencies, injectionArgs);
+        Resolver.prototype.createObject = function (container, object, registration, dependencies, injectionArgs) {
+            return this._createObject(object, registration, dependencies, injectionArgs);
         };
-        Resolver.prototype._createObject = function (registration, dependencies, injectionArgs) {
-            var object = registration.settings.object;
+        Resolver.prototype._createObject = function (object, registration, dependencies, injectionArgs) {
             var argumentsToBeInjected = dependencies.concat(injectionArgs);
             if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
                 this._injectDependenciesIntoInstance(registration.settings, object, argumentsToBeInjected);
             }
             return object;
         };
-        Resolver.prototype.createFactory = function (container, registration, dependencies, injectionArgs) {
+        Resolver.prototype.createFactory = function (container, type, registration, dependencies, injectionArgs) {
             return this._createFactory(registration, dependencies, injectionArgs);
         };
         Resolver.prototype._createFactory = function (registration, dependencies, injectionArgs) {
@@ -89,15 +88,15 @@ define(["require", "exports", "./utils"], function (require, exports, utils_1) {
             }
             return instance;
         };
-        Resolver.prototype.createInstance = function (container, registration, dependencies, injectionArgs) {
-            return this._createInstance(registration, dependencies, injectionArgs);
+        Resolver.prototype.createInstance = function (container, type, registration, dependencies, injectionArgs) {
+            return this._createInstance(type, registration, dependencies, injectionArgs);
         };
-        Resolver.prototype._createInstance = function (registration, dependencies, injectionArgs) {
+        Resolver.prototype._createInstance = function (type, registration, dependencies, injectionArgs) {
             var argumentsToBeInjected = dependencies.concat(injectionArgs);
             if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-                return this._createInstanceByConstructorWithInjection(registration.settings.type, argumentsToBeInjected);
+                return this._createInstanceByConstructorWithInjection(type, argumentsToBeInjected);
             }
-            var instance = this._createInstanceByConstructor(registration.settings.type);
+            var instance = this._createInstanceByConstructor(type);
             if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
                 this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
             }

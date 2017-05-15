@@ -287,30 +287,29 @@ export class Container extends Registry implements IContainer {
   
   private _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
-    const type = resolver.resolveType(this, registration);
-    const object = resolver.createObject(this, registration, dependencies, injectionArgs);
-    return object;
+    const object = resolver.resolveType(this, registration);
+    const createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
+    return createdObject;
   }
   
   private _createFactory<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
     const type = resolver.resolveType(this, registration);
-    const factory = resolver.createFactory(this, registration, dependencies, injectionArgs);
+    const factory = resolver.createFactory(this, type, registration, dependencies, injectionArgs);
     return factory;
   }
   
   private _createInstance<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
     const type = resolver.resolveType(this, registration);
-    // TODO: types durchreichen
-    const factory = resolver.createInstance(this, registration, dependencies, injectionArgs);
+    const factory = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
     return factory;
   }
   
   private async _createInstanceAsync<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): Promise<T> {
     const resolver = this._getResolver(registration);
     const type = await resolver.resolveTypeAsync(this, registration);
-    const instance = resolver.createInstance(this, registration, dependencies, injectionArgs);
+    const instance = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
     return instance;
   }
 

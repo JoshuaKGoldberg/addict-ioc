@@ -283,20 +283,20 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
         };
         Container.prototype._createObject = function (registration, dependencies, injectionArgs) {
             var resolver = this._getResolver(registration);
-            var type = resolver.resolveType(this, registration);
-            var object = resolver.createObject(this, registration, dependencies, injectionArgs);
-            return object;
+            var object = resolver.resolveType(this, registration);
+            var createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
+            return createdObject;
         };
         Container.prototype._createFactory = function (registration, dependencies, injectionArgs) {
             var resolver = this._getResolver(registration);
             var type = resolver.resolveType(this, registration);
-            var factory = resolver.createFactory(this, registration, dependencies, injectionArgs);
+            var factory = resolver.createFactory(this, type, registration, dependencies, injectionArgs);
             return factory;
         };
         Container.prototype._createInstance = function (registration, dependencies, injectionArgs) {
             var resolver = this._getResolver(registration);
             var type = resolver.resolveType(this, registration);
-            var factory = resolver.createInstance(this, registration, dependencies, injectionArgs);
+            var factory = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
             return factory;
         };
         Container.prototype._createInstanceAsync = function (registration, dependencies, injectionArgs) {
@@ -309,7 +309,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
                             return [4 /*yield*/, resolver.resolveTypeAsync(this, registration)];
                         case 1:
                             type = _a.sent();
-                            instance = resolver.createInstance(this, registration, dependencies, injectionArgs);
+                            instance = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
                             return [2 /*return*/, instance];
                     }
                 });
