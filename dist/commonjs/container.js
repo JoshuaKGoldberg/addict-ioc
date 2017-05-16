@@ -54,9 +54,9 @@ var Container = (function (_super) {
     __extends(Container, _super);
     function Container(settings, parentContainer, parentRegistry) {
         if (settings === void 0) { settings = default_settings_1.DefaultSettings; }
-        var _this = _super.call(this, settings, parentRegistry) || this;
+        var _this = _super.call(this, Object.assign(Object.assign({}, default_settings_1.DefaultSettings), settings), parentRegistry) || this;
         _this.parentContainer = parentContainer;
-        _this.settings = settings;
+        _this.settings = Object.assign(Object.assign({}, default_settings_1.DefaultSettings), settings);
         _this.initialize();
         return _this;
     }
@@ -120,14 +120,14 @@ var Container = (function (_super) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
         var dependencies = this._resolveDependencies(registration, resolutionContext);
         var object = this._createObject(registration, dependencies, injectionArgs);
-        this._configureInstance(object, config);
+        this._configureInstance(object, registration, configUsed);
         return object;
     };
     Container.prototype._resolveFactory = function (registration, resolutionContext, injectionArgs, config) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
         var dependencies = this._resolveDependencies(registration, resolutionContext);
         var factory = this._createFactory(registration, dependencies, injectionArgs);
-        this._configureInstance(factory, config);
+        this._configureInstance(factory, registration, configUsed);
         return factory;
     };
     Container.prototype._resolveInstance = function (registration, resolutionContext, injectionArgs, config) {
@@ -179,10 +179,11 @@ var Container = (function (_super) {
     };
     Container.prototype._getNewInstance = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
+        var configUsed = this._mergeRegistrationConfig(registration, config);
         this._validateResolutionContext(registration, resolutionContext);
         var dependencies = this._resolveDependencies(registration, resolutionContext);
         var instance = this._createInstance(registration, dependencies, injectionArgs);
-        this._configureInstance(instance, config);
+        this._configureInstance(instance, registration, configUsed);
         if (!resolutionContext.isDependencyOwned) {
             this._cacheInstance(registration, instance, injectionArgs, config);
         }
@@ -191,16 +192,17 @@ var Container = (function (_super) {
     Container.prototype._getNewInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         return __awaiter(this, void 0, void 0, function () {
-            var dependencies, instance;
+            var configUsed, dependencies, instance;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        configUsed = this._mergeRegistrationConfig(registration, config);
                         this._validateResolutionContext(registration, resolutionContext);
                         dependencies = this._resolveDependencies(registration, resolutionContext);
                         return [4 /*yield*/, this._createInstance(registration, dependencies, injectionArgs)];
                     case 1:
                         instance = _a.sent();
-                        this._configureInstance(instance, config);
+                        this._configureInstance(instance, registration, configUsed);
                         if (!resolutionContext.isDependencyOwned) {
                             this._cacheInstance(registration, instance, injectionArgs, config);
                         }
@@ -264,6 +266,12 @@ var Container = (function (_super) {
         if (this._isDependencyLazyAsync(registration, overwrittenDependencyKey)) {
             return this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
         }
+        if (dependencyRegistration.settings.isObject) {
+            return this._resolveObject(dependencyRegistration, resolutionContext, undefined, undefined);
+        }
+        if (dependencyRegistration.settings.isFactory) {
+            return this._resolveFactory(dependencyRegistration, resolutionContext, undefined, undefined);
+        }
         return this._resolveInstance(dependencyRegistration, newResolutionContext, undefined, undefined);
     };
     Container.prototype._resolveDependencyAsync = function (registration, dependencyKey, resolutionContext) {
@@ -288,8 +296,7 @@ var Container = (function (_super) {
     };
     Container.prototype._createObject = function (registration, dependencies, injectionArgs) {
         var resolver = this._getResolver(registration);
-        var object = resolver.resolveType(this, registration);
-        var createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
+        var createdObject = resolver.createObject(this, registration.settings.object, registration, dependencies, injectionArgs);
         return createdObject;
     };
     Container.prototype._createFactory = function (registration, dependencies, injectionArgs) {
@@ -323,8 +330,8 @@ var Container = (function (_super) {
     Container.prototype._getResolver = function (registration) {
         return registration.settings.resolver || this.settings.resolver;
     };
-    Container.prototype._configureInstance = function (instance, config) {
-        if (!config) {
+    Container.prototype._configureInstance = function (instance, registration, runtimeConfig) {
+        if (!registration.settings.config && !runtimeConfig) {
             return;
         }
         var configPropertyDescriptor = utils_1.getPropertyDescriptor(instance, 'config');
@@ -332,7 +339,10 @@ var Container = (function (_super) {
             var instancePrototype = Object.getPrototypeOf(instance);
             throw new Error("The setter for the config property on type '" + instancePrototype.constructor.name + "' is missing.");
         }
-        instance.config = config;
+        var resolver = this._getResolver(registration);
+        var resolvedConfig = resolver.resolveConfig(registration.settings.config);
+        var resultConfig = runtimeConfig ? this._mergeConfigs(resolvedConfig, runtimeConfig) : resolvedConfig;
+        instance.config = resultConfig;
     };
     Container.prototype._getCachedInstances = function (registration, injectionArgs, config) {
         var key = registration.settings.key;
@@ -497,10 +507,10 @@ var Container = (function (_super) {
         return errors;
     };
     Container.prototype._hashConfig = function (config) {
-        return this._hashObject(config);
+        return config ? config.toString() : undefined;
     };
     Container.prototype._hashInjectionArgs = function (injectionArgs) {
-        return this._hashObject(injectionArgs);
+        return injectionArgs ? injectionArgs.toString() : undefined;
     };
     Container.prototype._hashObject = function (object) {
         if (typeof object === 'undefined') {

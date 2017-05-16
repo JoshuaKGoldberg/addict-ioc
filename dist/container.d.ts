@@ -31,7 +31,7 @@ export declare class Container extends Registry implements IContainer {
     private _createInstance<T>(registration, dependencies, injectionArgs?);
     private _createInstanceAsync<T>(registration, dependencies, injectionArgs?);
     private _getResolver<T>(registration);
-    private _configureInstance(instance, config);
+    private _configureInstance(instance, registration, runtimeConfig?);
     private _getCachedInstances<T>(registration, injectionArgs, config);
     private _cacheInstance<T>(registration, instance, injectionArgs, config);
     validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;

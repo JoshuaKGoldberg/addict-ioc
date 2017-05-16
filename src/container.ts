@@ -21,10 +21,10 @@ export class Container extends Registry implements IContainer {
   public parentContainer: IContainer;
 
   constructor(settings: IContainerSettings = DefaultSettings, parentContainer?: IContainer, parentRegistry?: IRegistry) {
-    super(settings, parentRegistry);
+    super(Object.assign(Object.assign({}, DefaultSettings), settings), parentRegistry);
     
     this.parentContainer = parentContainer;
-    this.settings = settings;
+    this.settings = Object.assign(Object.assign({}, DefaultSettings), settings);
 
     this.initialize();
   }
@@ -104,7 +104,7 @@ export class Container extends Registry implements IContainer {
 
     const object = this._createObject(registration, dependencies, injectionArgs);
     
-    this._configureInstance(object, config);
+    this._configureInstance(object, registration, configUsed);
 
     return object;
   }  
@@ -117,7 +117,7 @@ export class Container extends Registry implements IContainer {
 
     const factory = this._createFactory(registration, dependencies, injectionArgs);
     
-    this._configureInstance(factory, config);
+    this._configureInstance(factory, registration, configUsed);
 
     return factory;
   }  
@@ -170,13 +170,15 @@ export class Container extends Registry implements IContainer {
 
   private _getNewInstance<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext<T>, injectionArgs: Array<any> = [], config?: any): T {
 
+    const configUsed = this._mergeRegistrationConfig(registration, config);
+
     this._validateResolutionContext(registration, resolutionContext);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
     const instance = this._createInstance(registration, dependencies, injectionArgs);
     
-    this._configureInstance(instance, config);
+    this._configureInstance(instance, registration, configUsed);
 
     if (!resolutionContext.isDependencyOwned) {
       this._cacheInstance(registration, instance, injectionArgs, config);
@@ -187,13 +189,15 @@ export class Container extends Registry implements IContainer {
 
   private async _getNewInstanceAsync<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext<T>, injectionArgs: Array<any> = [], config?: any): Promise<T> {
 
+    const configUsed = this._mergeRegistrationConfig(registration, config);
+
     this._validateResolutionContext(registration, resolutionContext);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
     const instance = await this._createInstance(registration, dependencies, injectionArgs);
     
-    this._configureInstance(instance, config);
+    this._configureInstance(instance, registration, configUsed);
 
     if (!resolutionContext.isDependencyOwned) {
       this._cacheInstance(registration, instance, injectionArgs, config);
@@ -263,6 +267,14 @@ export class Container extends Registry implements IContainer {
 
     if (this._isDependencyLazyAsync(registration, overwrittenDependencyKey)) {
       return this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
+    }    
+    
+    if (dependencyRegistration.settings.isObject) {
+      return this._resolveObject(dependencyRegistration, resolutionContext, undefined, undefined);
+    }
+
+    if (dependencyRegistration.settings.isFactory) {
+      return this._resolveFactory(dependencyRegistration, resolutionContext, undefined, undefined);
     }
 
     return this._resolveInstance(dependencyRegistration, newResolutionContext, undefined, undefined);
@@ -287,8 +299,8 @@ export class Container extends Registry implements IContainer {
   
   private _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
-    const object = resolver.resolveType(this, registration);
-    const createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
+    // const object = resolver.resolveType(this, registration);
+    const createdObject = resolver.createObject(this, registration.settings.object, registration, dependencies, injectionArgs);
     return createdObject;
   }
   
@@ -317,9 +329,9 @@ export class Container extends Registry implements IContainer {
     return registration.settings.resolver || this.settings.resolver;
   }
 
-  private _configureInstance(instance: any, config: any): void {
+  private _configureInstance(instance: any, registration: IRegistration, runtimeConfig?: any): void {
 
-    if (!config) {
+    if (!registration.settings.config && !runtimeConfig) {
       return;
     }
 
@@ -331,7 +343,12 @@ export class Container extends Registry implements IContainer {
       throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
     }
 
-    instance.config = config;
+    const resolver = this._getResolver(registration);
+    const resolvedConfig = resolver.resolveConfig(registration.settings.config);
+
+    const resultConfig = runtimeConfig ? this._mergeConfigs(resolvedConfig, runtimeConfig) : resolvedConfig;
+
+    instance.config = resultConfig;
   }
 
   private _getCachedInstances<T>(registration: IRegistration, injectionArgs: Array<any>, config: any): Array<T> {
@@ -565,11 +582,15 @@ export class Container extends Registry implements IContainer {
 
 
   private _hashConfig(config: any): string {
-    return this._hashObject(config);
+    return config ? config.toString() : undefined;
+    // TODO: find isomorph hashing
+    // return this._hashObject(config);
   }
 
   private _hashInjectionArgs(injectionArgs: Array<any>): string {
-    return this._hashObject(injectionArgs);
+    return injectionArgs ? injectionArgs.toString() : undefined;
+    // TODO: find isomorph hashing
+    // return this._hashObject(injectionArgs);
   }
 
   private _hashObject(object: any): string {

@@ -13,9 +13,9 @@ export declare class Registry implements IRegistry {
     autoRegisterModules(): void;
     isRegistered(key: RegistrationKey): boolean;
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
-    register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T>;
-    registerObject(key: RegistrationKey, object: any): IRegistration;
-    registerFactory(key: RegistrationKey, factoryMethod: any): IRegistration;
+    register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
+    registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration;
+    registerFactory(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IRegistration;
     unregister<T>(key: RegistrationKey): IRegistration;
     protected createTypeRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
     protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;

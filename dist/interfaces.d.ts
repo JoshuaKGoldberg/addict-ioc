@@ -22,8 +22,8 @@ export interface IValidationError {
     currentRegistration: IRegistration;
 }
 export interface IRegistrator {
-    register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T>;
-    registerObject(key: RegistrationKey, object: any): IRegistration;
+    register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
+    registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration;
     unregister<T>(key: RegistrationKey): IRegistration | ITypeRegistration<T>;
 }
 export interface IRegistry extends IRegistrator {

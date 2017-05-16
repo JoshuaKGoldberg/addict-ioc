@@ -37,22 +37,18 @@ var Registry = (function () {
     Registry.prototype.createRegistrationTemplate = function (registrationSettings) {
         return new RegistrationContext(this, registrationSettings);
     };
-    Registry.prototype.register = function (key, type) {
-        var registration = this.createTypeRegistration(key, type);
+    Registry.prototype.register = function (key, type, settings) {
+        var registration = this.createTypeRegistration(key, type, settings);
         this.cacheRegistration(key, registration);
         return registration;
     };
-    Registry.prototype.registerObject = function (key, object) {
-        var registrationSettings = Object.assign({}, this.settings.defaults);
-        registrationSettings.isObject = true;
-        var registration = this.createObjectRegistration(key, object, registrationSettings);
+    Registry.prototype.registerObject = function (key, object, settings) {
+        var registration = this.createObjectRegistration(key, object, settings);
         this.cacheRegistration(key, registration);
         return registration;
     };
-    Registry.prototype.registerFactory = function (key, factoryMethod) {
-        var registrationSettings = Object.assign({}, this.settings.defaults);
-        registrationSettings.isFactory = true;
-        var registration = this.createFactoryRegistration(key, factoryMethod, registrationSettings);
+    Registry.prototype.registerFactory = function (key, factoryMethod, settings) {
+        var registration = this.createFactoryRegistration(key, factoryMethod, settings);
         this.cacheRegistration(key, registration);
         return registration;
     };
@@ -62,7 +58,7 @@ var Registry = (function () {
         return registration;
     };
     Registry.prototype.createTypeRegistration = function (key, type, registrationSettings) {
-        var settings = registrationSettings ? new TypeRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new TypeRegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.type = type;
         var registration = new TypeRegistration(settings);
@@ -71,6 +67,7 @@ var Registry = (function () {
     Registry.prototype.createObjectRegistration = function (key, object, registrationSettings) {
         var settings = registrationSettings ? new TypeRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
+        settings.isObject = true;
         settings.object = object;
         var registration = new TypeRegistration(settings);
         return registration;
@@ -78,6 +75,7 @@ var Registry = (function () {
     Registry.prototype.createFactoryRegistration = function (key, factoryFunction, registrationSettings) {
         var settings = registrationSettings ? new TypeRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
+        settings.isFactory = true;
         settings.factory = factoryFunction;
         var registration = new TypeRegistration(settings);
         return registration;
