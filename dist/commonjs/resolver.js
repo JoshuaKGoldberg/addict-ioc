@@ -38,6 +38,9 @@ var utils_1 = require("./utils");
 var Resolver = (function () {
     function Resolver() {
     }
+    Resolver.prototype.resolveObject = function (container, registration) {
+        return registration.settings.object;
+    };
     Resolver.prototype.resolveType = function (container, registration) {
         return registration.settings.type;
     };

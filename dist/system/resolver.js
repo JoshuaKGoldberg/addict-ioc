@@ -47,6 +47,9 @@ System.register(["./utils"], function (exports_1, context_1) {
             Resolver = (function () {
                 function Resolver() {
                 }
+                Resolver.prototype.resolveObject = function (container, registration) {
+                    return registration.settings.object;
+                };
                 Resolver.prototype.resolveType = function (container, registration) {
                     return registration.settings.type;
                 };

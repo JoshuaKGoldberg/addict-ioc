@@ -1,4 +1,4 @@
-import { IContainer, ITypeRegistration, IRegistrationSettings, Type, TypeConfig, ITypeResolver } from './interfaces';
+import { IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, ITypeResolver } from './interfaces';
 declare global  {
     interface System {
         import(request: string): Promise<any>;
@@ -6,6 +6,7 @@ declare global  {
     var System: System;
 }
 export declare class Resolver implements ITypeResolver {
+    resolveObject(container: IContainer, registration: IRegistration): any;
     resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
     resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
     resolveConfig(config: TypeConfig): any;

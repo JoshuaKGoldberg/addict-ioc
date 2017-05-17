@@ -107,6 +107,7 @@ export interface IOverwrittenKeys {
 
 export interface ITypeResolver {
   resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
+  resolveObject(container: IContainer, registration: IRegistration): any;
   resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
   createInstance<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
   createObject<T>(container: IContainer, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;

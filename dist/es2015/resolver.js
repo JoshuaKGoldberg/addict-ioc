@@ -37,6 +37,9 @@ import { getPropertyDescriptor } from './utils';
 var Resolver = (function () {
     function Resolver() {
     }
+    Resolver.prototype.resolveObject = function (container, registration) {
+        return registration.settings.object;
+    };
     Resolver.prototype.resolveType = function (container, registration) {
         return registration.settings.type;
     };

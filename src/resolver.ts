@@ -10,6 +10,9 @@ declare global {
 }
 
 export class Resolver implements ITypeResolver {
+  public resolveObject(container: IContainer, registration: IRegistration): any {
+    return registration.settings.object;
+  }
 
   public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
     return registration.settings.type;

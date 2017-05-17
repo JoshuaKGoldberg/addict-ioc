@@ -299,8 +299,8 @@ export class Container extends Registry implements IContainer {
   
   private _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     const resolver = this._getResolver(registration);
-    // const object = resolver.resolveType(this, registration);
-    const createdObject = resolver.createObject(this, registration.settings.object, registration, dependencies, injectionArgs);
+    const object = resolver.resolveObject(this, registration);
+    const createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
     return createdObject;
   }
   

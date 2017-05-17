@@ -291,7 +291,8 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
         };
         Container.prototype._createObject = function (registration, dependencies, injectionArgs) {
             var resolver = this._getResolver(registration);
-            var createdObject = resolver.createObject(this, registration.settings.object, registration, dependencies, injectionArgs);
+            var object = resolver.resolveObject(this, registration);
+            var createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
             return createdObject;
         };
         Container.prototype._createFactory = function (registration, dependencies, injectionArgs) {
