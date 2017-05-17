@@ -83,6 +83,12 @@ var Container = (function (_super) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = _super.prototype.getRegistration.call(this, key);
         var resolutionContext = this._createNewResolutionContext(registration);
+        if (registration.settings.isObject) {
+            return this._resolveObjectAsync(registration, resolutionContext, injectionArgs, config);
+        }
+        if (registration.settings.isFactory) {
+            return this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config);
+        }
         return this._resolveInstanceAsync(registration, resolutionContext, injectionArgs, config);
     };
     Container.prototype.resolveLazy = function (key, injectionArgs, config) {
@@ -122,12 +128,41 @@ var Container = (function (_super) {
         this._configureInstance(object, registration, configUsed);
         return object;
     };
+    Container.prototype._resolveObjectAsync = function (registration, resolutionContext, injectionArgs, config) {
+        return __awaiter(this, void 0, void 0, function () {
+            var configUsed, dependencies, object;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        configUsed = this._mergeRegistrationConfig(registration, config);
+                        dependencies = this._resolveDependencies(registration, resolutionContext);
+                        return [4 /*yield*/, this._createObjectAsync(registration, dependencies, injectionArgs)];
+                    case 1:
+                        object = _a.sent();
+                        this._configureInstance(object, registration, configUsed);
+                        return [2 /*return*/, object];
+                }
+            });
+        });
+    };
     Container.prototype._resolveFactory = function (registration, resolutionContext, injectionArgs, config) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
         var dependencies = this._resolveDependencies(registration, resolutionContext);
         var factory = this._createFactory(registration, dependencies, injectionArgs);
         this._configureInstance(factory, registration, configUsed);
         return factory;
+    };
+    Container.prototype._resolveFactoryAsync = function (registration, resolutionContext, injectionArgs, config) {
+        return __awaiter(this, void 0, void 0, function () {
+            var configUsed, dependencies, factory;
+            return __generator(this, function (_a) {
+                configUsed = this._mergeRegistrationConfig(registration, config);
+                dependencies = this._resolveDependencies(registration, resolutionContext);
+                factory = this._createFactoryAsync(registration, dependencies, injectionArgs);
+                this._configureInstance(factory, registration, configUsed);
+                return [2 /*return*/, factory];
+            });
+        });
     };
     Container.prototype._resolveInstance = function (registration, resolutionContext, injectionArgs, config) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
@@ -181,7 +216,7 @@ var Container = (function (_super) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
         this._validateResolutionContext(registration, resolutionContext);
         var dependencies = this._resolveDependencies(registration, resolutionContext);
-        var instance = this._createInstance(registration, dependencies, injectionArgs);
+        var instance = this._createType(registration, dependencies, injectionArgs);
         this._configureInstance(instance, registration, configUsed);
         if (!resolutionContext.isDependencyOwned) {
             this._cacheInstance(registration, instance, injectionArgs, config);
@@ -198,7 +233,7 @@ var Container = (function (_super) {
                         configUsed = this._mergeRegistrationConfig(registration, config);
                         this._validateResolutionContext(registration, resolutionContext);
                         dependencies = this._resolveDependencies(registration, resolutionContext);
-                        return [4 /*yield*/, this._createInstance(registration, dependencies, injectionArgs)];
+                        return [4 /*yield*/, this._createType(registration, dependencies, injectionArgs)];
                     case 1:
                         instance = _a.sent();
                         this._configureInstance(instance, registration, configUsed);
@@ -287,6 +322,12 @@ var Container = (function (_super) {
                         if (this._isDependencyLazyAsync(registration, dependencyKey)) {
                             return [2 /*return*/, this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
                         }
+                        if (dependencyRegistration.settings.isObject) {
+                            return [2 /*return*/, this._resolveObjectAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
+                        }
+                        if (dependencyRegistration.settings.isFactory) {
+                            return [2 /*return*/, this._resolveFactoryAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
+                        }
                         return [4 /*yield*/, this._resolveInstanceAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
@@ -299,19 +340,51 @@ var Container = (function (_super) {
         var createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
         return createdObject;
     };
+    Container.prototype._createObjectAsync = function (registration, dependencies, injectionArgs) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resolver, object, createdObject;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resolver = this._getResolver(registration);
+                        return [4 /*yield*/, resolver.resolveObjectAsync(this, registration)];
+                    case 1:
+                        object = _a.sent();
+                        createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
+                        return [2 /*return*/, createdObject];
+                }
+            });
+        });
+    };
     Container.prototype._createFactory = function (registration, dependencies, injectionArgs) {
         var resolver = this._getResolver(registration);
-        var type = resolver.resolveType(this, registration);
+        var type = resolver.resolveFactory(this, registration);
         var factory = resolver.createFactory(this, type, registration, dependencies, injectionArgs);
         return factory;
     };
-    Container.prototype._createInstance = function (registration, dependencies, injectionArgs) {
+    Container.prototype._createFactoryAsync = function (registration, dependencies, injectionArgs) {
+        return __awaiter(this, void 0, void 0, function () {
+            var resolver, type, factory;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        resolver = this._getResolver(registration);
+                        return [4 /*yield*/, resolver.resolveFactoryAsync(this, registration)];
+                    case 1:
+                        type = _a.sent();
+                        factory = resolver.createFactory(this, type, registration, dependencies, injectionArgs);
+                        return [2 /*return*/, factory];
+                }
+            });
+        });
+    };
+    Container.prototype._createType = function (registration, dependencies, injectionArgs) {
         var resolver = this._getResolver(registration);
         var type = resolver.resolveType(this, registration);
         var factory = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
         return factory;
     };
-    Container.prototype._createInstanceAsync = function (registration, dependencies, injectionArgs) {
+    Container.prototype._createTypeAsync = function (registration, dependencies, injectionArgs) {
         return __awaiter(this, void 0, void 0, function () {
             var resolver, type, instance;
             return __generator(this, function (_a) {

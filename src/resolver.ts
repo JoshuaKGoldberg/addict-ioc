@@ -10,9 +10,6 @@ declare global {
 }
 
 export class Resolver implements ITypeResolver {
-  public resolveObject(container: IContainer, registration: IRegistration): any {
-    return registration.settings.object;
-  }
 
   public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
     return registration.settings.type;
@@ -21,6 +18,26 @@ export class Resolver implements ITypeResolver {
   public async resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>> {
     return new Promise<Type<T>>((resolve, reject) => {
       resolve(registration.settings.type);
+    });
+  }
+
+  public resolveObject(container: IContainer, registration: IRegistration): any {
+    return registration.settings.object;
+  }
+
+  public async resolveObjectAsync(container: IContainer, registration: IRegistration): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      resolve(registration.settings.object);
+    });
+  }
+
+  public resolveFactory(container: IContainer, registration: IRegistration): any {
+    return registration.settings.factory;
+  }
+
+  public async resolveFactoryAsync(container: IContainer, registration: IRegistration): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      resolve(registration.settings.factory);
     });
   }
 

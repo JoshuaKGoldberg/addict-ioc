@@ -38,9 +38,6 @@ define(["require", "exports", "./utils"], function (require, exports, utils_1) {
     var Resolver = (function () {
         function Resolver() {
         }
-        Resolver.prototype.resolveObject = function (container, registration) {
-            return registration.settings.object;
-        };
         Resolver.prototype.resolveType = function (container, registration) {
             return registration.settings.type;
         };
@@ -49,6 +46,30 @@ define(["require", "exports", "./utils"], function (require, exports, utils_1) {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, new Promise(function (resolve, reject) {
                             resolve(registration.settings.type);
+                        })];
+                });
+            });
+        };
+        Resolver.prototype.resolveObject = function (container, registration) {
+            return registration.settings.object;
+        };
+        Resolver.prototype.resolveObjectAsync = function (container, registration) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            resolve(registration.settings.object);
+                        })];
+                });
+            });
+        };
+        Resolver.prototype.resolveFactory = function (container, registration) {
+            return registration.settings.factory;
+        };
+        Resolver.prototype.resolveFactoryAsync = function (container, registration) {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new Promise(function (resolve, reject) {
+                            resolve(registration.settings.factory);
                         })];
                 });
             });

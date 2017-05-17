@@ -6,9 +6,12 @@ declare global  {
     var System: System;
 }
 export declare class Resolver implements ITypeResolver {
-    resolveObject(container: IContainer, registration: IRegistration): any;
     resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
     resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
+    resolveObject(container: IContainer, registration: IRegistration): any;
+    resolveObjectAsync(container: IContainer, registration: IRegistration): Promise<any>;
+    resolveFactory(container: IContainer, registration: IRegistration): any;
+    resolveFactoryAsync(container: IContainer, registration: IRegistration): Promise<any>;
     resolveConfig(config: TypeConfig): any;
     protected _configureInstance(instance: any, config: any): void;
     createObject<T>(container: IContainer, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;

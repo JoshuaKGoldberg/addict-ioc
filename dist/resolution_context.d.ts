@@ -1,8 +1,8 @@
-import { IResolutionContext, ITypeRegistration, IDependencyOwners } from './interfaces';
-export declare class ResolutionContext<T> implements IResolutionContext<T> {
-    registration: ITypeRegistration<T>;
-    history: Array<ITypeRegistration<any>>;
+import { IResolutionContext, IRegistration, IDependencyOwners } from './interfaces';
+export declare class ResolutionContext implements IResolutionContext {
+    registration: IRegistration;
+    history: Array<IRegistration>;
     owners: IDependencyOwners;
     isDependencyOwned: boolean;
-    constructor(registration: ITypeRegistration<T>);
+    constructor(registration: IRegistration);
 }

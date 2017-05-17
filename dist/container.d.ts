@@ -14,7 +14,9 @@ export declare class Container extends Registry implements IContainer {
     private _resolveLazy<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveLazyAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveObject<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _resolveFactory<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveObjectAsync<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveFactory(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveFactoryAsync(registration, resolutionContext, injectionArgs?, config?);
     private _resolveInstance<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _getInstance<T>(registration, resolutionContext, injectionArgs?, config?);
@@ -27,9 +29,11 @@ export declare class Container extends Registry implements IContainer {
     private _resolveDependency<T>(registration, dependencyKey, resolutionContext);
     private _resolveDependencyAsync<T>(registration, dependencyKey, resolutionContext);
     private _createObject<T>(registration, dependencies, injectionArgs?);
+    private _createObjectAsync<T>(registration, dependencies, injectionArgs?);
     private _createFactory<T>(registration, dependencies, injectionArgs?);
-    private _createInstance<T>(registration, dependencies, injectionArgs?);
-    private _createInstanceAsync<T>(registration, dependencies, injectionArgs?);
+    private _createFactoryAsync<T>(registration, dependencies, injectionArgs?);
+    private _createType<T>(registration, dependencies, injectionArgs?);
+    private _createTypeAsync<T>(registration, dependencies, injectionArgs?);
     private _getResolver<T>(registration);
     private _configureInstance(instance, registration, runtimeConfig?);
     private _getCachedInstances<T>(registration, injectionArgs, config);
@@ -44,7 +48,7 @@ export declare class Container extends Registry implements IContainer {
     private _hashConfig(config);
     private _hashInjectionArgs(injectionArgs);
     private _hashObject(object);
-    private _createNewResolutionContext<T>(registration);
+    private _createNewResolutionContext(registration);
     private _mergeArguments(existingArgs?, newArgs?);
     private _mergeConfigs(existingConfig, newConfig);
     private _mergeRegistrationConfig<T>(registration, config?);
