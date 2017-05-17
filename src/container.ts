@@ -5,8 +5,6 @@ import {ResolutionContext} from './resolution_context';
 import {DefaultSettings} from './default_settings';
 import {getPropertyDescriptor} from './utils';
 
-import * as merge from 'deepmerge';
-
 export class Container extends Registry implements IContainer {
 
   public instances: IInstanceCache<any>;
@@ -656,7 +654,7 @@ export class Container extends Registry implements IContainer {
       return existingConfig;
     }
 
-    return merge(existingConfig, newConfig);
+    return {...existingConfig, ...newConfig};
   }
 
   private _mergeRegistrationConfig<T>(registration: ITypeRegistration<T>, config?: any): any {

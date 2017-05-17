@@ -3,6 +3,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -38,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "./registry", "./resolution_context", "./default_settings", "./utils", "deepmerge"], function (require, exports, registry_1, resolution_context_1, default_settings_1, utils_1, merge) {
+define(["require", "exports", "./registry", "./resolution_context", "./default_settings", "./utils"], function (require, exports, registry_1, resolution_context_1, default_settings_1, utils_1) {
     "use strict";
     var Container = (function (_super) {
         __extends(Container, _super);
@@ -590,7 +598,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             if (!newConfig) {
                 return existingConfig;
             }
-            return merge(existingConfig, newConfig);
+            return __assign({}, existingConfig, newConfig);
         };
         Container.prototype._mergeRegistrationConfig = function (registration, config) {
             var registrationConfig = this._resolveConfig(registration, registration.settings.config);

@@ -4,6 +4,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -43,7 +51,6 @@ var registry_1 = require("./registry");
 var resolution_context_1 = require("./resolution_context");
 var default_settings_1 = require("./default_settings");
 var utils_1 = require("./utils");
-var merge = require("deepmerge");
 var Container = (function (_super) {
     __extends(Container, _super);
     function Container(settings, parentContainer, parentRegistry) {
@@ -594,7 +601,7 @@ var Container = (function (_super) {
         if (!newConfig) {
             return existingConfig;
         }
-        return merge(existingConfig, newConfig);
+        return __assign({}, existingConfig, newConfig);
     };
     Container.prototype._mergeRegistrationConfig = function (registration, config) {
         var registrationConfig = this._resolveConfig(registration, registration.settings.config);
