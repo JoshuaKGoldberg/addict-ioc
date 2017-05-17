@@ -109,6 +109,30 @@ define(["require", "exports", "./type_registration", "./type_registration_settin
             });
             return foundKeys;
         };
+        Registry.prototype.getKeysByAttributes = function (attributes) {
+            var _this = this;
+            var foundKeys = [];
+            var attributeKeys = Object.keys(attributes);
+            var registrationKeys = this.getKeysByTags.apply(this, attributeKeys);
+            registrationKeys.forEach(function (registrationKey) {
+                var registration = _this.getRegistration(registrationKey);
+                var registrationHasAttributes = _this._hasRegistrationAttributes(registration, attributes);
+                if (registrationHasAttributes) {
+                    foundKeys.push(registration.settings.key);
+                }
+            });
+            return foundKeys;
+        };
+        Registry.prototype._hasRegistrationAttributes = function (registration, attributes) {
+            var attributeKeys = Object.keys(attributes);
+            var attributeMissing = attributeKeys.some(function (attribute) {
+                var attributeValue = registration.settings.tags[attribute];
+                if (attributeValue !== attributes[attribute]) {
+                    return true;
+                }
+            });
+            return !attributeMissing;
+        };
         Registry.prototype._hasRegistrationTags = function (registration, tags) {
             var declaredTags = Object.keys(registration.settings.tags);
             var isTagMissing = tags.some(function (tag) {

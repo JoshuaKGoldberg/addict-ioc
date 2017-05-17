@@ -1,4 +1,4 @@
-import { RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator } from './interfaces';
+import { ITags, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator } from './interfaces';
 export interface IRegistrationsCache {
     [key: string]: ITypeRegistration<any>;
 }
@@ -24,5 +24,7 @@ export declare class Registry implements IRegistry {
     protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void;
     protected deleteRegistration(key: RegistrationKey): void;
     getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
+    getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;
+    private _hasRegistrationAttributes(registration, attributes);
     private _hasRegistrationTags(registration, tags);
 }

@@ -1,4 +1,4 @@
-import {IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, ITypeResolver, Type, IRegistry, IRegistrator} from './interfaces';
+import {ITags, IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, ITypeResolver, Type, IRegistry, IRegistrator} from './interfaces';
 import {TypeRegistration} from './type_registration';
 import {TypeRegistrationSettings} from './type_registration_settings';
 import {RegistrationContext} from './registration_context';
@@ -166,6 +166,46 @@ export class Registry implements IRegistry {
     });
 
     return foundKeys;
+  }
+
+  public getKeysByAttributes(attributes: ITags): Array<RegistrationKey> {
+
+    const foundKeys = [];
+
+    const attributeKeys = Object.keys(attributes);
+
+    const registrationKeys = this.getKeysByTags(...attributeKeys);
+
+    registrationKeys.forEach((registrationKey) => {
+
+      const registration = this.getRegistration(registrationKey);
+
+      const registrationHasAttributes = this._hasRegistrationAttributes(registration, attributes);
+
+      if (registrationHasAttributes) {
+
+        foundKeys.push(registration.settings.key);
+      }
+    });
+
+    return foundKeys;
+  }
+
+  private _hasRegistrationAttributes(registration: IRegistration, attributes: ITags): boolean {
+
+    const attributeKeys = Object.keys(attributes);
+
+    const attributeMissing = attributeKeys.some((attribute) => {
+
+      const attributeValue = registration.settings.tags[attribute];
+
+      if (attributeValue !== attributes[attribute]) {
+
+        return true;
+      }
+    });
+
+    return !attributeMissing;
   }
 
   private _hasRegistrationTags(registration: IRegistration, tags: Array<string>): boolean {

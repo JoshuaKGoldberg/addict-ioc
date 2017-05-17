@@ -32,6 +32,8 @@ export interface IRegistry extends IRegistrator {
     exportRegistrations(keysToExport: Array<RegistrationKey>): Array<IRegistrationSettings>;
     isRegistered(key: RegistrationKey): boolean;
     getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
+    getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
+    getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;
 }
 export interface ITypeRegistration<T> extends IRegistration {
     settings: ITypeRegistrationSettings<T>;
