@@ -10,7 +10,6 @@ export declare class Registry implements IRegistry {
     clear(): void;
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport?: Array<RegistrationKey>): Array<IRegistrationSettings>;
-    autoRegisterModules(): void;
     isRegistered(key: RegistrationKey): boolean;
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;

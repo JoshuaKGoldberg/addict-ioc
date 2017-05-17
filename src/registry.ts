@@ -50,9 +50,9 @@ export class Registry implements IRegistry {
     });
   }
 
-  public autoRegisterModules(): void {
+  // public autoRegisterModules(): void {
 
-  }
+  // }
 
   // public registerModule(moduleName: string): IRegistrator {
 

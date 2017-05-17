@@ -4,6 +4,10 @@ export class RegistrationContext implements IRegistrator {
   
   constructor(protected registry: IRegistrator, protected registrationSettings?: IRegistrationSettings) {}
 
+  public createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator {
+    return new RegistrationContext(this, registrationSettings);
+  }
+  
   public register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T> {
     const registration = this.registry.register(key, type);
     this.applyRegistrationTemplate(registration.settings, this.registrationSettings);

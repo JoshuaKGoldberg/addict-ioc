@@ -28,8 +28,6 @@ var Registry = (function () {
             return exportedSettings;
         });
     };
-    Registry.prototype.autoRegisterModules = function () {
-    };
     Registry.prototype.isRegistered = function (key) {
         var registration = this.getRegistration(key);
         return !!registration;

@@ -25,6 +25,7 @@ export interface IValidationError {
 }
 
 export interface IRegistrator {
+  createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
   register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
   registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration;
   unregister<T>(key: RegistrationKey): IRegistration | ITypeRegistration<T>;
@@ -35,7 +36,6 @@ export interface IRegistry extends IRegistrator {
   exportRegistrations(keysToExport: Array<RegistrationKey>): Array<IRegistrationSettings>;
   // registerModule(moduleName: string): IRegistrator;
   isRegistered(key: RegistrationKey): boolean;
-  createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
   getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
 }
 

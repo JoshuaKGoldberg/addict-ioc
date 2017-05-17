@@ -3,6 +3,9 @@ var RegistrationContext = (function () {
         this.registry = registry;
         this.registrationSettings = registrationSettings;
     }
+    RegistrationContext.prototype.createRegistrationTemplate = function (registrationSettings) {
+        return new RegistrationContext(this, registrationSettings);
+    };
     RegistrationContext.prototype.register = function (key, type) {
         var registration = this.registry.register(key, type);
         this.applyRegistrationTemplate(registration.settings, this.registrationSettings);

@@ -3,6 +3,7 @@ export declare class RegistrationContext implements IRegistrator {
     protected registry: IRegistrator;
     protected registrationSettings: IRegistrationSettings;
     constructor(registry: IRegistrator, registrationSettings?: IRegistrationSettings);
+    createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T>;
     registerObject(key: RegistrationKey, object: any): IRegistration;
     unregister<T>(key: string): IRegistration | ITypeRegistration<T>;

@@ -27,8 +27,6 @@ define(["require", "exports", "./type_registration", "./type_registration_settin
                 return exportedSettings;
             });
         };
-        Registry.prototype.autoRegisterModules = function () {
-        };
         Registry.prototype.isRegistered = function (key) {
             var registration = this.getRegistration(key);
             return !!registration;
