@@ -1,11 +1,16 @@
-import { IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, ITypeResolver } from './interfaces';
+import { IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, IResolver } from './interfaces';
 declare global  {
     interface System {
         import(request: string): Promise<any>;
     }
     var System: System;
 }
-export declare class Resolver implements ITypeResolver {
+export declare class Resolver implements IResolver {
+    hash(anything: any): string;
+    hashType<T>(type: Type<T>): string;
+    hashObject(object: any): string;
+    hashFactory(factory: any): string;
+    hashConfig(config: any): string;
     resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
     resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
     resolveObject(container: IContainer, registration: IRegistration): any;

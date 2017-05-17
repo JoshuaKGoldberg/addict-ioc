@@ -1,4 +1,4 @@
-import { ITypeRegistrationSettings, Type, IRegistrationSettings, IOverwrittenKeys, RegistrationKey, ITypeResolver, TypeConfig } from './interfaces';
+import { ITypeRegistrationSettings, Type, IRegistrationSettings, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig } from './interfaces';
 export declare class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T> {
     defaults: IRegistrationSettings;
     protected settings: ITypeRegistrationSettings<T>;
@@ -7,7 +7,7 @@ export declare class TypeRegistrationSettings<T> implements ITypeRegistrationSet
     type: Type<T>;
     object: any;
     factory: any;
-    readonly resolver: ITypeResolver;
+    readonly resolver: IResolver;
     readonly module: string;
     readonly config: TypeConfig;
     readonly dependencies: Array<string>;

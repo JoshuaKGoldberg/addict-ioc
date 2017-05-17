@@ -35,6 +35,11 @@ export class TypeRegistration<T> implements ITypeRegistration<T> {
     return this;
   }
 
+  public transient(isTransient: boolean = true): ITypeRegistration<T> {
+    this.settings.isSingleton = !isTransient;
+    return this;
+  }
+
   public injectLazy(...lazyDependencies: Array<RegistrationKey>): ITypeRegistration<T> {
     this.settings.lazyDependencies = lazyDependencies;
     return this;

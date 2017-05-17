@@ -7,6 +7,7 @@ export declare class TypeRegistration<T> implements ITypeRegistration<T> {
     configure(config: any): ITypeRegistration<T>;
     dependencies(...dependencies: Array<RegistrationKey>): ITypeRegistration<T>;
     singleton(isSingleton?: boolean): ITypeRegistration<T>;
+    transient(isTransient?: boolean): ITypeRegistration<T>;
     injectLazy(...lazyDependencies: Array<RegistrationKey>): ITypeRegistration<T>;
     injectPromiseLazy(...lazyPromiseDependencies: Array<RegistrationKey>): ITypeRegistration<T>;
     injectInto(targetFunction: string): ITypeRegistration<T>;

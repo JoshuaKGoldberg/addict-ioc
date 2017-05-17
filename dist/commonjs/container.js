@@ -43,13 +43,7 @@ var registry_1 = require("./registry");
 var resolution_context_1 = require("./resolution_context");
 var default_settings_1 = require("./default_settings");
 var utils_1 = require("./utils");
-var hash = require("object-hash");
 var merge = require("deepmerge");
-var hashOptions = {
-    respectFunctionProperties: false,
-    respectType: true,
-    unorderedArrays: true
-};
 var Container = (function (_super) {
     __extends(Container, _super);
     function Container(settings, parentContainer, parentRegistry) {
@@ -420,6 +414,7 @@ var Container = (function (_super) {
     };
     Container.prototype._getCachedInstances = function (registration, injectionArgs, config) {
         var key = registration.settings.key;
+        var resolver = this._getResolver(registration);
         if (!this.instances) {
             this.instances = new Map();
         }
@@ -427,12 +422,12 @@ var Container = (function (_super) {
         if (!allInstances) {
             return [];
         }
-        var configHash = this._hashConfig(config);
+        var configHash = resolver.hashConfig(config);
         var configInstances = allInstances.get(configHash);
         if (!configInstances) {
             return [];
         }
-        var injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+        var injectionArgsHash = resolver.hash(injectionArgs);
         var argumentInstances = configInstances.get(injectionArgsHash);
         if (!argumentInstances) {
             return [];
@@ -441,6 +436,7 @@ var Container = (function (_super) {
     };
     Container.prototype._cacheInstance = function (registration, instance, injectionArgs, config) {
         var key = registration.settings.key;
+        var resolver = this._getResolver(registration);
         if (!this.instances) {
             this.instances = new Map();
         }
@@ -449,13 +445,13 @@ var Container = (function (_super) {
             allInstances = new Map();
             this.instances.set(key, allInstances);
         }
-        var configHash = this._hashConfig(config);
+        var configHash = resolver.hashConfig(config);
         var configInstances = allInstances.get(configHash);
         if (!configInstances) {
             configInstances = new Map();
             allInstances.set(configHash, configInstances);
         }
-        var injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+        var injectionArgsHash = resolver.hash(injectionArgs);
         var argumentInstances = configInstances.get(injectionArgsHash);
         if (!argumentInstances) {
             argumentInstances = [];
@@ -579,18 +575,6 @@ var Container = (function (_super) {
             errors.push(validationError);
         }
         return errors;
-    };
-    Container.prototype._hashConfig = function (config) {
-        return config ? config.toString() : undefined;
-    };
-    Container.prototype._hashInjectionArgs = function (injectionArgs) {
-        return injectionArgs ? injectionArgs.toString() : undefined;
-    };
-    Container.prototype._hashObject = function (object) {
-        if (typeof object === 'undefined') {
-            return undefined;
-        }
-        return hash(object, hashOptions);
     };
     Container.prototype._createNewResolutionContext = function (registration) {
         return new resolution_context_1.ResolutionContext(registration);

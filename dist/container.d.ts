@@ -45,9 +45,6 @@ export declare class Container extends Registry implements IContainer {
     private _createValidationError(registration, history, errorMessage);
     private _validateOverwrittenKeys(registration, history);
     private _validateOverwrittenKey(registration, overwrittenKey, history);
-    private _hashConfig(config);
-    private _hashInjectionArgs(injectionArgs);
-    private _hashObject(object);
     private _createNewResolutionContext(registration);
     private _mergeArguments(existingArgs?, newArgs?);
     private _mergeConfigs(existingConfig, newConfig);

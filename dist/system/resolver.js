@@ -47,6 +47,21 @@ System.register(["./utils"], function (exports_1, context_1) {
             Resolver = (function () {
                 function Resolver() {
                 }
+                Resolver.prototype.hash = function (anything) {
+                    return anything.toString();
+                };
+                Resolver.prototype.hashType = function (type) {
+                    return this.hash(type);
+                };
+                Resolver.prototype.hashObject = function (object) {
+                    return this.hash(object);
+                };
+                Resolver.prototype.hashFactory = function (factory) {
+                    return this.hash(factory);
+                };
+                Resolver.prototype.hashConfig = function (config) {
+                    return this.hash(config);
+                };
                 Resolver.prototype.resolveType = function (container, registration) {
                     return registration.settings.type;
                 };

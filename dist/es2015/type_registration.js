@@ -33,6 +33,11 @@ var TypeRegistration = (function () {
         this.settings.isSingleton = isSingleton;
         return this;
     };
+    TypeRegistration.prototype.transient = function (isTransient) {
+        if (isTransient === void 0) { isTransient = true; }
+        this.settings.isSingleton = !isTransient;
+        return this;
+    };
     TypeRegistration.prototype.injectLazy = function () {
         var lazyDependencies = [];
         for (var _i = 0; _i < arguments.length; _i++) {

@@ -1,18 +1,11 @@
-import {IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IInstanceWithConfigCache, IInstanceWithInjectionArgsCache, IContainer, RegistrationKey, IRegistration, ITypeResolver, IContainerSettings, IResolutionContext, ITypeRegistrationSettings, ITypeRegistration, Type, IFactory, IFactoryAsync, IValidationError} from './interfaces';
+import {IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IInstanceWithConfigCache, IInstanceWithInjectionArgsCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistrationSettings, ITypeRegistration, Type, IFactory, IFactoryAsync, IValidationError} from './interfaces';
 import {TypeRegistration} from './type_registration';
 import {Registry} from './registry';
 import {ResolutionContext} from './resolution_context';
 import {DefaultSettings} from './default_settings';
 import {getPropertyDescriptor} from './utils';
 
-import * as hash from 'object-hash';
 import * as merge from 'deepmerge';
-
-const hashOptions = {
-  respectFunctionProperties: false,
-  respectType: true,
-  unorderedArrays: true
-};
 
 export class Container extends Registry implements IContainer {
 
@@ -382,7 +375,7 @@ export class Container extends Registry implements IContainer {
     return instance;
   }
 
-  private _getResolver<T>(registration: IRegistration): ITypeResolver {
+  private _getResolver<T>(registration: IRegistration): IResolver {
     return registration.settings.resolver || this.settings.resolver;
   }
 
@@ -411,6 +404,7 @@ export class Container extends Registry implements IContainer {
   private _getCachedInstances<T>(registration: IRegistration, injectionArgs: Array<any>, config: any): Array<T> {
 
     const key = registration.settings.key;
+    const resolver = this._getResolver(registration);
 
     if (!this.instances) {
       this.instances = new Map<RegistrationKey, IInstanceWithConfigCache<T>>();
@@ -421,7 +415,7 @@ export class Container extends Registry implements IContainer {
       return [];
     }
 
-    const configHash = this._hashConfig(config);
+    const configHash = resolver.hashConfig(config);
 
     const configInstances = allInstances.get(configHash);
 
@@ -429,7 +423,7 @@ export class Container extends Registry implements IContainer {
       return [];
     }
 
-    const injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+    const injectionArgsHash = resolver.hash(injectionArgs);
 
     const argumentInstances = configInstances.get(injectionArgsHash);
 
@@ -443,6 +437,7 @@ export class Container extends Registry implements IContainer {
   private _cacheInstance<T>(registration: IRegistration, instance: any, injectionArgs: Array<any>, config: any): void {
 
     const key = registration.settings.key;
+    const resolver = this._getResolver(registration);
 
     if (!this.instances) {
       this.instances = new Map<RegistrationKey, IInstanceWithConfigCache<T>>();
@@ -455,7 +450,7 @@ export class Container extends Registry implements IContainer {
       this.instances.set(key, allInstances);
     }
 
-    const configHash = this._hashConfig(config);
+    const configHash = resolver.hashConfig(config);
 
     let configInstances = allInstances.get(configHash);
 
@@ -464,7 +459,7 @@ export class Container extends Registry implements IContainer {
       allInstances.set(configHash, configInstances);
     }
 
-    const injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+    const injectionArgsHash = resolver.hash(injectionArgs);
 
     let argumentInstances = configInstances.get(injectionArgsHash);
 
@@ -635,26 +630,6 @@ export class Container extends Registry implements IContainer {
     }
 
     return errors;
-  }
-
-
-  private _hashConfig(config: any): string {
-    return config ? config.toString() : undefined;
-    // TODO: find isomorph hashing
-    // return this._hashObject(config);
-  }
-
-  private _hashInjectionArgs(injectionArgs: Array<any>): string {
-    return injectionArgs ? injectionArgs.toString() : undefined;
-    // TODO: find isomorph hashing
-    // return this._hashObject(injectionArgs);
-  }
-
-  private _hashObject(object: any): string {
-    if (typeof object === 'undefined') {
-      return undefined;
-    }
-    return hash(object, hashOptions);
   }
 
   private _createNewResolutionContext(registration: IRegistration): IResolutionContext {

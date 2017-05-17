@@ -1,4 +1,4 @@
-import {ITypeRegistrationSettings, Type, IRegistrationSettings, ITags, IOverwrittenKeys, RegistrationKey, ITypeResolver, TypeConfig} from './interfaces';
+import {ITypeRegistrationSettings, Type, IRegistrationSettings, ITags, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig} from './interfaces';
 
 export class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T> {
 
@@ -41,7 +41,7 @@ export class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T>
     this.settings.factory = value;
   }
 
-  public get resolver(): ITypeResolver {
+  public get resolver(): IResolver {
     return this._getCurrentOrDefault('resolver');
   }
 

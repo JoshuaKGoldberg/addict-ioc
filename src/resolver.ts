@@ -1,4 +1,4 @@
-import {IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, ITypeResolver} from './interfaces';
+import {IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, IResolver} from './interfaces';
 import {getPropertyDescriptor} from './utils';
 
 // we need this workaround until TypeScript supports async import() syntax
@@ -9,7 +9,27 @@ declare global {
   var System: System
 }
 
-export class Resolver implements ITypeResolver {
+export class Resolver implements IResolver {
+
+  hash(anything: any): string {
+    return anything.toString();
+  }
+
+  hashType<T>(type: Type<T>): string {
+    return this.hash(type);
+  }
+
+  hashObject(object: any): string {
+    return this.hash(object);
+  }
+
+  hashFactory(factory: any): string {
+    return this.hash(factory);
+  }
+  
+  hashConfig(config: any): string {
+    return this.hash(config);
+  }
 
   public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
     return registration.settings.type;

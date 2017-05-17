@@ -38,13 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "./registry", "./resolution_context", "./default_settings", "./utils", "object-hash", "deepmerge"], function (require, exports, registry_1, resolution_context_1, default_settings_1, utils_1, hash, merge) {
+define(["require", "exports", "./registry", "./resolution_context", "./default_settings", "./utils", "deepmerge"], function (require, exports, registry_1, resolution_context_1, default_settings_1, utils_1, merge) {
     "use strict";
-    var hashOptions = {
-        respectFunctionProperties: false,
-        respectType: true,
-        unorderedArrays: true
-    };
     var Container = (function (_super) {
         __extends(Container, _super);
         function Container(settings, parentContainer, parentRegistry) {
@@ -415,6 +410,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
         };
         Container.prototype._getCachedInstances = function (registration, injectionArgs, config) {
             var key = registration.settings.key;
+            var resolver = this._getResolver(registration);
             if (!this.instances) {
                 this.instances = new Map();
             }
@@ -422,12 +418,12 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             if (!allInstances) {
                 return [];
             }
-            var configHash = this._hashConfig(config);
+            var configHash = resolver.hashConfig(config);
             var configInstances = allInstances.get(configHash);
             if (!configInstances) {
                 return [];
             }
-            var injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+            var injectionArgsHash = resolver.hash(injectionArgs);
             var argumentInstances = configInstances.get(injectionArgsHash);
             if (!argumentInstances) {
                 return [];
@@ -436,6 +432,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
         };
         Container.prototype._cacheInstance = function (registration, instance, injectionArgs, config) {
             var key = registration.settings.key;
+            var resolver = this._getResolver(registration);
             if (!this.instances) {
                 this.instances = new Map();
             }
@@ -444,13 +441,13 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
                 allInstances = new Map();
                 this.instances.set(key, allInstances);
             }
-            var configHash = this._hashConfig(config);
+            var configHash = resolver.hashConfig(config);
             var configInstances = allInstances.get(configHash);
             if (!configInstances) {
                 configInstances = new Map();
                 allInstances.set(configHash, configInstances);
             }
-            var injectionArgsHash = this._hashInjectionArgs(injectionArgs);
+            var injectionArgsHash = resolver.hash(injectionArgs);
             var argumentInstances = configInstances.get(injectionArgsHash);
             if (!argumentInstances) {
                 argumentInstances = [];
@@ -574,18 +571,6 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
                 errors.push(validationError);
             }
             return errors;
-        };
-        Container.prototype._hashConfig = function (config) {
-            return config ? config.toString() : undefined;
-        };
-        Container.prototype._hashInjectionArgs = function (injectionArgs) {
-            return injectionArgs ? injectionArgs.toString() : undefined;
-        };
-        Container.prototype._hashObject = function (object) {
-            if (typeof object === 'undefined') {
-                return undefined;
-            }
-            return hash(object, hashOptions);
         };
         Container.prototype._createNewResolutionContext = function (registration) {
             return new resolution_context_1.ResolutionContext(registration);

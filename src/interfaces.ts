@@ -55,35 +55,25 @@ export interface ITypeRegistration<T> extends IRegistration {
   setTag(tag: string, value: any): ITypeRegistration<T>;
 }
 
-export interface IObjectRegistration extends IRegistration {
-  settings: IObjectRegistrationSettings;
-  configure(config: any): IObjectRegistration;
-  dependencies(...dependencies: Array<RegistrationKey>): IObjectRegistration;
-  singleton(isSingleton: boolean): IObjectRegistration;
-  injectLazy(...lazyDependencies: Array<RegistrationKey>): IObjectRegistration;
-  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): IObjectRegistration;
-  injectInto(targetFunction: string): IObjectRegistration;
-  bindFunctions(...functionsToBind: Array<string>): IObjectRegistration;
-  owns(...dependencies: Array<RegistrationKey>): IObjectRegistration;
-  overwrite(originalKey: string, overwrittenKey: string): IObjectRegistration;
-  tags(...tags: Array<string>): IObjectRegistration;
-  setTag(tag: string, value: any): IObjectRegistration;
+export interface ISpecializedRegistration<T extends IRegistration, U extends IRegistrationSettings> extends IRegistration {
+  settings: U;
+  configure(config: any): T;
+  dependencies(...dependencies: Array<RegistrationKey>): T;
+  singleton(isSingleton: boolean): T;
+  transient(isTransient: boolean): T;
+  injectLazy(...lazyDependencies: Array<RegistrationKey>): T;
+  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): T;
+  injectInto(targetFunction: string): T;
+  bindFunctions(...functionsToBind: Array<string>): T;
+  owns(...dependencies: Array<RegistrationKey>): T;
+  overwrite(originalKey: string, overwrittenKey: string): T;
+  tags(...tags: Array<string>): T;
+  setTag(tag: string, value: any): T;
 }
 
-export interface IFactoryRegistration extends IRegistration {
-  settings: IFactoryRegistrationSettings;
-  configure(config: any): IFactoryRegistration;
-  dependencies(...dependencies: Array<RegistrationKey>): IFactoryRegistration;
-  singleton(isSingleton: boolean): IFactoryRegistration;
-  injectLazy(...lazyDependencies: Array<RegistrationKey>): IFactoryRegistration;
-  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): IFactoryRegistration;
-  injectInto(targetFunction: string): IFactoryRegistration;
-  bindFunctions(...functionsToBind: Array<string>): IFactoryRegistration;
-  owns(...dependencies: Array<RegistrationKey>): IFactoryRegistration;
-  overwrite(originalKey: string, overwrittenKey: string): IFactoryRegistration;
-  tags(...tags: Array<string>): IFactoryRegistration;
-  setTag(tag: string, value: any): IFactoryRegistration;
-}
+export interface ITypeRegistration<T> extends ISpecializedRegistration<ITypeRegistration<T>, ITypeRegistrationSettings<T>> {}
+export interface IObjectRegistration extends ISpecializedRegistration<IObjectRegistration, IObjectRegistrationSettings> {}
+export interface IFactoryRegistration extends ISpecializedRegistration<IFactoryRegistration, IFactoryRegistrationSettings> {}
 
 export interface IRegistration {
   settings: IRegistrationSettings;
@@ -115,7 +105,7 @@ export interface IContainerSettings extends IRegistrationSettings {
 
 export interface IRegistrationSettings {
   defaults?: IRegistrationSettings;
-  resolver?: ITypeResolver;
+  resolver?: IResolver;
   key?: RegistrationKey;
   object?: any;
   factory?: any;
@@ -143,7 +133,7 @@ export interface IOverwrittenKeys {
   [originalKey: string]: string;
 }
 
-export interface ITypeResolver {
+export interface IResolver {
   resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T>;
   resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>>;
   resolveObject(container: IContainer, registration: IRegistration): any;
@@ -154,6 +144,11 @@ export interface ITypeResolver {
   createObject<T>(container: IContainer, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
   createFactory<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
   resolveConfig(config: TypeConfig): any;
+  hash(anything: any): string;
+  hashType<T>(type: Type<T>): string;
+  hashObject(object: any): string;
+  hashFactory(factory: any): string;
+  hashConfig(config: any): string;
 }
 
 export interface IResolutionContext {

@@ -1,4 +1,4 @@
-import {ITags, IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, ITypeResolver, Type, IRegistry, IRegistrator} from './interfaces';
+import {ITags, IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, Type, IRegistry, IRegistrator} from './interfaces';
 import {TypeRegistration} from './type_registration';
 import {TypeRegistrationSettings} from './type_registration_settings';
 import {RegistrationContext} from './registration_context';
