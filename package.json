@@ -27,6 +27,10 @@
   "bugs": {
     "url": "https://github.com/5minds/addict-ioc/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/5minds/addict-ioc"
+  },
   "homepage": "https://github.com/5minds/addict-ioc#readme",
   "devDependencies": {
     "gulptraum": "^1.2.0",
