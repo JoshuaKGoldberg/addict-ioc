@@ -12,6 +12,9 @@ declare global {
 export class Resolver implements IResolver {
 
   hash(anything: any): string {
+    if (typeof anything === 'undefined' || anything === null) {
+      return undefined;
+    }
     return anything.toString();
   }
 

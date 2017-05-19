@@ -48,6 +48,9 @@ System.register(["./utils"], function (exports_1, context_1) {
                 function Resolver() {
                 }
                 Resolver.prototype.hash = function (anything) {
+                    if (typeof anything === 'undefined' || anything === null) {
+                        return undefined;
+                    }
                     return anything.toString();
                 };
                 Resolver.prototype.hashType = function (type) {
