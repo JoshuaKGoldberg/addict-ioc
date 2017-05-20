@@ -66,6 +66,45 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             _super.prototype.clear.call(this);
             this.initialize();
         };
+        Container.prototype._orderDependencies = function (registration, results, missing, recursive, nest) {
+            if (nest === void 0) { nest = []; }
+            for (var _i = 0, _a = registration.settings.dependencies; _i < _a.length; _i++) {
+                var dependencyKey = _a[_i];
+                dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
+                if (results.indexOf(dependencyKey) !== -1) {
+                    return;
+                }
+                var dependency = this.getRegistration(dependencyKey);
+                if (!dependency) {
+                    missing.push(dependencyKey);
+                }
+                else if (nest.indexOf(dependencyKey) > -1) {
+                    nest.push(dependencyKey);
+                    recursive.push(nest.slice(0));
+                    nest.pop();
+                }
+                else if (dependency.settings.dependencies.length) {
+                    nest.push(dependencyKey);
+                    this._orderDependencies(dependency, results, missing, recursive, nest);
+                    nest.pop();
+                }
+                results.push(dependencyKey);
+            }
+        };
+        Container.prototype.newResolve = function (key, injectionArgs, config) {
+            var _this = this;
+            if (injectionArgs === void 0) { injectionArgs = []; }
+            var dependencyResolutionOrder = [];
+            var missingDependencies = [];
+            var recursiveDependencyResolutionGraphs = [];
+            var registration = this.getRegistration(key);
+            this._orderDependencies(registration.settings.dependencies, dependencyResolutionOrder, missingDependencies, recursiveDependencyResolutionGraphs);
+            dependencyResolutionOrder.forEach(function (dependencyKey) {
+                var dependency = _this.getRegistration(dependencyKey);
+                _this._getInstance(dependency, undefined, undefined, undefined);
+            });
+            return this._getInstance(registration, null, injectionArgs, config);
+        };
         Container.prototype.resolve = function (key, injectionArgs, config) {
             if (injectionArgs === void 0) { injectionArgs = []; }
             var registration = _super.prototype.getRegistration.call(this, key);

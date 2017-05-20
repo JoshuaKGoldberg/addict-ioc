@@ -54,4 +54,4 @@ const TestType = class TestType {
     '2'
   ];
 
-  const resolvedKey = container.resolve(key, testArgs, undefined);
+  const resolvedKey = container.resolveNew(key, testArgs, undefined);

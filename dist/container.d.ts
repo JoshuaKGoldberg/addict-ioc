@@ -7,6 +7,8 @@ export declare class Container extends Registry implements IContainer {
     constructor(settings?: IContainerSettings, parentContainer?: IContainer, parentRegistry?: IRegistry);
     initialize(): void;
     clear(): void;
+    private _orderDependencies(registration, results, missing, recursive, nest?);
+    newResolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
     resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
     private _resolve<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveAsync<T>(registration, resolutionContext, injectionArgs?, config?);

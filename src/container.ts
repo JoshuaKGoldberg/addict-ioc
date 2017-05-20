@@ -30,6 +30,67 @@ export class Container extends Registry implements IContainer {
     this.initialize();
   }
 
+
+
+
+
+  private _orderDependencies(registration: IRegistration, results: Array<RegistrationKey>, missing: Array<RegistrationKey>, recursive: Array<Array<RegistrationKey>>, nest: Array<RegistrationKey> = []): void {
+    
+    for (let dependencyKey of registration.settings.dependencies) {
+
+      dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
+
+      if (results.indexOf(dependencyKey) !== -1) {
+        return;
+      }
+
+      const dependency = this.getRegistration(dependencyKey);
+
+      if (!dependency) {
+        missing.push(dependencyKey);
+      } else if (nest.indexOf(dependencyKey) > -1) {
+        nest.push(dependencyKey);
+        recursive.push(nest.slice(0));
+        nest.pop();
+      } else if (dependency.settings.dependencies.length) {
+        nest.push(dependencyKey);
+        this._orderDependencies(dependency, results, missing, recursive, nest);
+        nest.pop();
+      }
+      results.push(dependencyKey);
+    }
+  }
+
+  public newResolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
+
+    const dependencyResolutionOrder = [];
+    const missingDependencies = [];
+    const recursiveDependencyResolutionGraphs = [];
+    
+    const registration = this.getRegistration<T>(key);
+    
+    this._orderDependencies(registration.settings.dependencies, dependencyResolutionOrder, missingDependencies, recursiveDependencyResolutionGraphs);
+
+    dependencyResolutionOrder.forEach((dependencyKey) => {
+
+      const dependency = this.getRegistration<T>(dependencyKey);
+
+      this._getInstance<T>(dependency, undefined, undefined, undefined);
+    });
+
+    return this._getInstance<T>(registration, null, injectionArgs, config);
+  }
+
+
+
+
+
+
+
+
+
+
+
   public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
     const registration = super.getRegistration<T>(key);
     const resolutionContext = this._createNewResolutionContext(registration);
