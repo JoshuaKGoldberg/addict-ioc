@@ -8,6 +8,8 @@ export declare class Container extends Registry implements IContainer {
     initialize(): void;
     clear(): void;
     resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
+    private _resolve<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     resolveAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<T>;
     resolveLazy<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<T>;
     resolveLazyAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<T>;
@@ -15,8 +17,8 @@ export declare class Container extends Registry implements IContainer {
     private _resolveLazyAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveObject<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveObjectAsync<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _resolveFactory(registration, resolutionContext, injectionArgs?, config?);
-    private _resolveFactoryAsync(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveFactory<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveFactoryAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveInstance<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _getInstance<T>(registration, resolutionContext, injectionArgs?, config?);

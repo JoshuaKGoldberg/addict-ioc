@@ -1,5 +1,5 @@
 import {IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IInstanceWithConfigCache, IInstanceWithInjectionArgsCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistrationSettings, ITypeRegistration, Type, IFactory, IFactoryAsync, IValidationError} from './interfaces';
-import {TypeRegistration} from './type_registration';
+import {Registration} from './registration';
 import {Registry} from './registry';
 import {ResolutionContext} from './resolution_context';
 import {DefaultSettings} from './default_settings';
@@ -34,45 +34,65 @@ export class Container extends Registry implements IContainer {
     const registration = super.getRegistration<T>(key);
     const resolutionContext = this._createNewResolutionContext(registration);
 
+    return this._resolve<T>(registration, resolutionContext, injectionArgs, config);
+  }
+
+  private _resolve<T>(registration: IRegistration, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): T {
+
     if (registration.settings.isObject) {
-      return this._resolveObject(registration, resolutionContext, injectionArgs, config);
+      return this._resolveObject(registration as IObjectRegistration<T>, resolutionContext, injectionArgs, config);
     }
 
     if (registration.settings.isFactory) {
-      return this._resolveFactory(registration, resolutionContext, injectionArgs, config);
+      return this._resolveFactory(registration as IFactoryRegistration<T>, resolutionContext, injectionArgs, config);
     }
 
-    return this._resolveInstance<T>(registration, resolutionContext, injectionArgs, config);
+    return this._resolve<T>(registration as ITypeRegistration<T>, resolutionContext, injectionArgs, config);
   }
+
+  private async _resolveAsync<T>(registration: IRegistration, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): Promise<T> {
+
+    if (registration.settings.isObject) {
+      return await this._resolveObjectAsync<T>(registration as IObjectRegistration<T>, resolutionContext, injectionArgs, config);
+    }
+
+    if (registration.settings.isFactory) {
+      return await this._resolveFactoryAsync<T>(registration as IFactoryRegistration<T>, resolutionContext, injectionArgs, config);
+    }
+
+    return await this._resolveInstanceAsync<T>(registration as ITypeRegistration<T>, resolutionContext, injectionArgs, config);
+  }
+
+  
 
   public resolveAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<T> {
     const registration = super.getRegistration<T>(key);
     const resolutionContext = this._createNewResolutionContext(registration);
 
     if (registration.settings.isObject) {
-      return this._resolveObjectAsync(registration, resolutionContext, injectionArgs, config);
+      return this._resolveObjectAsync<T>(registration as IObjectRegistration<T>, resolutionContext, injectionArgs, config);
     }
 
     if (registration.settings.isFactory) {
-      return this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config);
+      return this._resolveFactoryAsync<T>(registration as IFactoryRegistration<T>, resolutionContext, injectionArgs, config);
     }
 
-    return this._resolveInstanceAsync<T>(registration, resolutionContext, injectionArgs, config);
+    return this._resolveInstanceAsync<T>(registration as ITypeRegistration<T>, resolutionContext, injectionArgs, config);
   }
 
   public resolveLazy<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
     const registration = super.getRegistration<T>(key);
     const resolutionContext = this._createNewResolutionContext(registration);
-    return this._resolveLazy(registration, resolutionContext, injectionArgs, config);
+    return this._resolveLazy<T>(registration, resolutionContext, injectionArgs, config);
   }
 
   public resolveLazyAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
     const registration = super.getRegistration<T>(key);
     const resolutionContext = this._createNewResolutionContext(registration);
-    return this._resolveLazyAsync(registration, resolutionContext, injectionArgs, config);
+    return this._resolveLazyAsync<T>(registration, resolutionContext, injectionArgs, config);
   }
 
-  private _resolveLazy<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
+  private _resolveLazy<T>(registration: IRegistration, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
 
     return (lazyInjectionArgs: Array<any>, lazyConfig: any): T => {
 
@@ -80,11 +100,11 @@ export class Container extends Registry implements IContainer {
 
       const lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
 
-      return this._resolveInstance<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
+      return this._resolve<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
     };
   }
 
-  private _resolveLazyAsync<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
+  private _resolveLazyAsync<T>(registration: IRegistration, resolutionContext: IResolutionContext, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
 
     return (lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<T> => {
 
@@ -92,56 +112,56 @@ export class Container extends Registry implements IContainer {
 
       const lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
 
-      return this._resolveInstanceAsync<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
+      return this._resolveAsync<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
     };
   }
 
-  private _resolveObject<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): T {
+  private _resolveObject<T>(registration: IObjectRegistration<T>, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): T {
     
     const configUsed = this._mergeRegistrationConfig(registration, config);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
-    const object = this._createObject(registration, dependencies, injectionArgs);
+    const object = this._createObject<T>(registration, dependencies, injectionArgs);
     
     this._configureInstance(object, registration, configUsed);
 
     return object;
   }  
 
-  private async _resolveObjectAsync<T>(registration: IObjectRegistration, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): Promise<any> {
+  private async _resolveObjectAsync<T>(registration: IObjectRegistration<T>, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): Promise<any> {
     
     const configUsed = this._mergeRegistrationConfig(registration, config);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
-    const object = await this._createObjectAsync(registration, dependencies, injectionArgs);
+    const object = await this._createObjectAsync<T>(registration, dependencies, injectionArgs);
     
     this._configureInstance(object, registration, configUsed);
 
     return object;
   }  
 
-  private _resolveFactory(registration: IFactoryRegistration, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): any {
+  private _resolveFactory<T>(registration: IFactoryRegistration<T>, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): T {
     
     const configUsed = this._mergeRegistrationConfig(registration, config);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
-    const factory = this._createFactory(registration, dependencies, injectionArgs);
+    const factory = this._createFactory<T>(registration, dependencies, injectionArgs);
     
     this._configureInstance(factory, registration, configUsed);
 
     return factory;
   }  
 
-  private async _resolveFactoryAsync(registration: IFactoryRegistration, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): Promise<any> {
+  private async _resolveFactoryAsync<T>(registration: IFactoryRegistration<T>, resolutionContext: IResolutionContext, injectionArgs?: Array<any>, config?: any): Promise<T> {
     
     const configUsed = this._mergeRegistrationConfig(registration, config);
 
     const dependencies = this._resolveDependencies(registration, resolutionContext);
 
-    const factory = this._createFactoryAsync(registration, dependencies, injectionArgs);
+    const factory = this._createFactoryAsync<T>(registration, dependencies, injectionArgs);
     
     this._configureInstance(factory, registration, configUsed);
 
@@ -296,14 +316,14 @@ export class Container extends Registry implements IContainer {
     }    
     
     if (dependencyRegistration.settings.isObject) {
-      return this._resolveObject(dependencyRegistration, resolutionContext, undefined, undefined);
+      return this._resolveObject(dependencyRegistration as IObjectRegistration<T>, resolutionContext, undefined, undefined);
     }
 
     if (dependencyRegistration.settings.isFactory) {
-      return this._resolveFactory(dependencyRegistration, resolutionContext, undefined, undefined);
+      return this._resolveFactory(dependencyRegistration as IFactoryRegistration<T>, resolutionContext, undefined, undefined);
     }
 
-    return this._resolveInstance(dependencyRegistration, newResolutionContext, undefined, undefined);
+    return this._resolve(dependencyRegistration, newResolutionContext, undefined, undefined);
   }
 
   private async _resolveDependencyAsync<T>(registration: ITypeRegistration<T>, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext): Promise<any> {
@@ -313,22 +333,22 @@ export class Container extends Registry implements IContainer {
     const dependencyRegistration = super.getRegistration(dependencyKey);
 
     if (this._isDependencyLazy(registration, dependencyKey)) {
-      return this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined);
+      return await this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined);
     }
 
     if (this._isDependencyLazyAsync(registration, dependencyKey)) {
-      return this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
+      return await this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
     }    
     
     if (dependencyRegistration.settings.isObject) {
-      return this._resolveObjectAsync(dependencyRegistration, resolutionContext, undefined, undefined);
+      return await this._resolveObjectAsync(dependencyRegistration as IObjectRegistration<T>, resolutionContext, undefined, undefined);
     }
 
     if (dependencyRegistration.settings.isFactory) {
-      return this._resolveFactoryAsync(dependencyRegistration, resolutionContext, undefined, undefined);
+      return await this._resolveFactoryAsync(dependencyRegistration as IFactoryRegistration<T>, resolutionContext, undefined, undefined);
     }
 
-    return await this._resolveInstanceAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
+    return await this._resolveAsync(dependencyRegistration, newResolutionContext, undefined, undefined);
   }
   
   private _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {

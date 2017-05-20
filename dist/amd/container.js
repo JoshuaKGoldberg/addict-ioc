@@ -70,13 +70,36 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             if (injectionArgs === void 0) { injectionArgs = []; }
             var registration = _super.prototype.getRegistration.call(this, key);
             var resolutionContext = this._createNewResolutionContext(registration);
+            return this._resolve(registration, resolutionContext, injectionArgs, config);
+        };
+        Container.prototype._resolve = function (registration, resolutionContext, injectionArgs, config) {
+            if (injectionArgs === void 0) { injectionArgs = []; }
             if (registration.settings.isObject) {
                 return this._resolveObject(registration, resolutionContext, injectionArgs, config);
             }
             if (registration.settings.isFactory) {
                 return this._resolveFactory(registration, resolutionContext, injectionArgs, config);
             }
-            return this._resolveInstance(registration, resolutionContext, injectionArgs, config);
+            return this._resolve(registration, resolutionContext, injectionArgs, config);
+        };
+        Container.prototype._resolveAsync = function (registration, resolutionContext, injectionArgs, config) {
+            if (injectionArgs === void 0) { injectionArgs = []; }
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (!registration.settings.isObject) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this._resolveObjectAsync(registration, resolutionContext, injectionArgs, config)];
+                        case 1: return [2 /*return*/, _a.sent()];
+                        case 2:
+                            if (!registration.settings.isFactory) return [3 /*break*/, 4];
+                            return [4 /*yield*/, this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config)];
+                        case 3: return [2 /*return*/, _a.sent()];
+                        case 4: return [4 /*yield*/, this._resolveInstanceAsync(registration, resolutionContext, injectionArgs, config)];
+                        case 5: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
         };
         Container.prototype.resolveAsync = function (key, injectionArgs, config) {
             if (injectionArgs === void 0) { injectionArgs = []; }
@@ -108,7 +131,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             return function (lazyInjectionArgs, lazyConfig) {
                 var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
                 var lazyConfigUsed = _this._mergeConfigs(config, lazyConfig);
-                return _this._resolveInstance(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
+                return _this._resolve(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
             };
         };
         Container.prototype._resolveLazyAsync = function (registration, resolutionContext, injectionArgs, config) {
@@ -117,7 +140,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             return function (lazyInjectionArgs, lazyConfig) {
                 var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
                 var lazyConfigUsed = _this._mergeConfigs(config, lazyConfig);
-                return _this._resolveInstanceAsync(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
+                return _this._resolveAsync(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
             };
         };
         Container.prototype._resolveObject = function (registration, resolutionContext, injectionArgs, config) {
@@ -305,7 +328,7 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
             if (dependencyRegistration.settings.isFactory) {
                 return this._resolveFactory(dependencyRegistration, resolutionContext, undefined, undefined);
             }
-            return this._resolveInstance(dependencyRegistration, newResolutionContext, undefined, undefined);
+            return this._resolve(dependencyRegistration, newResolutionContext, undefined, undefined);
         };
         Container.prototype._resolveDependencyAsync = function (registration, dependencyKey, resolutionContext) {
             return __awaiter(this, void 0, void 0, function () {
@@ -315,20 +338,23 @@ define(["require", "exports", "./registry", "./resolution_context", "./default_s
                         case 0:
                             newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
                             dependencyRegistration = _super.prototype.getRegistration.call(this, dependencyKey);
-                            if (this._isDependencyLazy(registration, dependencyKey)) {
-                                return [2 /*return*/, this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined)];
-                            }
-                            if (this._isDependencyLazyAsync(registration, dependencyKey)) {
-                                return [2 /*return*/, this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
-                            }
-                            if (dependencyRegistration.settings.isObject) {
-                                return [2 /*return*/, this._resolveObjectAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
-                            }
-                            if (dependencyRegistration.settings.isFactory) {
-                                return [2 /*return*/, this._resolveFactoryAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
-                            }
-                            return [4 /*yield*/, this._resolveInstanceAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                            if (!this._isDependencyLazy(registration, dependencyKey)) return [3 /*break*/, 2];
+                            return [4 /*yield*/, this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined)];
                         case 1: return [2 /*return*/, _a.sent()];
+                        case 2:
+                            if (!this._isDependencyLazyAsync(registration, dependencyKey)) return [3 /*break*/, 4];
+                            return [4 /*yield*/, this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                        case 3: return [2 /*return*/, _a.sent()];
+                        case 4:
+                            if (!dependencyRegistration.settings.isObject) return [3 /*break*/, 6];
+                            return [4 /*yield*/, this._resolveObjectAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
+                        case 5: return [2 /*return*/, _a.sent()];
+                        case 6:
+                            if (!dependencyRegistration.settings.isFactory) return [3 /*break*/, 8];
+                            return [4 /*yield*/, this._resolveFactoryAsync(dependencyRegistration, resolutionContext, undefined, undefined)];
+                        case 7: return [2 /*return*/, _a.sent()];
+                        case 8: return [4 /*yield*/, this._resolveAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                        case 9: return [2 /*return*/, _a.sent()];
                     }
                 });
             });

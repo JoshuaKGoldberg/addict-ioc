@@ -1,6 +1,6 @@
-import { ITags, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator } from './interfaces';
+import { ITags, RegistrationKey, IObjectRegistration, ITypeRegistration, IFactoryRegistration, IRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator } from './interfaces';
 export interface IRegistrationsCache {
-    [key: string]: ITypeRegistration<any>;
+    [key: string]: IRegistration;
 }
 export declare class Registry implements IRegistry {
     registrations: IRegistrationsCache;
@@ -13,15 +13,15 @@ export declare class Registry implements IRegistry {
     isRegistered(key: RegistrationKey): boolean;
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
-    registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration;
-    registerFactory(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IRegistration;
+    registerObject<T>(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IObjectRegistration<T>;
+    registerFactory<T>(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IFactoryRegistration<T>;
     unregister<T>(key: RegistrationKey): IRegistration;
-    protected createTypeRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
-    protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
-    protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
-    getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
+    protected createRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
+    protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): IObjectRegistration<T>;
+    protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): IFactoryRegistration<T>;
+    getRegistration<T>(key: RegistrationKey): IRegistration;
     protected getRegistrationKeys(): Array<string>;
-    protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void;
+    protected cacheRegistration<T>(key: RegistrationKey, registration: IRegistration): void;
     protected deleteRegistration(key: RegistrationKey): void;
     getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
     getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;

@@ -1,10 +1,10 @@
-import {ITags, IContainer, RegistrationKey, IRegistration, ITypeRegistration, IRegistrationSettings, ITypeRegistrationSettings, Type, IRegistry, IRegistrator} from './interfaces';
-import {TypeRegistration} from './type_registration';
-import {TypeRegistrationSettings} from './type_registration_settings';
+import {ITags, IObjectRegistrationSettings, IFactoryRegistrationSettings, IContainer, ITypeRegistrationSettings, RegistrationKey, IObjectRegistration, ITypeRegistration, IFactoryRegistration, IRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator} from './interfaces';
+import {Registration} from './registration';
+import {TypeRegistrationSettings, ObjectRegistrationSettings, FactoryRegistrationSettings} from './registration_settings';
 import {RegistrationContext} from './registration_context';
 
 export interface IRegistrationsCache {
-  [key: string]: ITypeRegistration<any>;
+  [key: string]: IRegistration;
 }
 
 export class Registry implements IRegistry {
@@ -26,7 +26,7 @@ export class Registry implements IRegistry {
     
     registrationSettings.forEach((registrationSetting) =>  {
 
-      const registration = new TypeRegistration(registrationSetting);
+      const registration = new Registration(registrationSetting);
 
       this.cacheRegistration(registrationSetting.key, registration);
     });
@@ -40,10 +40,12 @@ export class Registry implements IRegistry {
 
       const registration = this.getRegistration(registrationKey);
 
-      const exportedSettings = Object.assign({}, registration.settings);
+      const exportedSettings: any = Object.assign({}, registration.settings);
 
       // strip unserializable properties
       delete exportedSettings.type;
+      delete exportedSettings.object;
+      delete exportedSettings.factory;
       delete exportedSettings.resolver;
 
       return exportedSettings;
@@ -77,18 +79,18 @@ export class Registry implements IRegistry {
   }
 
   public register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T> {
-    const registration = this.createTypeRegistration<T>(key, type, settings);
+    const registration = this.createRegistration<T>(key, type, settings);
     this.cacheRegistration(key, registration);
     return registration;
   }
 
-  public registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration {
+  public registerObject<T>(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IObjectRegistration<T> {
     const registration = this.createObjectRegistration(key, object, settings);
     this.cacheRegistration(key, registration);
     return registration;
   }  
   
-  public registerFactory(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IRegistration {
+  public registerFactory<T>(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IFactoryRegistration<T> {
     const registration = this.createFactoryRegistration(key, factoryMethod, settings);
     this.cacheRegistration(key, registration);
     return registration;
@@ -100,33 +102,33 @@ export class Registry implements IRegistry {
     return registration;
   }
 
-  protected createTypeRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
+  protected createRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
     const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
     settings.key = key;
     settings.type = type;
-    const registration = new TypeRegistration(settings);
+    const registration = new Registration(settings);
     return registration;
   }
 
-  protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
-    const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
+  protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): IObjectRegistration<T> {
+    const settings: IObjectRegistrationSettings = registrationSettings ? new ObjectRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
     settings.key = key;
     settings.isObject = true;
     settings.object = object;
-    const registration = new TypeRegistration(settings);
+    const registration = new Registration(settings);
     return registration;
   }
 
-  protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): ITypeRegistration<T> {
-    const settings: ITypeRegistrationSettings<T> = registrationSettings ? new TypeRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
+  protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): IFactoryRegistration<T> {
+    const settings: IFactoryRegistrationSettings = registrationSettings ? new FactoryRegistrationSettings<T>(registrationSettings) : Object.assign({}, this.settings.defaults);
     settings.key = key;
     settings.isFactory = true;
     settings.factory = factoryFunction;
-    const registration = new TypeRegistration(settings);
+    const registration = new Registration(settings);
     return registration;
   }
 
-  public getRegistration<T>(key: RegistrationKey): ITypeRegistration<T> {
+  public getRegistration<T>(key: RegistrationKey): IRegistration {
 
     const registration = this.registrations[key];
 
@@ -141,7 +143,7 @@ export class Registry implements IRegistry {
     return Object.keys(this.registrations);
   }
 
-  protected cacheRegistration<T>(key: RegistrationKey, registration: ITypeRegistration<T>): void {
+  protected cacheRegistration<T>(key: RegistrationKey, registration: IRegistration): void {
     this.registrations[key] = registration;
   }
 

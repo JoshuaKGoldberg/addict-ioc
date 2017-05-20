@@ -1,11 +1,13 @@
-import {ITypeRegistrationSettings, Type, IRegistrationSettings, ITags, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig} from './interfaces';
+import {ITypeRegistrationSettings, IFactoryRegistrationSettings, IObjectRegistrationSettings, Type, IRegistrationSettings, ITags, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig} from './interfaces';
 
-export class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T> {
+
+
+export class RegistrationSettings<T> implements IRegistrationSettings {
 
   public defaults: IRegistrationSettings;
-  protected settings: ITypeRegistrationSettings<T> = {};
+  public settings: IRegistrationSettings = {};
 
-  constructor(registrationSettings: ITypeRegistrationSettings<T>|IRegistrationSettings) {
+  constructor(registrationSettings: IRegistrationSettings) {
     Object.assign(this.settings, registrationSettings);
   }
 
@@ -15,14 +17,6 @@ export class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T>
 
   public set key(value: RegistrationKey) {
     this.settings.key = value;
-  }
-
-  public get type(): Type<T> {
-    return this.settings.type;
-  }
-
-  public set type(value: Type<T>) {
-    this.settings.type = value;
   }
 
   public get object(): any {
@@ -119,4 +113,64 @@ export class TypeRegistrationSettings<T> implements ITypeRegistrationSettings<T>
     return defaultValue;
   }
 
+}
+
+
+export class TypeRegistrationSettings<T> extends RegistrationSettings<T> {
+
+  constructor(registrationSettings: ITypeRegistrationSettings<T>) {
+    super(registrationSettings);
+  }
+  
+  public get settings(): ITypeRegistrationSettings<T> {
+    return this.settings;
+  }
+
+  public get type(): Type<T> {
+    return this.settings.type;
+  }
+
+  public set type(value: Type<T>) {
+    this.settings.type = value;
+  }
+}
+
+
+export class ObjectRegistrationSettings<T> extends RegistrationSettings<T> {
+
+  constructor(registrationSettings: IObjectRegistrationSettings) {
+    super(registrationSettings);
+  }
+  
+  public get settings(): IObjectRegistrationSettings {
+    return this.settings;
+  }
+
+  public get object(): T {
+    return this.settings.object;
+  }
+
+  public set object(value: T) {
+    this.settings.object = value;
+  }
+}
+
+
+export class FactoryRegistrationSettings<T> extends RegistrationSettings<T> {
+
+  constructor(registrationSettings: IFactoryRegistrationSettings) {
+    super(registrationSettings);
+  }
+  
+  public get settings(): IFactoryRegistrationSettings {
+    return this.settings;
+  }
+
+  public get object(): T {
+    return this.settings.object;
+  }
+
+  public set object(value: T) {
+    this.settings.object = value;
+  }
 }

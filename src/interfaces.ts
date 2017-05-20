@@ -35,45 +35,30 @@ export interface IRegistry extends IRegistrator {
   importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
   exportRegistrations(keysToExport: Array<RegistrationKey>): Array<IRegistrationSettings>;
   isRegistered(key: RegistrationKey): boolean;
-  getRegistration<T>(key: RegistrationKey): ITypeRegistration<T>;
+  getRegistration<T>(key: RegistrationKey): IRegistration;
   getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
   getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;
 }
 
-export interface ITypeRegistration<T> extends IRegistration {
-  settings: ITypeRegistrationSettings<T>;
-  configure(config: any): ITypeRegistration<T>;
-  dependencies(...dependencies: Array<RegistrationKey>): ITypeRegistration<T>;
-  singleton(isSingleton: boolean): ITypeRegistration<T>;
-  injectLazy(...lazyDependencies: Array<RegistrationKey>): ITypeRegistration<T>;
-  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): ITypeRegistration<T>;
-  injectInto(targetFunction: string): ITypeRegistration<T>;
-  bindFunctions(...functionsToBind: Array<string>): ITypeRegistration<T>;
-  owns(...dependencies: Array<RegistrationKey>): ITypeRegistration<T>;
-  overwrite(originalKey: string, overwrittenKey: string): ITypeRegistration<T>;
-  tags(...tags: Array<string>): ITypeRegistration<T>;
-  setTag(tag: string, value: any): ITypeRegistration<T>;
-}
-
 export interface ISpecializedRegistration<T extends IRegistration, U extends IRegistrationSettings> extends IRegistration {
   settings: U;
-  configure(config: any): T;
-  dependencies(...dependencies: Array<RegistrationKey>): T;
-  singleton(isSingleton: boolean): T;
-  transient(isTransient: boolean): T;
-  injectLazy(...lazyDependencies: Array<RegistrationKey>): T;
-  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): T;
-  injectInto(targetFunction: string): T;
-  bindFunctions(...functionsToBind: Array<string>): T;
-  owns(...dependencies: Array<RegistrationKey>): T;
-  overwrite(originalKey: string, overwrittenKey: string): T;
-  tags(...tags: Array<string>): T;
-  setTag(tag: string, value: any): T;
+  configure(config: any): ISpecializedRegistration<T,U>;
+  dependencies(...dependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U>;
+  singleton(isSingleton: boolean): ISpecializedRegistration<T,U>;
+  transient(isTransient: boolean): ISpecializedRegistration<T,U>;
+  injectLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U>;
+  injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U>;
+  injectInto(targetFunction: string): ISpecializedRegistration<T,U>;
+  bindFunctions(...functionsToBind: Array<string>): ISpecializedRegistration<T,U>;
+  owns(...dependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U>;
+  overwrite(originalKey: string, overwrittenKey: string): ISpecializedRegistration<T,U>;
+  tags(...tags: Array<string>): ISpecializedRegistration<T,U>;
+  setTag(tag: string, value: any): ISpecializedRegistration<T,U>;
 }
 
 export interface ITypeRegistration<T> extends ISpecializedRegistration<ITypeRegistration<T>, ITypeRegistrationSettings<T>> {}
-export interface IObjectRegistration extends ISpecializedRegistration<IObjectRegistration, IObjectRegistrationSettings> {}
-export interface IFactoryRegistration extends ISpecializedRegistration<IFactoryRegistration, IFactoryRegistrationSettings> {}
+export interface IObjectRegistration<T> extends ISpecializedRegistration<IObjectRegistration<T>, IObjectRegistrationSettings> {}
+export interface IFactoryRegistration<T> extends ISpecializedRegistration<IFactoryRegistration<T>, IFactoryRegistrationSettings> {}
 
 export interface IRegistration {
   settings: IRegistrationSettings;

@@ -1,4 +1,4 @@
-define(["require", "exports", "./container", "./default_settings", "./registration_context", "./registry", "./resolution_context", "./resolver", "./type_registration", "./type_registration_settings", "./utils"], function (require, exports, container_1, default_settings_1, registration_context_1, registry_1, resolution_context_1, resolver_1, type_registration_1, type_registration_settings_1, utils_1) {
+define(["require", "exports", "./container", "./default_settings", "./registration_context", "./registry", "./resolution_context", "./resolver", "./registration", "./registration_settings", "./utils"], function (require, exports, container_1, default_settings_1, registration_context_1, registry_1, resolution_context_1, resolver_1, registration_1, registration_settings_1, utils_1) {
     "use strict";
     function __export(m) {
         for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
@@ -9,8 +9,8 @@ define(["require", "exports", "./container", "./default_settings", "./registrati
     __export(registry_1);
     __export(resolution_context_1);
     __export(resolver_1);
-    __export(type_registration_1);
-    __export(type_registration_settings_1);
+    __export(registration_1);
+    __export(registration_settings_1);
     __export(utils_1);
 });
 

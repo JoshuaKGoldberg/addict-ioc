@@ -1,5 +1,5 @@
-import { TypeRegistration } from './type_registration';
-import { TypeRegistrationSettings } from './type_registration_settings';
+import { Registration } from './registration';
+import { TypeRegistrationSettings, ObjectRegistrationSettings, FactoryRegistrationSettings } from './registration_settings';
 import { RegistrationContext } from './registration_context';
 var Registry = (function () {
     function Registry(settings, parentRegistry) {
@@ -13,7 +13,7 @@ var Registry = (function () {
     Registry.prototype.importRegistrations = function (registrationSettings) {
         var _this = this;
         registrationSettings.forEach(function (registrationSetting) {
-            var registration = new TypeRegistration(registrationSetting);
+            var registration = new Registration(registrationSetting);
             _this.cacheRegistration(registrationSetting.key, registration);
         });
     };
@@ -24,6 +24,8 @@ var Registry = (function () {
             var registration = _this.getRegistration(registrationKey);
             var exportedSettings = Object.assign({}, registration.settings);
             delete exportedSettings.type;
+            delete exportedSettings.object;
+            delete exportedSettings.factory;
             delete exportedSettings.resolver;
             return exportedSettings;
         });
@@ -36,7 +38,7 @@ var Registry = (function () {
         return new RegistrationContext(this, registrationSettings);
     };
     Registry.prototype.register = function (key, type, settings) {
-        var registration = this.createTypeRegistration(key, type, settings);
+        var registration = this.createRegistration(key, type, settings);
         this.cacheRegistration(key, registration);
         return registration;
     };
@@ -55,27 +57,27 @@ var Registry = (function () {
         this.deleteRegistration(key);
         return registration;
     };
-    Registry.prototype.createTypeRegistration = function (key, type, registrationSettings) {
+    Registry.prototype.createRegistration = function (key, type, registrationSettings) {
         var settings = registrationSettings ? new TypeRegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.type = type;
-        var registration = new TypeRegistration(settings);
+        var registration = new Registration(settings);
         return registration;
     };
     Registry.prototype.createObjectRegistration = function (key, object, registrationSettings) {
-        var settings = registrationSettings ? new TypeRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new ObjectRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.isObject = true;
         settings.object = object;
-        var registration = new TypeRegistration(settings);
+        var registration = new Registration(settings);
         return registration;
     };
     Registry.prototype.createFactoryRegistration = function (key, factoryFunction, registrationSettings) {
-        var settings = registrationSettings ? new TypeRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new FactoryRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.isFactory = true;
         settings.factory = factoryFunction;
-        var registration = new TypeRegistration(settings);
+        var registration = new Registration(settings);
         return registration;
     };
     Registry.prototype.getRegistration = function (key) {

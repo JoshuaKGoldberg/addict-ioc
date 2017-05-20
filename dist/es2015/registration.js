@@ -1,27 +1,26 @@
-"use strict";
-var TypeRegistration = (function () {
-    function TypeRegistration(settings) {
+var Registration = (function () {
+    function Registration(settings) {
         this._settings = this._ensureSettings(settings);
     }
-    TypeRegistration.prototype._ensureSettings = function (settings) {
+    Registration.prototype._ensureSettings = function (settings) {
         var baseSettings = {
             overwrittenKeys: {},
             tags: {}
         };
         return Object.assign(baseSettings, settings);
     };
-    Object.defineProperty(TypeRegistration.prototype, "settings", {
+    Object.defineProperty(Registration.prototype, "settings", {
         get: function () {
             return this._settings;
         },
         enumerable: true,
         configurable: true
     });
-    TypeRegistration.prototype.configure = function (config) {
+    Registration.prototype.configure = function (config) {
         this.settings.config = config;
         return this;
     };
-    TypeRegistration.prototype.dependencies = function () {
+    Registration.prototype.dependencies = function () {
         var dependencies = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             dependencies[_i] = arguments[_i];
@@ -29,17 +28,17 @@ var TypeRegistration = (function () {
         this.settings.dependencies = dependencies;
         return this;
     };
-    TypeRegistration.prototype.singleton = function (isSingleton) {
+    Registration.prototype.singleton = function (isSingleton) {
         if (isSingleton === void 0) { isSingleton = true; }
         this.settings.isSingleton = isSingleton;
         return this;
     };
-    TypeRegistration.prototype.transient = function (isTransient) {
+    Registration.prototype.transient = function (isTransient) {
         if (isTransient === void 0) { isTransient = true; }
         this.settings.isSingleton = !isTransient;
         return this;
     };
-    TypeRegistration.prototype.injectLazy = function () {
+    Registration.prototype.injectLazy = function () {
         var lazyDependencies = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             lazyDependencies[_i] = arguments[_i];
@@ -47,7 +46,7 @@ var TypeRegistration = (function () {
         this.settings.lazyDependencies = lazyDependencies;
         return this;
     };
-    TypeRegistration.prototype.injectPromiseLazy = function () {
+    Registration.prototype.injectPromiseLazy = function () {
         var lazyPromiseDependencies = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             lazyPromiseDependencies[_i] = arguments[_i];
@@ -55,11 +54,11 @@ var TypeRegistration = (function () {
         this.settings.lazyPromiseDependencies = lazyPromiseDependencies;
         return this;
     };
-    TypeRegistration.prototype.injectInto = function (targetFunction) {
+    Registration.prototype.injectInto = function (targetFunction) {
         this.settings.injectInto = targetFunction;
         return this;
     };
-    TypeRegistration.prototype.bindFunctions = function () {
+    Registration.prototype.bindFunctions = function () {
         var functionsToBind = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             functionsToBind[_i] = arguments[_i];
@@ -67,7 +66,7 @@ var TypeRegistration = (function () {
         this.settings.functionsToBind = functionsToBind;
         return this;
     };
-    TypeRegistration.prototype.tags = function () {
+    Registration.prototype.tags = function () {
         var _this = this;
         var tags = [];
         for (var _i = 0; _i < arguments.length; _i++) {
@@ -80,15 +79,15 @@ var TypeRegistration = (function () {
         });
         return this;
     };
-    TypeRegistration.prototype.setTag = function (tag, value) {
+    Registration.prototype.setTag = function (tag, value) {
         this.settings.tags[tag] = value;
         return this;
     };
-    TypeRegistration.prototype.overwrite = function (originalKey, overwrittenKey) {
+    Registration.prototype.overwrite = function (originalKey, overwrittenKey) {
         this.settings.overwrittenKeys[originalKey] = overwrittenKey;
         return this;
     };
-    TypeRegistration.prototype.owns = function () {
+    Registration.prototype.owns = function () {
         var ownedDependencies = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             ownedDependencies[_i] = arguments[_i];
@@ -96,8 +95,8 @@ var TypeRegistration = (function () {
         this.settings.ownedDependencies = ownedDependencies;
         return this;
     };
-    return TypeRegistration;
+    return Registration;
 }());
-exports.TypeRegistration = TypeRegistration;
+export { Registration };
 
-//# sourceMappingURL=type_registration.js.map
+//# sourceMappingURL=registration.js.map
