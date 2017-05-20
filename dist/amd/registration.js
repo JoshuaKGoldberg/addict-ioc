@@ -46,6 +46,7 @@ define(["require", "exports"], function (require, exports) {
                 lazyDependencies[_i] = arguments[_i];
             }
             this.settings.lazyDependencies = lazyDependencies;
+            this.settings.wantsLazyInjection = true;
             return this;
         };
         Registration.prototype.injectPromiseLazy = function () {
@@ -54,6 +55,7 @@ define(["require", "exports"], function (require, exports) {
                 lazyPromiseDependencies[_i] = arguments[_i];
             }
             this.settings.lazyPromiseDependencies = lazyPromiseDependencies;
+            this.settings.wantsPromiseLazyInjection = true;
             return this;
         };
         Registration.prototype.injectInto = function (targetFunction) {

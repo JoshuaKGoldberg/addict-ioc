@@ -1,5 +1,5 @@
 import { Registration } from './registration';
-import { RegistrationSettings } from './registration_settings';
+import { TypeRegistrationSettings, ObjectRegistrationSettings, FactoryRegistrationSettings } from './registration_settings';
 import { RegistrationContext } from './registration_context';
 var Registry = (function () {
     function Registry(settings, parentRegistry) {
@@ -58,14 +58,14 @@ var Registry = (function () {
         return registration;
     };
     Registry.prototype.createRegistration = function (key, type, registrationSettings) {
-        var settings = registrationSettings ? new RegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new TypeRegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.type = type;
         var registration = new Registration(settings);
         return registration;
     };
     Registry.prototype.createObjectRegistration = function (key, object, registrationSettings) {
-        var settings = registrationSettings ? new RegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new ObjectRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.isObject = true;
         settings.object = object;
@@ -73,7 +73,7 @@ var Registry = (function () {
         return registration;
     };
     Registry.prototype.createFactoryRegistration = function (key, factoryFunction, registrationSettings) {
-        var settings = registrationSettings ? new RegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+        var settings = registrationSettings ? new FactoryRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
         settings.key = key;
         settings.isFactory = true;
         settings.factory = factoryFunction;

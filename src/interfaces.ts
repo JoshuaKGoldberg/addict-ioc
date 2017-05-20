@@ -13,9 +13,17 @@ export interface IContainer extends IRegistry {
   validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
 }
 
-export interface IInstanceCache<T> extends Map<RegistrationKey, IInstanceWithConfigCache<T>> {}
-export interface IInstanceWithConfigCache<T> extends Map<string, IInstanceWithInjectionArgsCache<T>> {}
-export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>> {}
+// export interface IInstanceCache<T> extends Map<RegistrationKey, IInstanceWithConfigCache<T>> {}
+// export interface IInstanceWithConfigCache<T> extends Map<string, IInstanceWithInjectionArgsCache<T>> {}
+// export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>> {}
+
+export interface IInstanceCache<T> {
+  [key: string]: {
+    [configHash: string]: {
+      [injectionArgsHash: string]: Array<T>;
+    }
+  }
+}
 
 
 export interface IValidationError {
@@ -106,7 +114,9 @@ export interface IRegistrationSettings {
   injectInto?: string;
   bindFunctions?: boolean;
   functionsToBind?: Array<string>;
+  wantsLazyInjection?: boolean;
   lazyDependencies?: Array<string>;
+  wantsPromiseLazyInjection?: boolean;
   lazyPromiseDependencies?: Array<string>;
   overwrittenKeys?: IOverwrittenKeys;
   // autoCreateMissingSubscribers?: boolean;

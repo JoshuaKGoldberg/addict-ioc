@@ -62,7 +62,7 @@ var Container = (function (_super) {
         return _this;
     }
     Container.prototype.initialize = function () {
-        this.instances = new Map();
+        this.instances = {};
         this.registerObject(this.settings.containerRegistrationKey, this);
     };
     Container.prototype.clear = function () {
@@ -94,20 +94,6 @@ var Container = (function (_super) {
             results.push(dependencyKey);
         }
     };
-    Container.prototype.newResolve = function (key, injectionArgs, config) {
-        var _this = this;
-        if (injectionArgs === void 0) { injectionArgs = []; }
-        var dependencyResolutionOrder = [];
-        var missingDependencies = [];
-        var recursiveDependencyResolutionGraphs = [];
-        var registration = this.getRegistration(key);
-        this._orderDependencies(registration.settings.dependencies, dependencyResolutionOrder, missingDependencies, recursiveDependencyResolutionGraphs);
-        dependencyResolutionOrder.forEach(function (dependencyKey) {
-            var dependency = _this.getRegistration(dependencyKey);
-            _this._getInstance(dependency, undefined, undefined, undefined);
-        });
-        return this._getInstance(registration, null, injectionArgs, config);
-    };
     Container.prototype.resolve = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = _super.prototype.getRegistration.call(this, key);
@@ -122,7 +108,7 @@ var Container = (function (_super) {
         if (registration.settings.isFactory) {
             return this._resolveFactory(registration, resolutionContext, injectionArgs, config);
         }
-        return this._resolve(registration, resolutionContext, injectionArgs, config);
+        return this._resolveTypeInstance(registration, resolutionContext, injectionArgs, config);
     };
     Container.prototype._resolveAsync = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
@@ -137,7 +123,7 @@ var Container = (function (_super) {
                         if (!registration.settings.isFactory) return [3 /*break*/, 4];
                         return [4 /*yield*/, this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config)];
                     case 3: return [2 /*return*/, _a.sent()];
-                    case 4: return [4 /*yield*/, this._resolveInstanceAsync(registration, resolutionContext, injectionArgs, config)];
+                    case 4: return [4 /*yield*/, this._resolveTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
                     case 5: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -153,7 +139,7 @@ var Container = (function (_super) {
         if (registration.settings.isFactory) {
             return this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config);
         }
-        return this._resolveInstanceAsync(registration, resolutionContext, injectionArgs, config);
+        return this._resolveTypeInstanceAsync(registration, resolutionContext, injectionArgs, config);
     };
     Container.prototype.resolveLazy = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
@@ -228,14 +214,14 @@ var Container = (function (_super) {
             });
         });
     };
-    Container.prototype._resolveInstance = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._resolveTypeInstance = function (registration, resolutionContext, injectionArgs, config) {
         var configUsed = this._mergeRegistrationConfig(registration, config);
         if (registration.settings.isSingleton) {
-            return this._getInstance(registration, resolutionContext, injectionArgs, configUsed);
+            return this._getTypeInstance(registration, resolutionContext, injectionArgs, configUsed);
         }
-        return this._getNewInstance(registration, resolutionContext, injectionArgs, configUsed);
+        return this._getNewTypeInstance(registration, resolutionContext, injectionArgs, configUsed);
     };
-    Container.prototype._resolveInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._resolveTypeInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
         return __awaiter(this, void 0, void 0, function () {
             var configUsed;
             return __generator(this, function (_a) {
@@ -243,23 +229,23 @@ var Container = (function (_super) {
                     case 0:
                         configUsed = this._mergeRegistrationConfig(registration, config);
                         if (!registration.settings.isSingleton) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._getInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
+                        return [4 /*yield*/, this._getTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
                     case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [4 /*yield*/, this._getNewInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
+                    case 2: return [4 /*yield*/, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
                     case 3: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    Container.prototype._getInstance = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._getTypeInstance = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var instances = this._getCachedInstances(registration, injectionArgs, config);
         if (instances.length === 0) {
-            return this._getNewInstance(registration, resolutionContext, injectionArgs, config);
+            return this._getNewTypeInstance(registration, resolutionContext, injectionArgs, config);
         }
         return instances[0];
     };
-    Container.prototype._getInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._getTypeInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         return __awaiter(this, void 0, void 0, function () {
             var instances;
@@ -268,14 +254,14 @@ var Container = (function (_super) {
                     case 0:
                         instances = this._getCachedInstances(registration, injectionArgs, config);
                         if (!(instances.length === 0)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._getNewInstanceAsync(registration, resolutionContext, injectionArgs, config)];
+                        return [4 /*yield*/, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2: return [2 /*return*/, instances[0]];
                 }
             });
         });
     };
-    Container.prototype._getNewInstance = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._getNewTypeInstance = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var configUsed = this._mergeRegistrationConfig(registration, config);
         this._validateResolutionContext(registration, resolutionContext);
@@ -287,7 +273,7 @@ var Container = (function (_super) {
         }
         return instance;
     };
-    Container.prototype._getNewInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
+    Container.prototype._getNewTypeInstanceAsync = function (registration, resolutionContext, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         return __awaiter(this, void 0, void 0, function () {
             var configUsed, dependencies, instance;
@@ -488,19 +474,19 @@ var Container = (function (_super) {
         var key = registration.settings.key;
         var resolver = this._getResolver(registration);
         if (!this.instances) {
-            this.instances = new Map();
+            this.instances = {};
         }
-        var allInstances = this.instances.get(key);
+        var allInstances = this.instances[key];
         if (!allInstances) {
             return [];
         }
         var configHash = resolver.hashConfig(config);
-        var configInstances = allInstances.get(configHash);
+        var configInstances = allInstances[configHash];
         if (!configInstances) {
             return [];
         }
         var injectionArgsHash = resolver.hash(injectionArgs);
-        var argumentInstances = configInstances.get(injectionArgsHash);
+        var argumentInstances = configInstances[injectionArgsHash];
         if (!argumentInstances) {
             return [];
         }
@@ -510,24 +496,21 @@ var Container = (function (_super) {
         var key = registration.settings.key;
         var resolver = this._getResolver(registration);
         if (!this.instances) {
-            this.instances = new Map();
+            this.instances = {};
         }
-        var allInstances = this.instances.get(key);
+        var allInstances = this.instances[key];
         if (!allInstances) {
-            allInstances = new Map();
-            this.instances.set(key, allInstances);
+            allInstances = this.instances[key] = {};
         }
         var configHash = resolver.hashConfig(config);
-        var configInstances = allInstances.get(configHash);
+        var configInstances = allInstances[configHash];
         if (!configInstances) {
-            configInstances = new Map();
-            allInstances.set(configHash, configInstances);
+            configInstances = allInstances[configHash] = {};
         }
         var injectionArgsHash = resolver.hash(injectionArgs);
-        var argumentInstances = configInstances.get(injectionArgsHash);
+        var argumentInstances = configInstances[injectionArgsHash];
         if (!argumentInstances) {
-            argumentInstances = [];
-            configInstances.set(injectionArgsHash, argumentInstances);
+            argumentInstances = configInstances[injectionArgsHash] = [];
         }
         argumentInstances.push(instance);
     };
@@ -606,9 +589,13 @@ var Container = (function (_super) {
             if (_this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
                 return true;
             }
-            if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.lazyDependencies && parentSettings.lazyDependencies.length > 0) {
-                if (parentSettings.lazyDependencies.length === 0 ||
+            if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection && parentSettings.lazyDependencies.length > 0) {
+                if (parentSettings.wantsLazyInjection ||
                     parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
+                    return true;
+                }
+                if (parentSettings.wantsPromiseLazyInjection ||
+                    parentSettings.lazyPromiseDependencies.indexOf(dependency.settings.key) >= 0) {
                     return true;
                 }
             }
@@ -690,22 +677,22 @@ var Container = (function (_super) {
         return Object.assign({}, resolutionContext);
     };
     Container.prototype._isDependencyLazy = function (registration, dependencyKey) {
-        if (!registration.settings.lazyDependencies) {
+        if (!registration.settings.wantsLazyInjection) {
             return false;
         }
-        return registration.settings.lazyDependencies && registration.settings.lazyDependencies.length !== 0 && registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
+        return registration.settings.lazyDependencies.length === 0 || registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
     };
     Container.prototype._isDependencyLazyAsync = function (registration, dependencyKey) {
-        if (!registration.settings.lazyPromiseDependencies) {
+        if (!registration.settings.wantsPromiseLazyInjection) {
             return false;
         }
-        return registration.settings.lazyPromiseDependencies && registration.settings.lazyPromiseDependencies.length !== 0 && registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
+        return registration.settings.lazyPromiseDependencies.length === 0 || registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
     };
     Container.prototype._isDependencyOwned = function (registration, dependencyKey) {
         if (!registration.settings.ownedDependencies) {
             return false;
         }
-        return registration.settings.ownedDependencies.length === 0 || registration.settings.ownedDependencies.indexOf(dependencyKey) >= 0;
+        return registration.settings.ownedDependencies.length !== 0 && registration.settings.ownedDependencies.indexOf(dependencyKey) >= 0;
     };
     Container.prototype._getDependencyKeyOverwritten = function (registration, dependencyKey) {
         var finalDependencyKey = dependencyKey;

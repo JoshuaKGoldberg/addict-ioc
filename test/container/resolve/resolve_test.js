@@ -190,7 +190,7 @@ describe('Dependency Injection Container Resolve Test', function describeCallbac
     const first = container.resolve(firstKey);
     const second = container.resolve(secondKey);
 
-    should(first.testType === second.testType).be.true();
+    should(first.testType == second.testType).be.true();
   });
 
   it('should resolve with layered config', function testCallback() {

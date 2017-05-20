@@ -44,11 +44,13 @@ export class Registration<T extends IRegistration, U extends IRegistrationSettin
 
   public injectLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U> {
     this.settings.lazyDependencies = lazyDependencies;
+    this.settings.wantsLazyInjection = true;
     return this;
   }
 
   public injectPromiseLazy(...lazyPromiseDependencies: Array<RegistrationKey>): ISpecializedRegistration<T,U> {
     this.settings.lazyPromiseDependencies = lazyPromiseDependencies;
+    this.settings.wantsPromiseLazyInjection = true;
     return this;
   }
 

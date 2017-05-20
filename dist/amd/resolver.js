@@ -39,10 +39,7 @@ define(["require", "exports", "./utils"], function (require, exports, utils_1) {
         function Resolver() {
         }
         Resolver.prototype.hash = function (anything) {
-            if (typeof anything === 'undefined' || anything === null) {
-                return undefined;
-            }
-            return anything.toString();
+            return anything;
         };
         Resolver.prototype.hashType = function (type) {
             return this.hash(type);

@@ -53,3 +53,5 @@ container.register(secondKey, SecondType)
 const first = container.resolve(firstKey);
 // testConfig.testConfiguration = 'changed';
 const second = container.resolve(secondKey);
+
+;

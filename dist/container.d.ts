@@ -8,7 +8,6 @@ export declare class Container extends Registry implements IContainer {
     initialize(): void;
     clear(): void;
     private _orderDependencies(registration, results, missing, recursive, nest?);
-    newResolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
     resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
     private _resolve<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveAsync<T>(registration, resolutionContext, injectionArgs?, config?);
@@ -21,12 +20,12 @@ export declare class Container extends Registry implements IContainer {
     private _resolveObjectAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveFactory<T>(registration, resolutionContext, injectionArgs?, config?);
     private _resolveFactoryAsync<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _resolveInstance<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _resolveInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _getInstance<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _getInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _getNewInstance<T>(registration, resolutionContext, injectionArgs?, config?);
-    private _getNewInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveTypeInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _resolveTypeInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getTypeInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getTypeInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getNewTypeInstance<T>(registration, resolutionContext, injectionArgs?, config?);
+    private _getNewTypeInstanceAsync<T>(registration, resolutionContext, injectionArgs?, config?);
     private _validateResolutionContext<T>(registration, resolutionContext);
     private _resolveDependencies<T>(registration, resolutionContext);
     private _resolveDependenciesAsync<T>(registration, resolutionContext);

@@ -57,14 +57,14 @@ define(["require", "exports", "./registration", "./registration_settings", "./re
             return registration;
         };
         Registry.prototype.createRegistration = function (key, type, registrationSettings) {
-            var settings = registrationSettings ? new registration_settings_1.RegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
+            var settings = registrationSettings ? new registration_settings_1.TypeRegistrationSettings(Object.assign({}, registrationSettings)) : Object.assign({}, this.settings.defaults);
             settings.key = key;
             settings.type = type;
             var registration = new registration_1.Registration(settings);
             return registration;
         };
         Registry.prototype.createObjectRegistration = function (key, object, registrationSettings) {
-            var settings = registrationSettings ? new registration_settings_1.RegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+            var settings = registrationSettings ? new registration_settings_1.ObjectRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
             settings.key = key;
             settings.isObject = true;
             settings.object = object;
@@ -72,7 +72,7 @@ define(["require", "exports", "./registration", "./registration_settings", "./re
             return registration;
         };
         Registry.prototype.createFactoryRegistration = function (key, factoryFunction, registrationSettings) {
-            var settings = registrationSettings ? new registration_settings_1.RegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
+            var settings = registrationSettings ? new registration_settings_1.FactoryRegistrationSettings(registrationSettings) : Object.assign({}, this.settings.defaults);
             settings.key = key;
             settings.isFactory = true;
             settings.factory = factoryFunction;

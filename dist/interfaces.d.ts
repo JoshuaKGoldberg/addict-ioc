@@ -10,11 +10,12 @@ export interface IContainer extends IRegistry {
     resolveLazyAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<T>;
     validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
 }
-export interface IInstanceCache<T> extends Map<RegistrationKey, IInstanceWithConfigCache<T>> {
-}
-export interface IInstanceWithConfigCache<T> extends Map<string, IInstanceWithInjectionArgsCache<T>> {
-}
-export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>> {
+export interface IInstanceCache<T> {
+    [key: string]: {
+        [configHash: string]: {
+            [injectionArgsHash: string]: Array<T>;
+        };
+    };
 }
 export interface IValidationError {
     errorMessage: string;
@@ -95,7 +96,9 @@ export interface IRegistrationSettings {
     injectInto?: string;
     bindFunctions?: boolean;
     functionsToBind?: Array<string>;
+    wantsLazyInjection?: boolean;
     lazyDependencies?: Array<string>;
+    wantsPromiseLazyInjection?: boolean;
     lazyPromiseDependencies?: Array<string>;
     overwrittenKeys?: IOverwrittenKeys;
 }
