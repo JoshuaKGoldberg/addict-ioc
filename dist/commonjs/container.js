@@ -13,18 +13,20 @@ const utils_1 = require("./utils");
 const uuid = require("node-uuid");
 class Container extends registry_1.Registry {
     constructor(settings = default_settings_1.DefaultSettings, parentContainer, parentRegistry) {
-        super(Object.assign(Object.assign({}, default_settings_1.DefaultSettings), settings), parentRegistry);
+        super(settings, parentRegistry);
         this.instances = {};
         this.parentContainer = parentContainer;
         this.settings = Object.assign(Object.assign({}, default_settings_1.DefaultSettings), settings);
         this.initialize();
     }
     initialize() {
+        super.initialize();
         this.instances = {};
+        this.settings = this._mergeSettings(default_settings_1.DefaultSettings, this.settings);
         this.registerObject(this.settings.containerRegistrationKey, this);
     }
     clear() {
-        this.clear();
+        super.clear();
         this.initialize();
     }
     _orderDependencies(registration, results, missing, recursive, nest = []) {
@@ -322,9 +324,7 @@ class Container extends registry_1.Registry {
         if (!argumentInstances) {
             return [];
         }
-        return argumentInstances.map((wrapper) => {
-            return wrapper.instance;
-        });
+        return argumentInstances;
     }
     _createInstanceId() {
         return uuid.v4();
@@ -335,11 +335,7 @@ class Container extends registry_1.Registry {
             resolutionContext.instanceLookup = {};
         }
         resolutionContext.currentResolution.instance = instance;
-        resolutionContext.instanceLookup[resolutionContext.currentResolution.id] = resolutionContext.currentResolution;
         resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
-        if (!resolutionContext.currentResolution.ownedBy) {
-            return;
-        }
         const resolver = this._getResolver(registration);
         if (!this.instances) {
             this.instances = {};

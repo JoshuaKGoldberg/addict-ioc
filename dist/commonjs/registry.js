@@ -2,14 +2,31 @@
 const registration_1 = require("./registration");
 const registration_settings_1 = require("./registration_settings");
 const registration_context_1 = require("./registration_context");
+const default_settings_1 = require("./default_settings");
 class Registry {
     constructor(settings, parentRegistry) {
         this.registrations = {};
         this.settings = settings;
         this.parentRegistry = parentRegistry;
     }
+    initialize() {
+        this.settings = this._mergeSettings(default_settings_1.DefaultSettings, this.settings);
+    }
     clear() {
         this.registrations = {};
+    }
+    _mergeSettings(existingSettings, newSettings) {
+        if (!existingSettings) {
+            return newSettings;
+        }
+        if (!newSettings) {
+            return existingSettings;
+        }
+        const settings = Object.assign({}, existingSettings);
+        Object.assign(settings, newSettings);
+        Object.assign(settings.defaults, existingSettings.defaults);
+        Object.assign(settings.defaults, newSettings.defaults);
+        return settings;
     }
     importRegistrations(registrationSettings) {
         registrationSettings.forEach((registrationSetting) => {

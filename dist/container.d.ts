@@ -31,7 +31,7 @@ export declare class Container<U extends IInstanceWrapper<any>> extends Registry
     protected _resolveDependencies<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext<T, U>): Array<any>;
     protected _resolveDependenciesAsync<T>(registration: ITypeRegistration<T>, resolutionContext: IResolutionContext<T, U>): Promise<Array<any>>;
     protected _resolveDependency<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext<T, U>): any;
-    protected _resolveDependencyAsync<T>(registration: ITypeRegistration<T>, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext<T, U>): Promise<any>;
+    protected _resolveDependencyAsync<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext<T, U>): Promise<any>;
     protected _createObject<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
     protected _createObjectAsync<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): Promise<any>;
     protected _createFactory<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;

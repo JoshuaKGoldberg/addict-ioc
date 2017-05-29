@@ -7,7 +7,9 @@ export declare class Registry implements IRegistry {
     settings: IRegistrationSettings;
     protected parentRegistry: IRegistry;
     constructor(settings: IRegistrationSettings, parentRegistry?: IRegistry);
+    initialize(): void;
     clear(): void;
+    protected _mergeSettings(existingSettings: IRegistrationSettings, newSettings: IRegistrationSettings): IRegistrationSettings;
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport?: Array<RegistrationKey>): Array<IRegistrationSettings>;
     isRegistered(key: RegistrationKey): boolean;

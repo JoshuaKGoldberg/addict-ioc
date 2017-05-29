@@ -35,6 +35,12 @@ export function executeAsExtensionHookAsync(func: any, thisContext: any, args?: 
   });
 }
 
+export function executeAsExtensionHook(func: any, thisContext: any, args?: Array<any>): void {
+  if (isValidFunction(func)) {
+    return func.call(thisContext, args);
+  }
+}
+
 function isValidFunction(func) {
   return func && typeof func === 'function';
 }

@@ -8,6 +8,12 @@ const container = new InvocationContainer({
 });
 
 class TestClass {
+  constructor(a, b) {
+
+    console.log('test created');
+    console.log(a);
+    console.log(b);
+  }
   initialize() {
     console.log('test init');
   }
@@ -20,6 +26,10 @@ class TestClass {
 
 class SecondClass {
 
+  constructor() {
+
+    console.log('second created');
+  }
   initialize() {
     console.log('second init');
 
@@ -31,12 +41,52 @@ class SecondClass {
   }
 }
 
+class ThirdClass {
+
+  constructor() {
+
+    console.log('third created');
+  }
+  initialize() {
+    console.log('third init');
+
+  }
+
+  start() {
+    console.log('third start');
+
+  }
+}
+
+class FourthClass {
+
+  constructor() {
+
+    console.log('fourth created');
+  }
+
+  initialize() {
+    console.log('fourth init');
+
+  }
+
+  start() {
+    console.log('fourth start');
+
+  }
+}
+
 // container.callByConvention('initialize', 'start');
 
-container.register('Second', SecondClass);
+container.register('Second', SecondClass)
+  .dependencies('Third');
+container.register('Third', ThirdClass)
+  .dependencies('Fourth');
+container.register('Fourth', FourthClass)
+  .singleton();
 
 container.register('Test', TestClass)
-  .dependencies('Second');
+  .dependencies('Second', 'Fourth');
   // .injectInState('Second', 'started');
 
 // container.register('Test', TestClass)
@@ -47,9 +97,17 @@ container.register('Test', TestClass)
   //   }
   // });
 
-container.resolveAsync('Test').then((instance) => {
-  console.log(instance);
-});
+
+
+// container.resolveAsync('Test').then((instance) => {
+//   console.log(instance);
+// });
+
+
+
+const bla = container.resolve('Test');
+
+
 
 // function async iterateOverResults(resolutionContext, conventionalCall) {
 //   for (let instanceId in resolutionContext.instanceResolutionOrder) {

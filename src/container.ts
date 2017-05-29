@@ -14,7 +14,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
   public parentContainer: IContainer<any>;
 
   constructor(settings: IContainerSettings = DefaultSettings, parentContainer?: IContainer<any>, parentRegistry?: IRegistry) {
-    super(Object.assign(Object.assign({}, DefaultSettings), settings), parentRegistry);
+    super(settings, parentRegistry);
     
     this.parentContainer = parentContainer;
     this.settings = Object.assign(Object.assign({}, DefaultSettings), settings);
@@ -24,12 +24,17 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
   public initialize(): void {
     // this.instances = new Map<RegistrationKey, IInstanceWithConfigCache<any>>();
+    super.initialize();
+
     this.instances = {};
+
+    this.settings = this._mergeSettings(DefaultSettings, this.settings) as IContainerSettings;
+
     this.registerObject(this.settings.containerRegistrationKey, this);
   }
 
   public clear(): void {
-    this.clear();
+    super.clear();
     this.initialize();
   }
 
@@ -64,44 +69,6 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
       results.push(dependencyKey);
     }
   }
-
-  // public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
-
-  //   const dependencyResolutionOrder = [];
-  //   const missingDependencies = [];
-  //   const recursiveDependencyResolutionGraphs = [];
-    
-  //   const registration = this.getRegistration<T>(key);
-    
-  //   this._orderDependencies(registration, dependencyResolutionOrder, missingDependencies, recursiveDependencyResolutionGraphs);
-
-  //   dependencyResolutionOrder.forEach((dependencyKey) => {
-
-  //     const dependency = this.getRegistration<T>(dependencyKey);
-
-  //     const resolutionContext = this._createNewResolutionContext(registration);
-
-  //     this._resolveDependency<T>(registration, dependencyKey, resolutionContext);
-  //   });
-
-  //   const resolutionContext = this._createNewResolutionContext(registration);
-    
-  //   if (registration.settings.isObject) {
-  //     return this._resolveObject(registration as IObjectRegistration<T>, resolutionContext, injectionArgs, config);
-  //   }
-
-  //   if (registration.settings.isFactory) {
-  //     return this._resolveFactory(registration as IFactoryRegistration<T>, resolutionContext, injectionArgs, config);
-  //   }
-
-  //   return this._resolveTypeInstance<T>(registration as ITypeRegistration<T>, resolutionContext, injectionArgs, config);
-  // }
-
-
-
-
-
-
 
 
   protected _createNewResolutionContext<T>(registration: IRegistration): IResolutionContext<T, U> {
@@ -418,7 +385,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     return this._resolve(dependencyRegistration, newResolutionContext, undefined, undefined);
   }
 
-  protected async _resolveDependencyAsync<T>(registration: ITypeRegistration<T>, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext<T, U>): Promise<any> {
+  protected async _resolveDependencyAsync<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IResolutionContext<T, U>): Promise<any> {
     
     const newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
     
@@ -542,9 +509,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
       return [];
     }
 
-    return argumentInstances.map((wrapper) => {
-      return wrapper.instance;
-    });
+    return argumentInstances;
   }
 
   protected _createInstanceId(): string {
@@ -568,13 +533,11 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     }
 
     resolutionContext.currentResolution.instance = instance;
-
-    resolutionContext.instanceLookup[resolutionContext.currentResolution.id] = resolutionContext.currentResolution;
     resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
 
-    if (!resolutionContext.currentResolution.ownedBy) {
-      return;
-    }
+    // if (!resolutionContext.currentResolution.ownedBy) {
+    //   return;
+    // }
 
     const resolver = this._getResolver(registration);
 
@@ -784,7 +747,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
   }
 
   protected _mergeConfigs(existingConfig: any, newConfig: any): any {
-    
+
     if (!existingConfig) {
       return newConfig;
     }
@@ -793,7 +756,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
       return existingConfig;
     }
 
-    return {...existingConfig, ...newConfig};
+    return { ...existingConfig, ...newConfig };
   }
 
   protected _mergeRegistrationConfig<T>(registration: ITypeRegistration<T>, config?: any): any {

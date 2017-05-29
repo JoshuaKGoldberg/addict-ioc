@@ -2,6 +2,7 @@ import {ITags, IObjectRegistrationSettings, IFactoryRegistrationSettings, IConta
 import {Registration} from './registration';
 import {TypeRegistrationSettings, ObjectRegistrationSettings, FactoryRegistrationSettings} from './registration_settings';
 import {RegistrationContext} from './registration_context';
+import { DefaultSettings } from './default_settings';
 
 export interface IRegistrationsCache {
   [key: string]: IRegistration;
@@ -18,8 +19,30 @@ export class Registry implements IRegistry {
     this.parentRegistry = parentRegistry;
   }
 
+  public initialize(): void {
+    this.settings = this._mergeSettings(DefaultSettings, this.settings);
+  }
+
   public clear(): void {
     this.registrations = {};
+  }
+
+  protected _mergeSettings(existingSettings: IRegistrationSettings, newSettings: IRegistrationSettings): IRegistrationSettings {
+
+    if (!existingSettings) {
+      return newSettings;
+    }
+
+    if (!newSettings) {
+      return existingSettings;
+    }
+    
+    const settings = Object.assign({}, existingSettings);
+    Object.assign(settings, newSettings);
+    Object.assign(settings.defaults, existingSettings.defaults);
+    Object.assign(settings.defaults, newSettings.defaults);
+
+    return settings;
   }
 
   public importRegistrations(registrationSettings: Array<IRegistrationSettings>): void {

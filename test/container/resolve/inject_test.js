@@ -200,7 +200,7 @@ describe('Dependency Injection Container Resolve Injection Test', function descr
   });
 });
 
-it.only('should inject dependencies mixed with args', function testCallback() {
+it('should inject dependencies mixed with args', function testCallback() {
   const key = 'test';
   const dependencyKey = 'dependency';
   const config = {

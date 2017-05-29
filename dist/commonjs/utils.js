@@ -24,6 +24,12 @@ function executeAsExtensionHookAsync(func, thisContext, args) {
     });
 }
 exports.executeAsExtensionHookAsync = executeAsExtensionHookAsync;
+function executeAsExtensionHook(func, thisContext, args) {
+    if (isValidFunction(func)) {
+        return func.call(thisContext, args);
+    }
+}
+exports.executeAsExtensionHook = executeAsExtensionHook;
 function isValidFunction(func) {
     return func && typeof func === 'function';
 }
