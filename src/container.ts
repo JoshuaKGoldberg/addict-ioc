@@ -535,9 +535,9 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     resolutionContext.currentResolution.instance = instance;
     resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
 
-    // if (!resolutionContext.currentResolution.ownedBy) {
-    //   return;
-    // }
+    if (!registration.settings.isSingleton) {
+      return;
+    }
 
     const resolver = this._getResolver(registration);
 
@@ -575,9 +575,9 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     const errors = this._validateDependencies(validationKeys);
     
     if (errors.length > 0) {
-      console.log('------------------');
-      console.log(errors);
-      console.log('------------------');
+      // console.log('------------------');
+      // console.log(errors);
+      // console.log('------------------');
       
       throw new Error('fuck');
     }
@@ -587,36 +587,47 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
 
   protected _validateDependencies(keys: Array<RegistrationKey>, history: Array<IRegistration> = []): Array<IValidationError> {
-    
+    console.log(keys);
     const errors = [];
 
-    keys.forEach((key) => {
+    // for (const key of keys) {
+      keys.forEach((key) => {
+        const registration = this.getRegistration(key);
 
-      const registration = this.getRegistration(key);
+        if (!registration) {
 
-      if (history.indexOf(registration) > 0) {
+          const errorMessage = `registration for key '${key}' is missing.`;
 
-        const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
-        
-        const validationError = this._createValidationError(registration, history, errorMessage);
-        errors.push(validationError);
+          const validationError = this._createValidationError(registration, history, errorMessage);
+          errors.push(validationError);
 
-        return;
-      }
+          return;
+        }
 
-      history.push(registration);
+        if (history.indexOf(registration) > 0) {
 
-      if (!registration.settings.dependencies) {
-        return;
-      }
+          const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
+          
+          const validationError = this._createValidationError(registration, history, errorMessage);
+          errors.push(validationError);
 
-      for (const dependencyKey of registration.settings.dependencies) {
-        
-        const dependency = this.getRegistration(dependencyKey);
+          return;
+        }
 
-        const deepErrors = this._validateDependency(registration, dependency, history);
-        Array.prototype.push.apply(errors, deepErrors);
-      }
+        history.push(registration);
+
+        if (!registration.settings.dependencies) {
+          return;
+        }
+
+        for (const dependencyKey of registration.settings.dependencies) {
+          
+          const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
+          const dependency = this.getRegistration(dependencyKeyOverwritten);
+
+          const deepErrors = this._validateDependency(registration, dependency, history);
+          Array.prototype.push.apply(errors, deepErrors);
+        }
 
     });
 
@@ -631,17 +642,10 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
     const errors = [];
     const dependencyKey = dependency.settings.key;
-    const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependency.settings.key);
-
+console.log(dependency);
     if (!dependency) {
 
-      let errorMessage;
-
-      if (dependencyKey === dependencyKeyOverwritten) {
-        errorMessage = `dependency '${dependencyKey}' overwritten with key '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`
-      } else {
-        errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`
-      }
+      const errorMessage = `dependency '${dependencyKey}' declared on '${registration.settings.key}' is missing.`;
       
       const validationError = this._createValidationError(registration, newRegistrationHistory, errorMessage);
 
@@ -655,7 +659,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
       const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
 
       if (!circularBreakFound) {
-        const deepErrors = this._validateDependencies([dependency.settings.key], newRegistrationHistory);
+        const deepErrors = this._validateDependencies([dependencyKey], newRegistrationHistory);
         Array.prototype.push.apply(errors, deepErrors);
       }
     }

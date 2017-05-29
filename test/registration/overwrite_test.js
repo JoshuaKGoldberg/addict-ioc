@@ -2,7 +2,9 @@
 
 const should = require('should');
 
-const container = require('./../../lib/container.js');
+const Container = require('./../../dist/commonjs').Container;
+
+const container = new Container();
 
 class TestType {}
 

@@ -15,7 +15,10 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     // if (typeof anything === 'undefined' || anything === null || Array.isArray(anything)) {
     //   return "";
     // }
-    return anything;
+    if (!anything) {
+      return anything;
+    }
+    return JSON.stringify(anything);
   }
 
   hashType<T>(type: Type<T>): string {

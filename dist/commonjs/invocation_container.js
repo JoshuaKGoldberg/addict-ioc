@@ -7,6 +7,7 @@ class InvocationContainer extends container_1.Container {
         const resolutionContext = this._createNewResolutionContext(registration);
         const resolvedInstance = await this._resolveAsync(registration, resolutionContext, injectionArgs, config);
         await this._performInvocationsAsync(resolutionContext);
+        console.log(resolutionContext);
         return resolvedInstance;
     }
     resolve(key, injectionArgs = [], config) {
@@ -14,6 +15,7 @@ class InvocationContainer extends container_1.Container {
         const resolutionContext = this._createNewResolutionContext(registration);
         const resolvedInstance = this._resolve(registration, resolutionContext, injectionArgs, config);
         this._performInvocations(resolutionContext);
+        console.log(resolutionContext);
         return resolvedInstance;
     }
     _resolveLazy(registration, resolutionContext, injectionArgs = [], config) {

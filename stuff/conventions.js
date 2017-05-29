@@ -107,7 +107,7 @@ container.register('Test', TestClass)
 
 const bla = container.resolve('Test');
 
-
+container.validateDependencies();
 
 // function async iterateOverResults(resolutionContext, conventionalCall) {
 //   for (let instanceId in resolutionContext.instanceResolutionOrder) {

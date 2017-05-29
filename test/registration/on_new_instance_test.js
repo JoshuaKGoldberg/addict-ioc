@@ -2,11 +2,13 @@
 
 const should = require('should');
 
-const container = require('./../../lib/container.js');
+const Container = require('./../../dist/commonjs').Container;
+
+const container = new Container();
 
 class TestType {}
 
-describe('Type Registration With Subscription Test', function describeCallback() {
+describe.skip('Type Registration With Subscription Test', function describeCallback() {
 
   beforeEach(() => {
     container.clear();

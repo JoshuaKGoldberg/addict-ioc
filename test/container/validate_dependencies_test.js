@@ -3,6 +3,7 @@
 const should = require('should');
 
 const Container = require('./../../dist/commonjs').Container;
+
 const container = new Container();
 
 class TestType {}
@@ -140,6 +141,7 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
       next();
 
     } catch (error) {
+      // console.log(error);
       next(error);
     }
   });
@@ -196,7 +198,7 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it.only('should not throw error on circular dependency that includes a singleton', function testCallback() {
+  it('should not throw error on circular dependency that includes a singleton', function testCallback() {
     const key = 'test';
     const secondKey = 'second';
 
@@ -214,17 +216,41 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     container.validateDependencies(key);
   });
 
+  it('should throw error on circular dependency that does not include a circular break', function testCallback(next) {
+    const key = 'test';
+    const secondKey = 'second';
+
+    const SecondType = class SecondType { };
+
+    container.register(secondKey, SecondType)
+      .dependencies(key);
+
+    const ThirdType = class ThirdType { };
+
+    container.register(key, ThirdType)
+      .dependencies(secondKey);
+
+    try {
+      container.validateDependencies(key);
+
+    } catch (error) {
+      should(error).not.be.null();
+      next();
+    }
+  });
+
+
   it('should not throw error on circular dependency that includes lazy dependencies', function testCallback() {
     const key = 'test';
     const secondKey = 'second';
 
-    const SecondType = class SecondType {};
+    const SecondType = class SecondType { };
 
     container.register(secondKey, SecondType)
       .dependencies(key)
       .injectLazy();
 
-    const ThirdType = class ThirdType {};
+    const ThirdType = class ThirdType { };
 
     container.register(key, ThirdType)
       .dependencies(secondKey);

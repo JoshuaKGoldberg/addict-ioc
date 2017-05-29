@@ -336,6 +336,9 @@ class Container extends registry_1.Registry {
         }
         resolutionContext.currentResolution.instance = instance;
         resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
+        if (!registration.settings.isSingleton) {
+            return;
+        }
         const resolver = this._getResolver(registration);
         if (!this.instances) {
             this.instances = {};
@@ -360,17 +363,21 @@ class Container extends registry_1.Registry {
         const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
         const errors = this._validateDependencies(validationKeys);
         if (errors.length > 0) {
-            console.log('------------------');
-            console.log(errors);
-            console.log('------------------');
             throw new Error('fuck');
         }
         return errors;
     }
     _validateDependencies(keys, history = []) {
+        console.log(keys);
         const errors = [];
         keys.forEach((key) => {
             const registration = this.getRegistration(key);
+            if (!registration) {
+                const errorMessage = `registration for key '${key}' is missing.`;
+                const validationError = this._createValidationError(registration, history, errorMessage);
+                errors.push(validationError);
+                return;
+            }
             if (history.indexOf(registration) > 0) {
                 const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
                 const validationError = this._createValidationError(registration, history, errorMessage);
@@ -382,7 +389,8 @@ class Container extends registry_1.Registry {
                 return;
             }
             for (const dependencyKey of registration.settings.dependencies) {
-                const dependency = this.getRegistration(dependencyKey);
+                const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
+                const dependency = this.getRegistration(dependencyKeyOverwritten);
                 const deepErrors = this._validateDependency(registration, dependency, history);
                 Array.prototype.push.apply(errors, deepErrors);
             }
@@ -394,15 +402,9 @@ class Container extends registry_1.Registry {
         Array.prototype.push.apply(newRegistrationHistory, history);
         const errors = [];
         const dependencyKey = dependency.settings.key;
-        const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependency.settings.key);
+        console.log(dependency);
         if (!dependency) {
-            let errorMessage;
-            if (dependencyKey === dependencyKeyOverwritten) {
-                errorMessage = `dependency '${dependencyKey}' overwritten with key '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`;
-            }
-            else {
-                errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`;
-            }
+            const errorMessage = `dependency '${dependencyKey}' declared on '${registration.settings.key}' is missing.`;
             const validationError = this._createValidationError(registration, newRegistrationHistory, errorMessage);
             errors.push(validationError);
         }
@@ -411,7 +413,7 @@ class Container extends registry_1.Registry {
             Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
             const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
             if (!circularBreakFound) {
-                const deepErrors = this._validateDependencies([dependency.settings.key], newRegistrationHistory);
+                const deepErrors = this._validateDependencies([dependencyKey], newRegistrationHistory);
                 Array.prototype.push.apply(errors, deepErrors);
             }
         }

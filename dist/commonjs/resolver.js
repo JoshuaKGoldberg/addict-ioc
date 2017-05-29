@@ -2,7 +2,10 @@
 const utils_1 = require("./utils");
 class Resolver {
     hash(anything) {
-        return anything;
+        if (!anything) {
+            return anything;
+        }
+        return JSON.stringify(anything);
     }
     hashType(type) {
         return this.hash(type);

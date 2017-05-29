@@ -13,6 +13,8 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
   
     await this._performInvocationsAsync<T>(resolutionContext);
 
+    console.log(resolutionContext);
+
     return resolvedInstance;
   }
 
@@ -24,6 +26,8 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     const resolvedInstance = this._resolve<T>(registration, resolutionContext, injectionArgs, config);
 
     this._performInvocations<T>(resolutionContext);
+
+    console.log(resolutionContext);
 
     return resolvedInstance;
   }
