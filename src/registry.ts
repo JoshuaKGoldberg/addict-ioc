@@ -46,13 +46,13 @@ export class Registry implements IRegistry {
   }
 
   public importRegistrations(registrationSettings: Array<IRegistrationSettings>): void {
-    
-    registrationSettings.forEach((registrationSetting) =>  {
+
+    for (const registrationSetting of registrationSettings) {
 
       const registration = new Registration(registrationSetting);
 
       this.cacheRegistration(registrationSetting.key, registration);
-    });
+    }
   }
 
   public exportRegistrations(keysToExport?: Array<RegistrationKey>): Array<IRegistrationSettings> {
@@ -180,7 +180,7 @@ export class Registry implements IRegistry {
 
     const registrationKeys = this.getRegistrationKeys();
 
-    registrationKeys.forEach((registrationKey) => {
+    for (const registrationKey of registrationKeys) {
 
       const registration = this.getRegistration(registrationKey);
 
@@ -188,7 +188,7 @@ export class Registry implements IRegistry {
 
         foundKeys.push(registration.settings.key);
       }
-    });
+    }
 
     return foundKeys;
   }
@@ -201,7 +201,7 @@ export class Registry implements IRegistry {
 
     const registrationKeys = this.getKeysByTags(...attributeKeys);
 
-    registrationKeys.forEach((registrationKey) => {
+    for (const registrationKey of registrationKeys) {
 
       const registration = this.getRegistration(registrationKey);
 
@@ -211,7 +211,7 @@ export class Registry implements IRegistry {
 
         foundKeys.push(registration.settings.key);
       }
-    });
+    }
 
     return foundKeys;
   }

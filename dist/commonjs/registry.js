@@ -29,10 +29,10 @@ class Registry {
         return settings;
     }
     importRegistrations(registrationSettings) {
-        registrationSettings.forEach((registrationSetting) => {
+        for (const registrationSetting of registrationSettings) {
             const registration = new registration_1.Registration(registrationSetting);
             this.cacheRegistration(registrationSetting.key, registration);
-        });
+        }
     }
     exportRegistrations(keysToExport) {
         const registrationKeys = keysToExport || this.getRegistrationKeys();
@@ -115,25 +115,25 @@ class Registry {
     getKeysByTags(...tags) {
         const foundKeys = [];
         const registrationKeys = this.getRegistrationKeys();
-        registrationKeys.forEach((registrationKey) => {
+        for (const registrationKey of registrationKeys) {
             const registration = this.getRegistration(registrationKey);
             if (this._hasRegistrationTags(registration, tags)) {
                 foundKeys.push(registration.settings.key);
             }
-        });
+        }
         return foundKeys;
     }
     getKeysByAttributes(attributes) {
         const foundKeys = [];
         const attributeKeys = Object.keys(attributes);
         const registrationKeys = this.getKeysByTags(...attributeKeys);
-        registrationKeys.forEach((registrationKey) => {
+        for (const registrationKey of registrationKeys) {
             const registration = this.getRegistration(registrationKey);
             const registrationHasAttributes = this._hasRegistrationAttributes(registration, attributes);
             if (registrationHasAttributes) {
                 foundKeys.push(registration.settings.key);
             }
-        });
+        }
         return foundKeys;
     }
     _hasRegistrationAttributes(registration, attributes) {

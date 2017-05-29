@@ -83,7 +83,6 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
     const resolutionContext = {
       currentResolution: currentResolution,
-      history: [],
       instanceLookup: {},
       instanceResolutionOrder: []
     } as IResolutionContext<T, U>;
@@ -322,17 +321,14 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
     const resolvedDependencies = [];
 
-    // TODO: redo runtime validation
-    // resolutionContext.history.push(registration);
-
     const dependencies = registration.settings.dependencies || [];
 
-    dependencies.forEach((dependency) => {
+    for (const dependencyKey of dependencies) {
 
-      const resolvedDependency = this._resolveDependency(registration, dependency, resolutionContext);
+      const resolvedDependency = this._resolveDependency(registration, dependencyKey, resolutionContext);
 
       resolvedDependencies.push(resolvedDependency);
-    });
+    }
 
     return resolvedDependencies;
   }
@@ -341,14 +337,11 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
     const resolvedDependencies = [];
 
-    // TODO: redo runtime validation
-    // resolutionContext.history.push(registration);
-
     const dependencies = registration.settings.dependencies || [];
 
-    for (let dependency of dependencies) {
+    for (const dependencyKey of dependencies) {
 
-      const resolvedDependency = await this._resolveDependencyAsync(registration, dependency, resolutionContext);
+      const resolvedDependency = await this._resolveDependencyAsync(registration, dependencyKey, resolutionContext);
 
       resolvedDependencies.push(resolvedDependency);
     }
@@ -590,46 +583,45 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     console.log(keys);
     const errors = [];
 
-    // for (const key of keys) {
-      keys.forEach((key) => {
-        const registration = this.getRegistration(key);
+    for (const key of keys) {
+      const registration = this.getRegistration(key);
 
-        if (!registration) {
+      if (!registration) {
 
-          const errorMessage = `registration for key '${key}' is missing.`;
+        const errorMessage = `registration for key '${key}' is missing.`;
 
-          const validationError = this._createValidationError(registration, history, errorMessage);
-          errors.push(validationError);
+        const validationError = this._createValidationError(registration, history, errorMessage);
+        errors.push(validationError);
 
-          return;
-        }
+        return;
+      }
 
-        if (history.indexOf(registration) > 0) {
+      if (history.indexOf(registration) > 0) {
 
-          const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
-          
-          const validationError = this._createValidationError(registration, history, errorMessage);
-          errors.push(validationError);
+        const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
+        
+        const validationError = this._createValidationError(registration, history, errorMessage);
+        errors.push(validationError);
 
-          return;
-        }
+        return;
+      }
 
-        history.push(registration);
+      history.push(registration);
 
-        if (!registration.settings.dependencies) {
-          return;
-        }
+      if (!registration.settings.dependencies) {
+        return;
+      }
 
-        for (const dependencyKey of registration.settings.dependencies) {
-          
-          const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
-          const dependency = this.getRegistration(dependencyKeyOverwritten);
+      for (const dependencyKey of registration.settings.dependencies) {
+        
+        const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
+        const dependency = this.getRegistration(dependencyKeyOverwritten);
 
-          const deepErrors = this._validateDependency(registration, dependency, history);
-          Array.prototype.push.apply(errors, deepErrors);
-        }
+        const deepErrors = this._validateDependency(registration, dependency, history);
+        Array.prototype.push.apply(errors, deepErrors);
+      }
 
-    });
+    }
 
     return errors;
   }
@@ -710,10 +702,10 @@ console.log(dependency);
 
     const errors = [];
 
-    overwrittenKeys.forEach((overwrittenKey) => {
+    for (const overwrittenKey of overwrittenKeys) {
       const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey, history);
       Array.prototype.push.apply(errors, keyErrors);
-    });
+    }
 
     return errors;
   }

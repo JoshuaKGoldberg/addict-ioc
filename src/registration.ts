@@ -65,11 +65,11 @@ export class Registration<T extends IRegistration, U extends IRegistrationSettin
   }
 
   public tags(...tags: Array<string>): ISpecializedRegistration<T,U> {
-    tags.forEach((tag) => {
+    for (const tag of tags) {
       if (!this.settings.tags[tag]) {
         this.settings.tags[tag] = {};
       }
-    });
+    }
     return this;
   }
 

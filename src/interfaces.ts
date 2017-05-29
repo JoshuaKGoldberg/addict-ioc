@@ -193,7 +193,6 @@ export type InstanceId = string;
 
 export interface IResolutionContext<T, U extends IInstanceWrapper<T>> {
   currentResolution: U;
-  history: Array<U>;
   instanceLookup: IInstanceLookup<U>;
   instanceResolutionOrder: Array<InstanceId>;
 }

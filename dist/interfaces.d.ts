@@ -158,7 +158,6 @@ export interface IInvocationWrapper<T> extends IInstanceWrapper<T> {
 export declare type InstanceId = string;
 export interface IResolutionContext<T, U extends IInstanceWrapper<T>> {
     currentResolution: U;
-    history: Array<U>;
     instanceLookup: IInstanceLookup<U>;
     instanceResolutionOrder: Array<InstanceId>;
 }

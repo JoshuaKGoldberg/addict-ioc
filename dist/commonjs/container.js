@@ -61,7 +61,6 @@ class Container extends registry_1.Registry {
         };
         const resolutionContext = {
             currentResolution: currentResolution,
-            history: [],
             instanceLookup: {},
             instanceResolutionOrder: []
         };
@@ -199,17 +198,17 @@ class Container extends registry_1.Registry {
     _resolveDependencies(registration, resolutionContext) {
         const resolvedDependencies = [];
         const dependencies = registration.settings.dependencies || [];
-        dependencies.forEach((dependency) => {
-            const resolvedDependency = this._resolveDependency(registration, dependency, resolutionContext);
+        for (const dependencyKey of dependencies) {
+            const resolvedDependency = this._resolveDependency(registration, dependencyKey, resolutionContext);
             resolvedDependencies.push(resolvedDependency);
-        });
+        }
         return resolvedDependencies;
     }
     async _resolveDependenciesAsync(registration, resolutionContext) {
         const resolvedDependencies = [];
         const dependencies = registration.settings.dependencies || [];
-        for (let dependency of dependencies) {
-            const resolvedDependency = await this._resolveDependencyAsync(registration, dependency, resolutionContext);
+        for (const dependencyKey of dependencies) {
+            const resolvedDependency = await this._resolveDependencyAsync(registration, dependencyKey, resolutionContext);
             resolvedDependencies.push(resolvedDependency);
         }
         return resolvedDependencies;
@@ -370,7 +369,7 @@ class Container extends registry_1.Registry {
     _validateDependencies(keys, history = []) {
         console.log(keys);
         const errors = [];
-        keys.forEach((key) => {
+        for (const key of keys) {
             const registration = this.getRegistration(key);
             if (!registration) {
                 const errorMessage = `registration for key '${key}' is missing.`;
@@ -394,7 +393,7 @@ class Container extends registry_1.Registry {
                 const deepErrors = this._validateDependency(registration, dependency, history);
                 Array.prototype.push.apply(errors, deepErrors);
             }
-        });
+        }
         return errors;
     }
     _validateDependency(registration, dependency, history) {
@@ -448,10 +447,10 @@ class Container extends registry_1.Registry {
     _validateOverwrittenKeys(registration, history) {
         const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
         const errors = [];
-        overwrittenKeys.forEach((overwrittenKey) => {
+        for (const overwrittenKey of overwrittenKeys) {
             const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey, history);
             Array.prototype.push.apply(errors, keyErrors);
-        });
+        }
         return errors;
     }
     _validateOverwrittenKey(registration, overwrittenKey, history) {

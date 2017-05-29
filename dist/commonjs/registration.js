@@ -48,11 +48,11 @@ class Registration {
         return this;
     }
     tags(...tags) {
-        tags.forEach((tag) => {
+        for (const tag of tags) {
             if (!this.settings.tags[tag]) {
                 this.settings.tags[tag] = {};
             }
-        });
+        }
         return this;
     }
     setTag(tag, value) {

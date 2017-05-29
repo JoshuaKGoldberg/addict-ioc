@@ -1,13 +1,7 @@
 'use strict';
 
-const InvocationContainer = require('./../dist/commonjs').InvocationContainer;
-const container = new InvocationContainer({
-  defaults: {
-    conventionCalls: ['initialize', 'start'],
-  },
-});
-
 class TestClass {
+
   constructor(a, b) {
 
     console.log('test created');
@@ -22,6 +16,7 @@ class TestClass {
     console.log('test start');
 
   }
+
 }
 
 class SecondClass {
@@ -39,6 +34,7 @@ class SecondClass {
     console.log('second start');
 
   }
+
 }
 
 class ThirdClass {
@@ -56,6 +52,7 @@ class ThirdClass {
     console.log('third start');
 
   }
+
 }
 
 class FourthClass {
@@ -74,9 +71,20 @@ class FourthClass {
     console.log('fourth start');
 
   }
+
 }
 
 // container.callByConvention('initialize', 'start');
+
+
+const InvocationContainer = require('./../dist/commonjs').InvocationContainer;
+
+const container = new InvocationContainer({
+  defaults: {
+    conventionCalls: ['initialize', 'start'],
+  },
+});
+
 
 container.register('Second', SecondClass)
   .dependencies('Third');
@@ -98,11 +106,9 @@ container.register('Test', TestClass)
   // });
 
 
-
 // container.resolveAsync('Test').then((instance) => {
 //   console.log(instance);
 // });
-
 
 
 const bla = container.resolve('Test');
