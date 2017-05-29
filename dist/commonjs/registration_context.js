@@ -1,30 +1,29 @@
 "use strict";
-var RegistrationContext = (function () {
-    function RegistrationContext(registry, registrationSettings) {
+class RegistrationContext {
+    constructor(registry, registrationSettings) {
         this.registry = registry;
         this.registrationSettings = registrationSettings;
     }
-    RegistrationContext.prototype.createRegistrationTemplate = function (registrationSettings) {
+    createRegistrationTemplate(registrationSettings) {
         return new RegistrationContext(this, registrationSettings);
-    };
-    RegistrationContext.prototype.register = function (key, type) {
-        var registration = this.registry.register(key, type);
+    }
+    register(key, type) {
+        const registration = this.registry.register(key, type);
         this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
         return registration;
-    };
-    RegistrationContext.prototype.registerObject = function (key, object) {
-        var registration = this.registry.registerObject(key, object);
+    }
+    registerObject(key, object) {
+        const registration = this.registry.registerObject(key, object);
         this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
         return registration;
-    };
-    RegistrationContext.prototype.unregister = function (key) {
+    }
+    unregister(key) {
         return this.registry.unregister(key);
-    };
-    RegistrationContext.prototype.applyRegistrationTemplate = function (registrationSettings, template) {
+    }
+    applyRegistrationTemplate(registrationSettings, template) {
         return Object.assign(registrationSettings, this.registrationSettings);
-    };
-    return RegistrationContext;
-}());
+    }
+}
 exports.RegistrationContext = RegistrationContext;
 
 //# sourceMappingURL=registration_context.js.map

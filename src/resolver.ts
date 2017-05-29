@@ -1,4 +1,4 @@
-import {IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, IResolver} from './interfaces';
+import { IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, IResolver, IInstanceWrapper } from './interfaces';
 import {getPropertyDescriptor} from './utils';
 
 // we need this workaround until TypeScript supports async import() syntax
@@ -9,7 +9,7 @@ declare global {
   var System: System
 }
 
-export class Resolver implements IResolver {
+export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, U> {
 
   hash(anything: any): string {
     // if (typeof anything === 'undefined' || anything === null || Array.isArray(anything)) {
@@ -34,31 +34,31 @@ export class Resolver implements IResolver {
     return this.hash(config);
   }
 
-  public resolveType<T>(container: IContainer, registration: ITypeRegistration<T>): Type<T> {
+  public resolveType<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Type<T> {
     return registration.settings.type;
   }
 
-  public async resolveTypeAsync<T>(container: IContainer, registration: ITypeRegistration<T>): Promise<Type<T>> {
+  public async resolveTypeAsync<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Promise<Type<T>> {
     return new Promise<Type<T>>((resolve, reject) => {
       resolve(registration.settings.type);
     });
   }
 
-  public resolveObject(container: IContainer, registration: IRegistration): any {
+  public resolveObject(container: IContainer<U>, registration: IRegistration): any {
     return registration.settings.object;
   }
 
-  public async resolveObjectAsync(container: IContainer, registration: IRegistration): Promise<any> {
+  public async resolveObjectAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       resolve(registration.settings.object);
     });
   }
 
-  public resolveFactory(container: IContainer, registration: IRegistration): any {
+  public resolveFactory(container: IContainer<U>, registration: IRegistration): any {
     return registration.settings.factory;
   }
 
-  public async resolveFactoryAsync(container: IContainer, registration: IRegistration): Promise<any> {
+  public async resolveFactoryAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       resolve(registration.settings.factory);
     });
@@ -85,7 +85,7 @@ export class Resolver implements IResolver {
     instance.config = config;
   }
 
-  public createObject<T>(container: IContainer, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createObject<T>(container: IContainer<U>, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     return this._createObject(object, registration, dependencies, injectionArgs);
   }
 
@@ -100,7 +100,7 @@ export class Resolver implements IResolver {
     return object;
   }
 
-  public createFactory<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createFactory<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     return this._createFactory(registration, dependencies, injectionArgs);
   }
 
@@ -121,7 +121,7 @@ export class Resolver implements IResolver {
     return instance;
   }
 
-  public createInstance<T>(container: IContainer, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createInstance<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
     return this._createInstance(type, registration, dependencies, injectionArgs);
   }
 

@@ -1,24 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    "module": "es2015",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": false,
-    "moduleResolution": "node",
-    "stripInternal": true,
-    "preserveConstEnums": true,
-    "listFiles": true,
-    "declaration": true,
-    "removeComments": true,
-    "lib": ["es2015"]
+  "typingOptions": {
+    "enableAutoDiscovery": true
   },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "doc",
-    "test",
-    "config.js",
-    "gulpfile.js"
-  ]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2017",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "sourceMap": true,
+    "experimentalDecorators": true
+  }
 }

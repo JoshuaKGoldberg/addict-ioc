@@ -4,9 +4,9 @@ function __export(m) {
 }
 __export(require("./container"));
 __export(require("./default_settings"));
+__export(require("./invocation_container"));
 __export(require("./registration_context"));
 __export(require("./registry"));
-__export(require("./resolution_context"));
 __export(require("./resolver"));
 __export(require("./registration"));
 __export(require("./registration_settings"));

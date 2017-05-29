@@ -5,7 +5,7 @@
             "name": "Launch Master",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/stuff/lazy.js",
+            "program": "${workspaceRoot}/stuff/conventions.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}/",

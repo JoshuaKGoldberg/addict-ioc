@@ -1,15 +1,31 @@
 "use strict";
+const BluebirdPromise = require("bluebird");
 function getPropertyDescriptor(type, key) {
-    var propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
+    const propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
     if (propertyDescriptor) {
         return propertyDescriptor;
     }
-    var prototype = Object.getPrototypeOf(type);
+    const prototype = Object.getPrototypeOf(type);
     if (!prototype) {
         return undefined;
     }
     return getPropertyDescriptor(prototype, key);
 }
 exports.getPropertyDescriptor = getPropertyDescriptor;
+function executeAsExtensionHookAsync(func, thisContext, args) {
+    return new BluebirdPromise((resolve, reject) => {
+        if (isValidFunction(func)) {
+            const funcReturn = func.call(thisContext, args);
+            resolve(funcReturn);
+        }
+        else {
+            resolve();
+        }
+    });
+}
+exports.executeAsExtensionHookAsync = executeAsExtensionHookAsync;
+function isValidFunction(func) {
+    return func && typeof func === 'function';
+}
 
 //# sourceMappingURL=utils.js.map
