@@ -568,9 +568,9 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     const errors = this._validateDependencies(validationKeys);
     
     if (errors.length > 0) {
-      // console.log('------------------');
-      // console.log(errors);
-      // console.log('------------------');
+      console.log('------------------');
+      console.log(errors);
+      console.log('------------------');
       
       throw new Error('fuck');
     }
@@ -580,7 +580,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
 
   protected _validateDependencies(keys: Array<RegistrationKey>, history: Array<IRegistration> = []): Array<IValidationError> {
-    console.log(keys);
+
     const errors = [];
 
     for (const key of keys) {
@@ -613,11 +613,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
       }
 
       for (const dependencyKey of registration.settings.dependencies) {
-        
-        const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
-        const dependency = this.getRegistration(dependencyKeyOverwritten);
-
-        const deepErrors = this._validateDependency(registration, dependency, history);
+        const deepErrors = this._validateDependency(registration, dependencyKey, history);
         Array.prototype.push.apply(errors, deepErrors);
       }
 
@@ -627,23 +623,23 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
   }
   
 
-  protected _validateDependency(registration: IRegistration, dependency: IRegistration, history: Array<IRegistration>) {
+  protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>) {
 
     const newRegistrationHistory = [];
     Array.prototype.push.apply(newRegistrationHistory, history);
 
     const errors = [];
-    const dependencyKey = dependency.settings.key;
-console.log(dependency);
+
+    const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
+    const dependency = this.getRegistration(dependencyKeyOverwritten);
+
     if (!dependency) {
-
-      const errorMessage = `dependency '${dependencyKey}' declared on '${registration.settings.key}' is missing.`;
       
-      const validationError = this._createValidationError(registration, newRegistrationHistory, errorMessage);
-
+      const errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`;
+      const validationError = this._createValidationError(registration, history, errorMessage);
       errors.push(validationError);
-
-    } else if (dependency.settings.dependencies) {
+    
+  } else if (dependency.settings.dependencies) {
 
       const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration, newRegistrationHistory);
       Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
