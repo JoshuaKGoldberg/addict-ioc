@@ -45,7 +45,7 @@ export declare class Container<U extends IInstanceWrapper<any>> extends Registry
     protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: any, injectionArgs: Array<any>, config: any): void;
     validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
     protected _validateDependencies(keys: Array<RegistrationKey>, history?: Array<IRegistration>): Array<IValidationError>;
-    protected _validateDependency(registration: IRegistration, dependency: IRegistration, history: Array<IRegistration>): any[];
+    protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>): any[];
     protected _historyHasCircularBreak(history: Array<IRegistration>, dependency: IRegistration): boolean;
     protected _createValidationError(registration: IRegistration, history: Array<IRegistration>, errorMessage: string): IValidationError;
     protected _validateOverwrittenKeys(registration: IRegistration, history: Array<IRegistration>): Array<IValidationError>;
