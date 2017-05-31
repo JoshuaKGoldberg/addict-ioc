@@ -64,27 +64,6 @@ describe('Dependency Injection Container Validate Dependencies Test', function d
     }
   });
 
-  it('should throw error if original key of overwritten key is not registered', function testCallback(next) {
-
-    try {
-      const key = 'test';
-      const secondKey = 'secondKey';
-      const thirdKey = 'thirdKey';
-
-      container.register(thirdKey, TestType);
-
-      container.register(key, TestType)
-        .dependencies(secondKey)
-        .overwrite(secondKey, thirdKey);
-
-      container.validateDependencies();
-
-    } catch (error) {
-      should(error).not.be.null();
-      next();
-    }
-  });
-
   it('should throw error if overwritten key is not registered', function testCallback(next) {
 
     try {
