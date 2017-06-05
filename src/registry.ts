@@ -1,4 +1,4 @@
-import {ITags, IObjectRegistrationSettings, IFactoryRegistrationSettings, IContainer, ITypeRegistrationSettings, RegistrationKey, IObjectRegistration, ITypeRegistration, IFactoryRegistration, IRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator} from './interfaces';
+import { ITags, IObjectRegistrationSettings, IFactoryRegistrationSettings, IContainer, ITypeRegistrationSettings, RegistrationKey, IObjectRegistration, ITypeRegistration, IFactoryRegistration, IRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator, ISpecializedRegistration } from './interfaces';
 import {Registration} from './registration';
 import {TypeRegistrationSettings, ObjectRegistrationSettings, FactoryRegistrationSettings} from './registration_settings';
 import {RegistrationContext} from './registration_context';
@@ -12,9 +12,8 @@ export class Registry implements IRegistry {
 
   public registrations: IRegistrationsCache = {};
   public settings: IRegistrationSettings;
-  protected parentRegistry: IRegistry; 
 
-  constructor(settings: IRegistrationSettings, parentRegistry?: IRegistry) {
+  constructor(settings: IRegistrationSettings, public parentRegistry?: IRegistry) {
     this.settings = settings;
     this.parentRegistry = parentRegistry;
   }
@@ -119,8 +118,8 @@ export class Registry implements IRegistry {
     return registration;
   }
 
-  public unregister<T>(key: RegistrationKey): IRegistration {
-    const registration = this.getRegistration<T>(key);
+  public unregister(key: RegistrationKey): IRegistration {
+    const registration = this.getRegistration(key);
     this.deleteRegistration(key);
     return registration;
   }
@@ -151,12 +150,12 @@ export class Registry implements IRegistry {
     return registration;
   }
 
-  public getRegistration<T>(key: RegistrationKey): IRegistration {
+  public getRegistration(key: RegistrationKey): IRegistration {
 
     const registration = this.registrations[key];
 
     if (!registration && this.parentRegistry) {
-      return this.parentRegistry.getRegistration<T>(key);
+      return this.parentRegistry.getRegistration(key);
     }
 
     return registration;
@@ -174,76 +173,65 @@ export class Registry implements IRegistry {
     delete this.registrations[key];
   }
 
-  public getKeysByTags(...tags: Array<string>): Array<RegistrationKey> {
 
-    const foundKeys = [];
+
+  public getKeysByTags(...tags: Array<ITags|string>): Array<RegistrationKey> {
 
     const registrationKeys = this.getRegistrationKeys();
-
-    for (const registrationKey of registrationKeys) {
-
-      const registration = this.getRegistration(registrationKey);
-
-      if (this._hasRegistrationTags(registration, tags)) {
-
-        foundKeys.push(registration.settings.key);
-      }
-    }
-
-    return foundKeys;
-  }
-
-  public getKeysByAttributes(attributes: ITags): Array<RegistrationKey> {
-
     const foundKeys = [];
 
-    const attributeKeys = Object.keys(attributes);
+    const query = this._buildTagQuery(tags);
 
-    const registrationKeys = this.getKeysByTags(...attributeKeys);
+    for (const tag in query) {
 
-    for (const registrationKey of registrationKeys) {
+      const tagValue = query[tag];
 
-      const registration = this.getRegistration(registrationKey);
+      for (const registrationKey of registrationKeys) {
 
-      const registrationHasAttributes = this._hasRegistrationAttributes(registration, attributes);
+        const registration = this.getRegistration(registrationKey);
 
-      if (registrationHasAttributes) {
+        const registrationTagValue = registration.settings.tags[tag];
 
-        foundKeys.push(registration.settings.key);
+        if (tagValue == registrationTagValue) {
+
+          foundKeys.push(registrationKey);
+        }
       }
     }
 
     return foundKeys;
   }
 
-  private _hasRegistrationAttributes(registration: IRegistration, attributes: ITags): boolean {
+  protected _buildTagQuery(...tags: Array<ITags | string>): ITags {
 
-    const attributeKeys = Object.keys(attributes);
+    const query = {};
 
-    const attributeMissing = attributeKeys.some((attribute) => {
+    for (const value of tags) {
 
-      const attributeValue = registration.settings.tags[attribute];
+      if (typeof value === 'string') {
 
-      if (attributeValue !== attributes[attribute]) {
+        const hasTagDefaultValue = typeof query[value] === 'undefined';
 
-        return true;
+        if (!hasTagDefaultValue) {
+          query[value] = {};
+        }
+
+      } else {
+
+        for (const tagKey in value as ITags) {
+
+          const tagValue = query[tagKey];
+
+          const hasTagValue = Object.keys(tagValue).length !== 0;
+
+          if (!hasTagValue) {
+            query[tagKey] = value[tagKey];
+          }
+        }
       }
-    });
+    }
 
-    return !attributeMissing;
+    return query;
   }
 
-  private _hasRegistrationTags(registration: IRegistration, tags: Array<string>): boolean {
-
-    const declaredTags = Object.keys(registration.settings.tags);
-
-    const isTagMissing = tags.some((tag) => {
-
-      if (declaredTags.indexOf(tag) < 0) {
-        return true;
-      }
-    });
-
-    return !isTagMissing;
-  }
 }

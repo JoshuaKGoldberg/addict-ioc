@@ -1,4 +1,4 @@
-import { IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistrationSettings, ITypeRegistration, Type, IFactory, IFactoryAsync, IValidationError, IInstanceLookup, IInstanceWrapper } from './interfaces';
+import { IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistrationSettings, ITypeRegistration, Type, IFactory, IFactoryAsync, IInstanceLookup, IInstanceWrapper, IValidationResults, IRegistrationSettings } from './interfaces';
 import {Registration} from './registration';
 import {Registry} from './registry';
 // import {ResolutionContext} from './resolution_context';
@@ -42,32 +42,108 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
 
 
-  protected _orderDependencies(registration: IRegistration, results: Array<RegistrationKey>, missing: Array<RegistrationKey>, recursive: Array<Array<RegistrationKey>>, nest: Array<RegistrationKey> = []): void {
+  protected _orderDependencies(registration: IRegistration, results: IValidationResults, nest: Array<RegistrationKey> = []): void {
     
     for (let dependencyKey of registration.settings.dependencies) {
 
-      dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
-
-      if (results.indexOf(dependencyKey) !== -1) {
+      if (results.order.indexOf(dependencyKey) !== -1) {
         return;
       }
 
       const dependency = this.getRegistration(dependencyKey);
 
       if (!dependency) {
-        missing.push(dependencyKey);
+        results.missing.push(dependencyKey);
       } else if (nest.indexOf(dependencyKey) > -1) {
         nest.push(dependencyKey);
         // TODO: circular breaks
-        recursive.push(nest.slice(0));
+        results.recursive.push(nest.slice(0));
         nest.pop();
       } else if (dependency.settings.dependencies.length) {
         nest.push(dependencyKey);
-        this._orderDependencies(dependency, results, missing, recursive, nest);
+        this._orderDependencies(dependency, results, nest);
         nest.pop();
       }
-      results.push(dependencyKey);
+      results.order.push(dependencyKey);
     }
+  }
+
+  public validateDependencies(...keys: Array<RegistrationKey>): Array<string> {
+    
+    const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
+    const errors = [];
+
+    for (const key of validationKeys) {
+
+      const registration = this.getRegistration(key);
+
+      const results = {
+        order: [],
+        missing: [],
+        recursive: [],
+      }
+
+      errors.concat(this._valDependencies(registration, results));
+      if (results.missing.length > 0) {
+        for (const miss of results.missing) {
+          errors.push(`registration for key "${miss}" is missing`);
+        }
+      }
+      if (results.recursive.length > 0) {
+        for (const recurs of results.recursive) {
+          errors.push(`recursive dependency detected: ` + recurs.join(' -> '));
+        }
+      }
+      console.log('results');
+      console.log(results);
+    }
+
+
+
+    if (errors.length > 0) {
+      console.log('.................');
+      console.log(errors);
+      console.log('.................');
+      throw new Error('validation failed');
+    }
+    return errors;
+  }
+
+  protected _valDependencies(registration: IRegistration, results: IValidationResults, nest: Array<IRegistration> = []): Array<string> {
+
+    const errors = [];
+
+    errors.concat(this._validateOverwrittenKeys(registration));
+    
+    for (let dependencyKey of registration.settings.dependencies) {
+
+      dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
+
+      if (results.order.indexOf(dependencyKey) !== -1) {
+        return;
+      }
+
+      const dependency = this.getRegistration(dependencyKey);
+
+      if (!dependency) {
+        results.missing.push(dependencyKey);
+      } else if (nest.indexOf(dependency) > -1) {
+        
+        if (!this._historyHasCircularBreak(nest, dependency)) {
+          nest.push(dependency);
+          results.recursive.push(nest.slice(0).map(x => x.settings.key));
+          nest.pop();
+        }
+
+      } else if (dependency.settings.dependencies.length) {
+        nest.push(dependency);
+        errors.concat(this._valDependencies(dependency, results, nest));
+        nest.pop();
+      }
+      results.order.push(dependencyKey);
+    }
+
+    return errors;
   }
 
 
@@ -95,7 +171,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
   public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
     
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext(registration);
 
     return this._resolve<T>(registration, resolutionContext, injectionArgs, config);
@@ -103,7 +179,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
   public resolveAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<T> {
     
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext(registration);
 
     return this._resolveAsync<T>(registration, resolutionContext, injectionArgs, config);
@@ -138,13 +214,13 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
   
 
   public resolveLazy<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext(registration);
     return this._resolveLazy<T>(registration, resolutionContext, injectionArgs, config);
   }
 
   public resolveLazyAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext(registration);
     return this._resolveLazyAsync<T>(registration, resolutionContext, injectionArgs, config);
   }
@@ -563,23 +639,20 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     argumentInstances.push(instance);
   }
 
-  public validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError> {
+  public validateDependencies2(...keys: Array<RegistrationKey>): Array<string> {
     const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
     const errors = this._validateDependencies(validationKeys);
-    
     if (errors.length > 0) {
-      console.log('------------------');
+      console.log('.................');
       console.log(errors);
-      console.log('------------------');
-      
-      throw new Error('fuck');
+      console.log('.................');
+      throw new Error('validation failed');
     }
-
     return errors;
   }
 
 
-  protected _validateDependencies(keys: Array<RegistrationKey>, history: Array<IRegistration> = []): Array<IValidationError> {
+  protected _validateDependencies(keys: Array<RegistrationKey>, history: Array<IRegistration> = []): Array<string> {
 
     const errors = [];
 
@@ -588,20 +661,14 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
       if (!registration) {
 
-        const errorMessage = `registration for key '${key}' is missing.`;
-
-        const validationError = this._createValidationError(registration, history, errorMessage);
-        errors.push(validationError);
+        errors.push(`registration for key '${key}' is missing.`);
 
         return;
       }
 
       if (history.indexOf(registration) > 0) {
 
-        const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
-        
-        const validationError = this._createValidationError(registration, history, errorMessage);
-        errors.push(validationError);
+        errors.push(`circular dependency on key '${registration.settings.key}' detected.`);
 
         return;
       }
@@ -634,21 +701,22 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     const dependency = this.getRegistration(dependencyKeyOverwritten);
 
     if (!dependency) {
-      
-      const errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`;
-      const validationError = this._createValidationError(registration, history, errorMessage);
-      errors.push(validationError);
+
+      errors.push(`dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
     
-  } else if (dependency.settings.dependencies) {
+    } else {
 
-      const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration, newRegistrationHistory);
+      const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(dependency);
       Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
+      
+      if (dependency.settings.dependencies) {
 
-      const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
+        const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
 
-      if (!circularBreakFound) {
-        const deepErrors = this._validateDependencies([dependencyKey], newRegistrationHistory);
-        Array.prototype.push.apply(errors, deepErrors);
+        if (!circularBreakFound) {
+          const deepErrors = this._validateDependencies(dependency.settings.dependencies, newRegistrationHistory);
+          Array.prototype.push.apply(errors, deepErrors);
+        }
       }
     }
 
@@ -665,11 +733,11 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
         return true;
       }
 
-      if (this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection && parentSettings.lazyDependencies.length > 0) {
+      if (this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection) {
 
         if (parentSettings.wantsLazyInjection ||
           parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
-
+ 
           return true;
         }
         if (parentSettings.wantsPromiseLazyInjection ||
@@ -681,39 +749,27 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
     });
   }
 
-  protected _createValidationError(registration: IRegistration, history: Array<IRegistration>, errorMessage: string): IValidationError {
-
-      const validationError: IValidationError = {
-        registrationStack: history,
-        currentRegistration: registration,
-        errorMessage: errorMessage
-      };
-
-      return validationError;
-  }
-
-  protected _validateOverwrittenKeys(registration: IRegistration, history: Array<IRegistration>): Array<IValidationError> {
+  protected _validateOverwrittenKeys(registration: IRegistration): Array<string> {
 
     const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
 
     const errors = [];
 
     for (const overwrittenKey of overwrittenKeys) {
-      const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey, history);
+      const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey);
       Array.prototype.push.apply(errors, keyErrors);
     }
 
     return errors;
   }
 
-  protected _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey, history: Array<IRegistration>): Array<IValidationError> {
+  protected _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey): Array<string> {
 
     const errors = [];
 
     if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
       const errorMessage = `No dependency for overwritten key '${overwrittenKey}' has been declared on registration for key '${registration.settings.key}'.`;
-      const validationError = this._createValidationError(registration, history, errorMessage);
-      errors.push(validationError);
+      errors.push(errorMessage);
     }
 
     const overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
@@ -721,8 +777,7 @@ export class Container<U extends IInstanceWrapper<any>> extends Registry impleme
 
     if (!overwrittenKeyRegistration) {
       const errorMessage = `Registration for overwritten key '${overwrittenKey}' declared on registration for key '${registration.settings.key}' is missing.`;
-      const validationError = this._createValidationError(registration, history, errorMessage);
-      errors.push(validationError);
+      errors.push(errorMessage);
     }
 
     return errors;

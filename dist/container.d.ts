@@ -1,4 +1,4 @@
-import { IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistration, IFactory, IFactoryAsync, IValidationError, IInstanceWrapper } from './interfaces';
+import { IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistration, IFactory, IFactoryAsync, IInstanceWrapper, IValidationResults } from './interfaces';
 import { Registry } from './registry';
 export declare class Container<U extends IInstanceWrapper<any>> extends Registry implements IContainer<U> {
     instances: IInstanceCache<any, U>;
@@ -7,7 +7,9 @@ export declare class Container<U extends IInstanceWrapper<any>> extends Registry
     constructor(settings?: IContainerSettings, parentContainer?: IContainer<any>, parentRegistry?: IRegistry);
     initialize(): void;
     clear(): void;
-    protected _orderDependencies(registration: IRegistration, results: Array<RegistrationKey>, missing: Array<RegistrationKey>, recursive: Array<Array<RegistrationKey>>, nest?: Array<RegistrationKey>): void;
+    protected _orderDependencies(registration: IRegistration, results: IValidationResults, nest?: Array<RegistrationKey>): void;
+    validateDependencies(...keys: Array<RegistrationKey>): Array<string>;
+    protected _valDependencies(registration: IRegistration, results: IValidationResults, nest?: Array<IRegistration>): Array<string>;
     protected _createNewResolutionContext<T>(registration: IRegistration): IResolutionContext<T, U>;
     resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
     resolveAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<T>;
@@ -43,13 +45,12 @@ export declare class Container<U extends IInstanceWrapper<any>> extends Registry
     protected _getCachedInstances<T>(registration: IRegistration, injectionArgs: Array<any>, config: any): Array<T>;
     protected _createInstanceId(): string;
     protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: any, injectionArgs: Array<any>, config: any): void;
-    validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
-    protected _validateDependencies(keys: Array<RegistrationKey>, history?: Array<IRegistration>): Array<IValidationError>;
+    validateDependencies2(...keys: Array<RegistrationKey>): Array<string>;
+    protected _validateDependencies(keys: Array<RegistrationKey>, history?: Array<IRegistration>): Array<string>;
     protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>): any[];
     protected _historyHasCircularBreak(history: Array<IRegistration>, dependency: IRegistration): boolean;
-    protected _createValidationError(registration: IRegistration, history: Array<IRegistration>, errorMessage: string): IValidationError;
-    protected _validateOverwrittenKeys(registration: IRegistration, history: Array<IRegistration>): Array<IValidationError>;
-    protected _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey, history: Array<IRegistration>): Array<IValidationError>;
+    protected _validateOverwrittenKeys(registration: IRegistration): Array<string>;
+    protected _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey): Array<string>;
     protected _mergeArguments(existingArgs?: Array<any>, newArgs?: Array<any>): Array<any>;
     protected _mergeConfigs(existingConfig: any, newConfig: any): any;
     protected _mergeRegistrationConfig<T>(registration: ITypeRegistration<T>, config?: any): any;

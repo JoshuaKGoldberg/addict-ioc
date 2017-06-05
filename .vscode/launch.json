@@ -5,7 +5,7 @@
             "name": "Launch Master",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/stuff/conventions.js",
+            "program": "${workspaceRoot}/stuff/validation.js",
             "stopOnEntry": false,
             "args": [],
             "cwd": "${workspaceRoot}/",

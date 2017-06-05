@@ -6,7 +6,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
   public async resolveAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<T> {
 
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext<T>(registration);
 
     const resolvedInstance = await this._resolveAsync<T>(registration, resolutionContext, injectionArgs, config);
@@ -20,7 +20,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
   public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
 
-    const registration = this.getRegistration<T>(key);
+    const registration = this.getRegistration(key);
     const resolutionContext = this._createNewResolutionContext<T>(registration);
 
     const resolvedInstance = this._resolve<T>(registration, resolutionContext, injectionArgs, config);
@@ -94,17 +94,26 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
   protected _initializeDependencyInvocationContext<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<T>): void {
     
-    const parentConventionCalls = registration.settings.conventionCalls[dependencyKey] || {};
+    const parentConventionCalls = registration.settings.conventionCalls[dependencyKey];
 
     const conventionCalls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
-    const invocations = {};
 
-    for (let call of conventionCalls) {
+    let invocations = {};
 
-      const callOverwritten = parentConventionCalls[call];
-      const callUsed = callOverwritten || call;
+    if (!parentConventionCalls) {
 
-      invocations[call] = callUsed;
+      // TODO: checken - entscheiden, ob auch bei nicht überschreiben gesetzt werden soll
+      invocations = conventionCalls;
+
+    } else {
+
+      for (let call of conventionCalls) {
+
+        const callOverwritten = parentConventionCalls[call];
+        const callUsed = callOverwritten || call;
+
+        invocations[call] = callUsed;
+      }
     }
 
     resolutionContext.instanceLookup[resolutionContext.currentResolution.id].invocations = invocations;
@@ -139,15 +148,30 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       return;
     }
 
-    for (let call of calls) {
+    for (const call of calls) {
 
-      for (let instanceId of resolutionContext.instanceResolutionOrder) {
+      const instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
+
+      if (instanceResolutionIndex === -1) {
+        throw new Error('that shouldn`t happen');
+      }
+
+      const instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex);
+
+      for (let instanceId of instancesToInvoke) {
 
         const instanceWrapper = resolutionContext.instanceLookup[instanceId];
+
+        if (instanceWrapper.invoked.indexOf(call) === -1) {
+          continue;
+        } else {
+          instanceWrapper.invoked.push(call);
+        }
 
         const invocation = instanceWrapper.invocations[call] || call;
 
         extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
+
       }
     }
   }

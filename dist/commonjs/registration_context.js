@@ -21,7 +21,7 @@ class RegistrationContext {
         return this.registry.unregister(key);
     }
     applyRegistrationTemplate(registrationSettings, template) {
-        return Object.assign(registrationSettings, this.registrationSettings);
+        return Object.assign(this.registrationSettings, registrationSettings);
     }
 }
 exports.RegistrationContext = RegistrationContext;

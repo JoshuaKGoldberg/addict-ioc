@@ -8,7 +8,7 @@ export interface IContainer<T extends IInstanceWrapper<any>> extends IRegistry {
     resolveLazy<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<T>;
     resolveAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<T>;
     resolveLazyAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<T>;
-    validateDependencies(...keys: Array<RegistrationKey>): Array<IValidationError>;
+    validateDependencies(...keys: Array<RegistrationKey>): Array<string>;
 }
 export interface IInstanceCache<T, U extends IInstanceWrapper<T>> {
     [key: string]: {
@@ -25,6 +25,11 @@ export interface IValidationError {
     registrationStack: Array<IRegistration>;
     currentRegistration: IRegistration;
 }
+export interface IValidationResults {
+    order: Array<RegistrationKey>;
+    missing: Array<RegistrationKey>;
+    recursive: Array<Array<RegistrationKey>>;
+}
 export interface IRegistrator {
     createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
     register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
@@ -35,9 +40,8 @@ export interface IRegistry extends IRegistrator {
     importRegistrations(registrationSettings: Array<IRegistrationSettings>): void;
     exportRegistrations(keysToExport: Array<RegistrationKey>): Array<IRegistrationSettings>;
     isRegistered(key: RegistrationKey): boolean;
-    getRegistration<T>(key: RegistrationKey): IRegistration;
-    getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
-    getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;
+    getRegistration(key: RegistrationKey): IRegistration;
+    getKeysByTags(...tags: Array<ITags | string>): Array<RegistrationKey>;
 }
 export interface ISpecializedRegistration<T extends IRegistration, U extends IRegistrationSettings> extends IRegistration {
     settings: U;
@@ -151,6 +155,7 @@ export interface IInstanceWrapper<T> {
     instance?: T;
     ownedInstances: Array<InstanceId>;
     registration: IRegistration;
+    invoked: Array<string>;
 }
 export interface IInvocationWrapper<T> extends IInstanceWrapper<T> {
     invocations: IInvocationContext;

@@ -57,13 +57,18 @@ class InvocationContainer extends container_1.Container {
         return resolvedDependency;
     }
     _initializeDependencyInvocationContext(registration, dependencyKey, resolutionContext) {
-        const parentConventionCalls = registration.settings.conventionCalls[dependencyKey] || {};
+        const parentConventionCalls = registration.settings.conventionCalls[dependencyKey];
         const conventionCalls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
-        const invocations = {};
-        for (let call of conventionCalls) {
-            const callOverwritten = parentConventionCalls[call];
-            const callUsed = callOverwritten || call;
-            invocations[call] = callUsed;
+        let invocations = {};
+        if (!parentConventionCalls) {
+            invocations = conventionCalls;
+        }
+        else {
+            for (let call of conventionCalls) {
+                const callOverwritten = parentConventionCalls[call];
+                const callUsed = callOverwritten || call;
+                invocations[call] = callUsed;
+            }
         }
         resolutionContext.instanceLookup[resolutionContext.currentResolution.id].invocations = invocations;
     }
@@ -85,9 +90,20 @@ class InvocationContainer extends container_1.Container {
         if (!calls) {
             return;
         }
-        for (let call of calls) {
-            for (let instanceId of resolutionContext.instanceResolutionOrder) {
+        for (const call of calls) {
+            const instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
+            if (instanceResolutionIndex === -1) {
+                throw new Error('that shouldn`t happen');
+            }
+            const instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex);
+            for (let instanceId of instancesToInvoke) {
                 const instanceWrapper = resolutionContext.instanceLookup[instanceId];
+                if (instanceWrapper.invoked.indexOf(call) === -1) {
+                    continue;
+                }
+                else {
+                    instanceWrapper.invoked.push(call);
+                }
                 const invocation = instanceWrapper.invocations[call] || call;
                 utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
             }

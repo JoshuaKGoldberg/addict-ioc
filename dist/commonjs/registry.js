@@ -5,6 +5,7 @@ const registration_context_1 = require("./registration_context");
 const default_settings_1 = require("./default_settings");
 class Registry {
     constructor(settings, parentRegistry) {
+        this.parentRegistry = parentRegistry;
         this.registrations = {};
         this.settings = settings;
         this.parentRegistry = parentRegistry;
@@ -113,47 +114,41 @@ class Registry {
         delete this.registrations[key];
     }
     getKeysByTags(...tags) {
-        const foundKeys = [];
         const registrationKeys = this.getRegistrationKeys();
-        for (const registrationKey of registrationKeys) {
-            const registration = this.getRegistration(registrationKey);
-            if (this._hasRegistrationTags(registration, tags)) {
-                foundKeys.push(registration.settings.key);
-            }
-        }
-        return foundKeys;
-    }
-    getKeysByAttributes(attributes) {
         const foundKeys = [];
-        const attributeKeys = Object.keys(attributes);
-        const registrationKeys = this.getKeysByTags(...attributeKeys);
-        for (const registrationKey of registrationKeys) {
-            const registration = this.getRegistration(registrationKey);
-            const registrationHasAttributes = this._hasRegistrationAttributes(registration, attributes);
-            if (registrationHasAttributes) {
-                foundKeys.push(registration.settings.key);
+        const query = this._buildTagQuery(tags);
+        for (const tag in query) {
+            const tagValue = query[tag];
+            for (const registrationKey of registrationKeys) {
+                const registration = this.getRegistration(registrationKey);
+                const registrationTagValue = registration.settings.tags[tag];
+                if (tagValue == registrationTagValue) {
+                    foundKeys.push(registrationKey);
+                }
             }
         }
         return foundKeys;
     }
-    _hasRegistrationAttributes(registration, attributes) {
-        const attributeKeys = Object.keys(attributes);
-        const attributeMissing = attributeKeys.some((attribute) => {
-            const attributeValue = registration.settings.tags[attribute];
-            if (attributeValue !== attributes[attribute]) {
-                return true;
+    _buildTagQuery(...tags) {
+        const query = {};
+        for (const value of tags) {
+            if (typeof value === 'string') {
+                const hasTagDefaultValue = typeof query[value] === 'undefined';
+                if (!hasTagDefaultValue) {
+                    query[value] = {};
+                }
             }
-        });
-        return !attributeMissing;
-    }
-    _hasRegistrationTags(registration, tags) {
-        const declaredTags = Object.keys(registration.settings.tags);
-        const isTagMissing = tags.some((tag) => {
-            if (declaredTags.indexOf(tag) < 0) {
-                return true;
+            else {
+                for (const tagKey in value) {
+                    const tagValue = query[tagKey];
+                    const hasTagValue = Object.keys(tagValue).length !== 0;
+                    if (!hasTagValue) {
+                        query[tagKey] = value[tagKey];
+                    }
+                }
             }
-        });
-        return !isTagMissing;
+        }
+        return query;
     }
 }
 exports.Registry = Registry;

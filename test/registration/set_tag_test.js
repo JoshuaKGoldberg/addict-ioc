@@ -8,7 +8,7 @@ const container = new Container();
 
 class TestType {}
 
-describe('Type Registration Set Attribute Test', function describeCallback() {
+describe('Type Registration Set Tag Test', function describeCallback() {
 
   beforeEach(() => {
     container.clear();
@@ -21,7 +21,7 @@ describe('Type Registration Set Attribute Test', function describeCallback() {
     };
     const testAttribute = { key: 'test1', value: 'value1' };
     container.register(key, TestType)
-      .setAttribute(testAttribute.key, testAttribute.value);
+      .setTag(testAttribute.key, testAttribute.value);
     should(container.registrations[key].settings.tags[testAttribute.key]).equal(testAttribute.value);
   });
 
@@ -30,7 +30,7 @@ describe('Type Registration Set Attribute Test', function describeCallback() {
     const testAttribute = { key: 'test1', value: 'value1' };
 
     try {
-      container.setAttribute(testAttribute.key, testAttribute.value);
+      container.setTag(testAttribute.key, testAttribute.value);
 
     } catch (error) {
       should(error).not.be.null();

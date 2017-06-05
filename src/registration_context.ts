@@ -25,6 +25,6 @@ export class RegistrationContext implements IRegistrator {
   }
 
   protected applyRegistrationTemplate(registrationSettings: IRegistrationSettings, template: IRegistrationSettings): IRegistrationSettings {
-    return Object.assign(registrationSettings, this.registrationSettings);
+    return Object.assign(this.registrationSettings, registrationSettings);
   }
 }

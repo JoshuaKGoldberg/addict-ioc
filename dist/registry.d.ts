@@ -3,9 +3,9 @@ export interface IRegistrationsCache {
     [key: string]: IRegistration;
 }
 export declare class Registry implements IRegistry {
+    parentRegistry: IRegistry;
     registrations: IRegistrationsCache;
     settings: IRegistrationSettings;
-    protected parentRegistry: IRegistry;
     constructor(settings: IRegistrationSettings, parentRegistry?: IRegistry);
     initialize(): void;
     clear(): void;
@@ -17,16 +17,14 @@ export declare class Registry implements IRegistry {
     register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
     registerObject<T>(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IObjectRegistration<T>;
     registerFactory<T>(key: RegistrationKey, factoryMethod: any, settings?: IRegistrationSettings): IFactoryRegistration<T>;
-    unregister<T>(key: RegistrationKey): IRegistration;
+    unregister(key: RegistrationKey): IRegistration;
     protected createRegistration<T>(key: RegistrationKey, type: Type<T>, registrationSettings?: IRegistrationSettings): ITypeRegistration<T>;
     protected createObjectRegistration<T>(key: RegistrationKey, object: any, registrationSettings?: IRegistrationSettings): IObjectRegistration<T>;
     protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): IFactoryRegistration<T>;
-    getRegistration<T>(key: RegistrationKey): IRegistration;
+    getRegistration(key: RegistrationKey): IRegistration;
     protected getRegistrationKeys(): Array<string>;
     protected cacheRegistration<T>(key: RegistrationKey, registration: IRegistration): void;
     protected deleteRegistration(key: RegistrationKey): void;
-    getKeysByTags(...tags: Array<string>): Array<RegistrationKey>;
-    getKeysByAttributes(attributes: ITags): Array<RegistrationKey>;
-    private _hasRegistrationAttributes(registration, attributes);
-    private _hasRegistrationTags(registration, tags);
+    getKeysByTags(...tags: Array<ITags | string>): Array<RegistrationKey>;
+    protected _buildTagQuery(...tags: Array<ITags | string>): ITags;
 }

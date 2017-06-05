@@ -29,28 +29,87 @@ class Container extends registry_1.Registry {
         super.clear();
         this.initialize();
     }
-    _orderDependencies(registration, results, missing, recursive, nest = []) {
+    _orderDependencies(registration, results, nest = []) {
         for (let dependencyKey of registration.settings.dependencies) {
-            dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
-            if (results.indexOf(dependencyKey) !== -1) {
+            if (results.order.indexOf(dependencyKey) !== -1) {
                 return;
             }
             const dependency = this.getRegistration(dependencyKey);
             if (!dependency) {
-                missing.push(dependencyKey);
+                results.missing.push(dependencyKey);
             }
             else if (nest.indexOf(dependencyKey) > -1) {
                 nest.push(dependencyKey);
-                recursive.push(nest.slice(0));
+                results.recursive.push(nest.slice(0));
                 nest.pop();
             }
             else if (dependency.settings.dependencies.length) {
                 nest.push(dependencyKey);
-                this._orderDependencies(dependency, results, missing, recursive, nest);
+                this._orderDependencies(dependency, results, nest);
                 nest.pop();
             }
-            results.push(dependencyKey);
+            results.order.push(dependencyKey);
         }
+    }
+    validateDependencies(...keys) {
+        const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
+        const errors = [];
+        for (const key of validationKeys) {
+            const registration = this.getRegistration(key);
+            const results = {
+                order: [],
+                missing: [],
+                recursive: [],
+            };
+            errors.concat(this._valDependencies(registration, results));
+            if (results.missing.length > 0) {
+                for (const miss of results.missing) {
+                    errors.push(`registration for key "${miss}" is missing`);
+                }
+            }
+            if (results.recursive.length > 0) {
+                for (const recurs of results.recursive) {
+                    errors.push(`recursive dependency detected: ` + recurs.join(' -> '));
+                }
+            }
+            console.log('results');
+            console.log(results);
+        }
+        if (errors.length > 0) {
+            console.log('.................');
+            console.log(errors);
+            console.log('.................');
+            throw new Error('validation failed');
+        }
+        return errors;
+    }
+    _valDependencies(registration, results, nest = []) {
+        const errors = [];
+        errors.concat(this._validateOverwrittenKeys(registration));
+        for (let dependencyKey of registration.settings.dependencies) {
+            dependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
+            if (results.order.indexOf(dependencyKey) !== -1) {
+                return;
+            }
+            const dependency = this.getRegistration(dependencyKey);
+            if (!dependency) {
+                results.missing.push(dependencyKey);
+            }
+            else if (nest.indexOf(dependency) > -1) {
+                if (!this._historyHasCircularBreak(nest, dependency)) {
+                    nest.push(dependency);
+                    results.recursive.push(nest.slice(0).map(x => x.settings.key));
+                    nest.pop();
+                }
+            }
+            else if (dependency.settings.dependencies.length) {
+                nest.push(dependency);
+                errors.concat(this._valDependencies(dependency, results, nest));
+                nest.pop();
+            }
+            results.order.push(dependencyKey);
+        }
+        return errors;
     }
     _createNewResolutionContext(registration) {
         const id = this._createInstanceId();
@@ -358,14 +417,14 @@ class Container extends registry_1.Registry {
         }
         argumentInstances.push(instance);
     }
-    validateDependencies(...keys) {
+    validateDependencies2(...keys) {
         const validationKeys = keys.length > 0 ? keys : this.getRegistrationKeys();
         const errors = this._validateDependencies(validationKeys);
         if (errors.length > 0) {
-            console.log('------------------');
+            console.log('.................');
             console.log(errors);
-            console.log('------------------');
-            throw new Error('fuck');
+            console.log('.................');
+            throw new Error('validation failed');
         }
         return errors;
     }
@@ -374,15 +433,11 @@ class Container extends registry_1.Registry {
         for (const key of keys) {
             const registration = this.getRegistration(key);
             if (!registration) {
-                const errorMessage = `registration for key '${key}' is missing.`;
-                const validationError = this._createValidationError(registration, history, errorMessage);
-                errors.push(validationError);
+                errors.push(`registration for key '${key}' is missing.`);
                 return;
             }
             if (history.indexOf(registration) > 0) {
-                const errorMessage = `circular dependency on key '${registration.settings.key}' detected.`;
-                const validationError = this._createValidationError(registration, history, errorMessage);
-                errors.push(validationError);
+                errors.push(`circular dependency on key '${registration.settings.key}' detected.`);
                 return;
             }
             history.push(registration);
@@ -403,17 +458,17 @@ class Container extends registry_1.Registry {
         const dependencyKeyOverwritten = this._getDependencyKeyOverwritten(registration, dependencyKey);
         const dependency = this.getRegistration(dependencyKeyOverwritten);
         if (!dependency) {
-            const errorMessage = `dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`;
-            const validationError = this._createValidationError(registration, history, errorMessage);
-            errors.push(validationError);
+            errors.push(`dependency '${dependencyKeyOverwritten}' declared on '${registration.settings.key}' is missing.`);
         }
-        else if (dependency.settings.dependencies) {
-            const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(registration, newRegistrationHistory);
+        else {
+            const overwrittenKeyValidationErrors = this._validateOverwrittenKeys(dependency);
             Array.prototype.push.apply(errors, overwrittenKeyValidationErrors);
-            const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
-            if (!circularBreakFound) {
-                const deepErrors = this._validateDependencies([dependencyKey], newRegistrationHistory);
-                Array.prototype.push.apply(errors, deepErrors);
+            if (dependency.settings.dependencies) {
+                const circularBreakFound = this._historyHasCircularBreak(newRegistrationHistory, dependency);
+                if (!circularBreakFound) {
+                    const deepErrors = this._validateDependencies(dependency.settings.dependencies, newRegistrationHistory);
+                    Array.prototype.push.apply(errors, deepErrors);
+                }
             }
         }
         return errors;
@@ -424,7 +479,7 @@ class Container extends registry_1.Registry {
             if (this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
                 return true;
             }
-            if (this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection && parentSettings.lazyDependencies.length > 0) {
+            if (this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection) {
                 if (parentSettings.wantsLazyInjection ||
                     parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
                     return true;
@@ -436,36 +491,26 @@ class Container extends registry_1.Registry {
             }
         });
     }
-    _createValidationError(registration, history, errorMessage) {
-        const validationError = {
-            registrationStack: history,
-            currentRegistration: registration,
-            errorMessage: errorMessage
-        };
-        return validationError;
-    }
-    _validateOverwrittenKeys(registration, history) {
+    _validateOverwrittenKeys(registration) {
         const overwrittenKeys = Object.keys(registration.settings.overwrittenKeys);
         const errors = [];
         for (const overwrittenKey of overwrittenKeys) {
-            const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey, history);
+            const keyErrors = this._validateOverwrittenKey(registration, overwrittenKey);
             Array.prototype.push.apply(errors, keyErrors);
         }
         return errors;
     }
-    _validateOverwrittenKey(registration, overwrittenKey, history) {
+    _validateOverwrittenKey(registration, overwrittenKey) {
         const errors = [];
         if (registration.settings.dependencies.indexOf(overwrittenKey) < 0) {
             const errorMessage = `No dependency for overwritten key '${overwrittenKey}' has been declared on registration for key '${registration.settings.key}'.`;
-            const validationError = this._createValidationError(registration, history, errorMessage);
-            errors.push(validationError);
+            errors.push(errorMessage);
         }
         const overwrittenKeyValue = registration.settings.overwrittenKeys[overwrittenKey];
         const overwrittenKeyRegistration = this.getRegistration(overwrittenKeyValue);
         if (!overwrittenKeyRegistration) {
             const errorMessage = `Registration for overwritten key '${overwrittenKey}' declared on registration for key '${registration.settings.key}' is missing.`;
-            const validationError = this._createValidationError(registration, history, errorMessage);
-            errors.push(validationError);
+            errors.push(errorMessage);
         }
         return errors;
     }
