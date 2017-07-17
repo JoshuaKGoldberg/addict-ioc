@@ -1,5 +1,5 @@
 "use strict";
-const resolver_1 = require("./resolver");
+var resolver_1 = require("./resolver");
 exports.DefaultSettings = {
     defaults: {
         isSingleton: false,

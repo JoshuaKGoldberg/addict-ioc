@@ -1,73 +1,105 @@
 "use strict";
-class Registration {
-    constructor(settings) {
+var Registration = (function () {
+    function Registration(settings) {
         this._settings = this._ensureSettings(settings);
     }
-    _ensureSettings(settings) {
-        const baseSettings = {
+    Registration.prototype._ensureSettings = function (settings) {
+        var baseSettings = {
             overwrittenKeys: {},
             tags: {}
         };
         return Object.assign(baseSettings, settings);
-    }
-    get settings() {
-        return this._settings;
-    }
-    configure(config) {
+    };
+    Object.defineProperty(Registration.prototype, "settings", {
+        get: function () {
+            return this._settings;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Registration.prototype.configure = function (config) {
         this.settings.config = config;
         return this;
-    }
-    dependencies(...dependencies) {
+    };
+    Registration.prototype.dependencies = function () {
+        var dependencies = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            dependencies[_i] = arguments[_i];
+        }
         this.settings.dependencies = dependencies;
         return this;
-    }
-    singleton(isSingleton = true) {
+    };
+    Registration.prototype.singleton = function (isSingleton) {
+        if (isSingleton === void 0) { isSingleton = true; }
         this.settings.isSingleton = isSingleton;
         return this;
-    }
-    transient(isTransient = true) {
+    };
+    Registration.prototype.transient = function (isTransient) {
+        if (isTransient === void 0) { isTransient = true; }
         this.settings.isSingleton = !isTransient;
         return this;
-    }
-    injectLazy(...lazyDependencies) {
+    };
+    Registration.prototype.injectLazy = function () {
+        var lazyDependencies = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            lazyDependencies[_i] = arguments[_i];
+        }
         this.settings.lazyDependencies = lazyDependencies;
         this.settings.wantsLazyInjection = true;
         return this;
-    }
-    injectPromiseLazy(...lazyPromiseDependencies) {
+    };
+    Registration.prototype.injectPromiseLazy = function () {
+        var lazyPromiseDependencies = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            lazyPromiseDependencies[_i] = arguments[_i];
+        }
         this.settings.lazyPromiseDependencies = lazyPromiseDependencies;
         this.settings.wantsPromiseLazyInjection = true;
         return this;
-    }
-    injectInto(targetFunction) {
+    };
+    Registration.prototype.injectInto = function (targetFunction) {
         this.settings.injectInto = targetFunction;
         return this;
-    }
-    bindFunctions(...functionsToBind) {
+    };
+    Registration.prototype.bindFunctions = function () {
+        var functionsToBind = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            functionsToBind[_i] = arguments[_i];
+        }
         this.settings.functionsToBind = functionsToBind;
         return this;
-    }
-    tags(...tags) {
-        for (const tag of tags) {
+    };
+    Registration.prototype.tags = function () {
+        var tags = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            tags[_i] = arguments[_i];
+        }
+        for (var _a = 0, tags_1 = tags; _a < tags_1.length; _a++) {
+            var tag = tags_1[_a];
             if (!this.settings.tags[tag]) {
                 this.settings.tags[tag] = {};
             }
         }
         return this;
-    }
-    setTag(tag, value) {
+    };
+    Registration.prototype.setTag = function (tag, value) {
         this.settings.tags[tag] = value;
         return this;
-    }
-    overwrite(originalKey, overwrittenKey) {
+    };
+    Registration.prototype.overwrite = function (originalKey, overwrittenKey) {
         this.settings.overwrittenKeys[originalKey] = overwrittenKey;
         return this;
-    }
-    owns(...ownedDependencies) {
+    };
+    Registration.prototype.owns = function () {
+        var ownedDependencies = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            ownedDependencies[_i] = arguments[_i];
+        }
         this.settings.ownedDependencies = ownedDependencies;
         return this;
-    }
-}
+    };
+    return Registration;
+}());
 exports.Registration = Registration;
 
 //# sourceMappingURL=registration.js.map
