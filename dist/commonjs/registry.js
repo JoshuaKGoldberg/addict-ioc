@@ -1,8 +1,9 @@
 "use strict";
-var registration_1 = require("./registration");
-var registration_settings_1 = require("./registration_settings");
-var registration_context_1 = require("./registration_context");
+Object.defineProperty(exports, "__esModule", { value: true });
 var default_settings_1 = require("./default_settings");
+var registration_1 = require("./registration");
+var registration_context_1 = require("./registration_context");
+var registration_settings_1 = require("./registration_settings");
 var Registry = (function () {
     function Registry(settings, parentRegistry) {
         this.parentRegistry = parentRegistry;
@@ -11,7 +12,7 @@ var Registry = (function () {
         this.parentRegistry = parentRegistry;
     }
     Registry.prototype.initialize = function () {
-        this.settings = this._mergeSettings(default_settings_1.DefaultSettings, this.settings);
+        this.settings = this._mergeSettings(default_settings_1.defaultSettings, this.settings);
     };
     Registry.prototype.clear = function () {
         this.registrations = {};
@@ -129,7 +130,7 @@ var Registry = (function () {
                 var registrationKey = registrationKeys_1[_a];
                 var registration = this.getRegistration(registrationKey);
                 var registrationTagValue = registration.settings.tags[tag];
-                if (tagValue == registrationTagValue) {
+                if (tagValue === registrationTagValue) {
                     foundKeys.push(registrationKey);
                 }
             }

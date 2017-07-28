@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var BluebirdPromise = require("bluebird");
 function getPropertyDescriptor(type, key) {
     var propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);

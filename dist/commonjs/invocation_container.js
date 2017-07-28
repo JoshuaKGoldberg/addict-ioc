@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -13,8 +18,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -39,6 +44,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 var container_1 = require("./container");
 var utils_1 = require("./utils");
 var InvocationContainer = (function (_super) {
@@ -55,14 +61,14 @@ var InvocationContainer = (function (_super) {
                     case 0:
                         registration = this.getRegistration(key);
                         resolutionContext = this._createNewResolutionContext(registration);
-                        return [4 /*yield*/, this._resolveAsync(registration, resolutionContext, injectionArgs, config)];
+                        return [4, this._resolveAsync(registration, resolutionContext, injectionArgs, config)];
                     case 1:
                         resolvedInstance = _a.sent();
-                        return [4 /*yield*/, this._performInvocationsAsync(resolutionContext)];
+                        return [4, this._performInvocationsAsync(resolutionContext)];
                     case 2:
                         _a.sent();
                         console.log(resolutionContext);
-                        return [2 /*return*/, resolvedInstance];
+                        return [2, resolvedInstance];
                 }
             });
         });
@@ -98,10 +104,10 @@ var InvocationContainer = (function (_super) {
                         injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                         lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
                         resolvedInstance = this._resolveAsync(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
-                        return [4 /*yield*/, this._performInvocationsAsync(resolutionContext)];
+                        return [4, this._performInvocationsAsync(resolutionContext)];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/, resolvedInstance];
+                        return [2, resolvedInstance];
                 }
             });
         }); };
@@ -121,11 +127,11 @@ var InvocationContainer = (function (_super) {
             var resolvedDependency;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _super.prototype._resolveDependencyAsync.call(this, registration, dependencyKey, resolutionContext)];
+                    case 0: return [4, _super.prototype._resolveDependencyAsync.call(this, registration, dependencyKey, resolutionContext)];
                     case 1:
                         resolvedDependency = _a.sent();
                         this._initializeDependencyInvocationContext(registration, dependencyKey, resolutionContext);
-                        return [2 /*return*/, resolvedDependency];
+                        return [2, resolvedDependency];
                 }
             });
         });
@@ -160,31 +166,31 @@ var InvocationContainer = (function (_super) {
                     case 0:
                         calls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
                         if (!calls) {
-                            return [2 /*return*/];
+                            return [2];
                         }
                         _i = 0, calls_1 = calls;
                         _c.label = 1;
                     case 1:
-                        if (!(_i < calls_1.length)) return [3 /*break*/, 6];
+                        if (!(_i < calls_1.length)) return [3, 6];
                         call = calls_1[_i];
                         _a = 0, _b = resolutionContext.instanceResolutionOrder;
                         _c.label = 2;
                     case 2:
-                        if (!(_a < _b.length)) return [3 /*break*/, 5];
+                        if (!(_a < _b.length)) return [3, 5];
                         instanceId = _b[_a];
                         instanceWrapper = resolutionContext.instanceLookup[instanceId];
                         invocation = instanceWrapper.invocations[call] || call;
-                        return [4 /*yield*/, utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, [])];
+                        return [4, utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, [])];
                     case 3:
                         _c.sent();
                         _c.label = 4;
                     case 4:
                         _a++;
-                        return [3 /*break*/, 2];
+                        return [3, 2];
                     case 5:
                         _i++;
-                        return [3 /*break*/, 1];
-                    case 6: return [2 /*return*/];
+                        return [3, 1];
+                    case 6: return [2];
                 }
             });
         });

@@ -1,4 +1,4 @@
-import { ITags, RegistrationKey, IObjectRegistration, ITypeRegistration, IFactoryRegistration, IRegistration, IRegistrationSettings, Type, IRegistry, IRegistrator } from './interfaces';
+import { IFactoryRegistration, IObjectRegistration, IRegistration, IRegistrationSettings, IRegistrator, IRegistry, ITags, ITypeRegistration, RegistrationKey, Type } from './interfaces';
 export interface IRegistrationsCache {
     [key: string]: IRegistration;
 }

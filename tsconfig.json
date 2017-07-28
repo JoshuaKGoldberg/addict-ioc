@@ -3,7 +3,7 @@
     "enableAutoDiscovery": true
   },
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es5",
     "lib": [
       "es2017",

@@ -1,4 +1,4 @@
-
+// tslint:disable:no-empty-interface
 
 export interface IContainer<T extends IInstanceWrapper<any>> extends IRegistry {
   instances: IInstanceCache<any, T>;
@@ -6,10 +6,10 @@ export interface IContainer<T extends IInstanceWrapper<any>> extends IRegistry {
   settings: IContainerSettings;
   clear(): void;
   initialize(): void;
-  resolve<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): T;
-  resolveLazy<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<T>;
-  resolveAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<T>;
-  resolveLazyAsync<T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<T>;
+  resolve<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): V;
+  resolveLazy<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<V>;
+  resolveAsync<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<V>;
+  resolveLazyAsync<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<V>;
   validateDependencies(...keys: Array<RegistrationKey>): Array<string>;
 }
 
@@ -21,14 +21,13 @@ export interface IInstanceCache<T, U extends IInstanceWrapper<T>> {
   [key: string]: {
     [configHash: string]: {
       [injectionArgsHash: string]: Array<T>;
-    }
-  }
+    },
+  };
 }
 
 export interface IInstanceLookup<T extends IInstanceWrapper<any>> {
   [instanceId: string]: T;
 }
-
 
 export interface IValidationError {
   errorMessage: string;
@@ -44,8 +43,9 @@ export interface IValidationResults {
 
 export interface IRegistrator {
   createRegistrationTemplate(registrationSettings: IRegistrationSettings): IRegistrator;
-  register<T>(key: RegistrationKey, type: Type<T>, settings?: IRegistrationSettings): ITypeRegistration<T>;
-  registerObject(key: RegistrationKey, object: any, settings?: IRegistrationSettings): IRegistration;
+  register<T, U extends IRegistrationSettings = ITypeRegistrationSettings<T>>(key: RegistrationKey, type: Type<T>, settings?: U): ITypeRegistration<T>;
+  registerObject<T, U extends IRegistrationSettings = IObjectRegistrationSettings<T>>(key: RegistrationKey, object: T, settings?: U): IObjectRegistration<T>;
+  registerFactory<T, U extends IRegistrationSettings = IFactoryRegistrationSettings<T>>(key: RegistrationKey, factory: T, settings?: U): IFactoryRegistration<T>;
   unregister<T>(key: RegistrationKey): IRegistration | ITypeRegistration<T>;
 }
 
@@ -74,8 +74,8 @@ export interface ISpecializedRegistration<T extends IRegistration, U extends IRe
 }
 
 export interface ITypeRegistration<T> extends ISpecializedRegistration<ITypeRegistration<T>, ITypeRegistrationSettings<T>> { }
-export interface IObjectRegistration<T> extends ISpecializedRegistration<IObjectRegistration<T>, IObjectRegistrationSettings> { }
-export interface IFactoryRegistration<T> extends ISpecializedRegistration<IFactoryRegistration<T>, IFactoryRegistrationSettings> { }
+export interface IObjectRegistration<T> extends ISpecializedRegistration<IObjectRegistration<T>, IObjectRegistrationSettings<T>> { }
+export interface IFactoryRegistration<T> extends ISpecializedRegistration<IFactoryRegistration<T>, IFactoryRegistrationSettings<T>> { }
 
 export interface IRegistration {
   settings: IRegistrationSettings;
@@ -85,12 +85,12 @@ export interface ITypeRegistrationSettings<T> extends IRegistrationSettings {
   type?: Type<T>;
 }
 
-export interface IObjectRegistrationSettings extends IRegistrationSettings {
-  object?: any;
+export interface IObjectRegistrationSettings<T> extends IRegistrationSettings {
+  object?: T;
 }
 
-export interface IFactoryRegistrationSettings extends IRegistrationSettings {
-  factory?: any;
+export interface IFactoryRegistrationSettings<T> extends IRegistrationSettings {
+  factory?: T;
 }
 
 export interface IConfigResolver {
@@ -100,9 +100,9 @@ export interface IConfigResolver {
 export type TypeConfig = string | any | IConfigResolver;
 
 export interface IContainerSettings extends IRegistrationSettings {
-  containerRegistrationKey: RegistrationKey,
-  circularDependencyCanIncludeSingleton: boolean,
-  circularDependencyCanIncludeLazy: boolean,
+  containerRegistrationKey: RegistrationKey;
+  circularDependencyCanIncludeSingleton: boolean;
+  circularDependencyCanIncludeLazy: boolean;
 }
 
 export interface IRegistrationSettings {
@@ -125,8 +125,8 @@ export interface IRegistrationSettings {
   functionsToBind?: Array<string>;
   wantsLazyInjection?: boolean;
   lazyDependencies?: Array<string>;
-  wantsPromiseLazyInjection?: boolean;
-  lazyPromiseDependencies?: Array<string>;
+  wantsLazyInjectionAsync?: boolean;
+  lazyDependenciesAsync?: Array<string>;
   overwrittenKeys?: IOverwrittenKeys;
   conventionCalls?: Array<string>;
   // autoCreateMissingSubscribers?: boolean;
@@ -139,23 +139,22 @@ export interface IOverwrittenKeys {
 }
 
 export interface IResolver<T, U extends IInstanceWrapper<any>> {
-  resolveType<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Type<T>;
-  resolveTypeAsync<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Promise<Type<T>>;
-  resolveObject(container: IContainer<U>, registration: IRegistration): any;
-  resolveObjectAsync(container: IContainer<U>, registration: IRegistration): Promise<any>;
-  resolveFactory(container: IContainer<U>, registration: IRegistration): any;
-  resolveFactoryAsync(container: IContainer<U>, registration: IRegistration): Promise<any>;
-  createInstance<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
-  createObject<T>(container: IContainer<U>, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
-  createFactory<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
+  resolveType<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Type<V>;
+  resolveTypeAsync<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Promise<Type<V>>;
+  resolveObject<V extends T = T>(container: IContainer<U>, registration: IRegistration): V;
+  resolveObjectAsync<V extends T = T>(container: IContainer<U>, registration: IRegistration): Promise<V>;
+  resolveFactory<V extends T = T>(container: IContainer<U>, registration: IRegistration): V;
+  resolveFactoryAsync<V extends T = T>(container: IContainer<U>, registration: IRegistration): Promise<V>;
+  createInstance<V extends T = T>(container: IContainer<U>, type: any, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V;
+  createObject<V extends T = T>(container: IContainer<U>, object: any, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V;
+  createFactory<V extends T = T>(container: IContainer<U>, type: any, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V;
   resolveConfig(config: TypeConfig): any;
   hash(anything: any): string;
-  hashType<T>(type: Type<T>): string;
-  hashObject(object: any): string;
-  hashFactory(factory: any): string;
+  hashType<V extends T = T>(type: Type<V>): string;
+  hashObject<V extends T = T>(object: V): string;
+  hashFactory<V extends T = T>(factory: V): string;
   hashConfig(config: any): string;
 }
-
 
 export interface IDependencyOwners {
   [ownedDependencyKey: string]: ITypeRegistration<any>;
@@ -176,7 +175,7 @@ export interface ITags {
 }
 
 export interface Type<T> {
-  new (...args: any[]): T;
+  new (...args: Array<any>): T;
 }
 export interface IInvocationContext {
   [conventionCall: string]: string;

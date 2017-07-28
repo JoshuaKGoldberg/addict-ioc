@@ -1,4 +1,4 @@
-import { ITypeRegistrationSettings, IFactoryRegistrationSettings, IObjectRegistrationSettings, Type, IRegistrationSettings, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig, IInstanceWrapper } from './interfaces';
+import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings, IResolver, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
 export declare class RegistrationSettings<T> implements IRegistrationSettings {
     defaults: IRegistrationSettings;
     settings: IRegistrationSettings;
@@ -6,20 +6,20 @@ export declare class RegistrationSettings<T> implements IRegistrationSettings {
     key: RegistrationKey;
     object: any;
     factory: any;
-    readonly resolver: IResolver<T, IInstanceWrapper<T>>;
-    readonly module: string;
-    readonly config: TypeConfig;
-    readonly dependencies: Array<string>;
-    readonly ownedDependencies: Array<string>;
-    readonly lazyDependencies: Array<string>;
-    readonly lazyDependenciesAsync: Array<string>;
-    readonly isSingleton: boolean;
-    readonly isObject: boolean;
-    readonly isFactory: boolean;
-    readonly wantsInjection: boolean;
-    readonly injectInto: string;
-    readonly functionsToBind: Array<string>;
-    readonly overwrittenKeys: IOverwrittenKeys;
+    resolver: IResolver<T, IInstanceWrapper<T>>;
+    module: string;
+    config: TypeConfig;
+    dependencies: Array<string>;
+    ownedDependencies: Array<string>;
+    lazyDependencies: Array<string>;
+    lazyDependenciesAsync: Array<string>;
+    isSingleton: boolean;
+    isObject: boolean;
+    isFactory: boolean;
+    wantsInjection: boolean;
+    injectInto: string;
+    functionsToBind: Array<string>;
+    overwrittenKeys: IOverwrittenKeys;
     private _getCurrentOrDefault(key);
     private _getCurrentOrDefaultArray(key);
     private _getCurrentOrDefaultIndexer(key);
@@ -30,12 +30,12 @@ export declare class TypeRegistrationSettings<T> extends RegistrationSettings<T>
     type: Type<T>;
 }
 export declare class ObjectRegistrationSettings<T> extends RegistrationSettings<T> {
-    constructor(registrationSettings: IObjectRegistrationSettings);
-    readonly settings: IObjectRegistrationSettings;
+    constructor(registrationSettings: IObjectRegistrationSettings<T>);
+    readonly settings: IObjectRegistrationSettings<T>;
     object: T;
 }
 export declare class FactoryRegistrationSettings<T> extends RegistrationSettings<T> {
-    constructor(registrationSettings: IFactoryRegistrationSettings);
-    readonly settings: IFactoryRegistrationSettings;
+    constructor(registrationSettings: IFactoryRegistrationSettings<T>);
+    readonly settings: IFactoryRegistrationSettings<T>;
     object: T;
 }

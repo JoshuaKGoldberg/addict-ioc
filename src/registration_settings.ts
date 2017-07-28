@@ -1,6 +1,5 @@
-import { ITypeRegistrationSettings, IFactoryRegistrationSettings, IObjectRegistrationSettings, Type, IRegistrationSettings, ITags, IOverwrittenKeys, RegistrationKey, IResolver, TypeConfig, IInstanceWrapper } from './interfaces';
-
-
+import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings,
+  IResolver, ITags, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
 
 export class RegistrationSettings<T> implements IRegistrationSettings {
 
@@ -39,56 +38,112 @@ export class RegistrationSettings<T> implements IRegistrationSettings {
     return this._getCurrentOrDefault('resolver');
   }
 
+  public set resolver(value: IResolver<T, IInstanceWrapper<T>>) {
+    this.settings.resolver = value;
+  }
+
   public get module(): string {
     return this._getCurrentOrDefault('module');
+  }
+
+  public set module(value: string) {
+    this.settings.module = value;
   }
 
   public get config(): TypeConfig {
     return this._getCurrentOrDefault('config');
   }
 
+  public set config(value: TypeConfig) {
+    this.settings.config = value;
+  }
+
   public get dependencies(): Array<string>  {
     return this._getCurrentOrDefaultArray('dependencies');
+  }
+
+  public set dependencies(value: Array<string>) {
+    this.settings.dependencies = value;
   }
 
   public get ownedDependencies(): Array<string>  {
     return this._getCurrentOrDefaultArray('ownedDependencies');
   }
 
+  public set ownedDependencies(value: Array<string>) {
+    this.settings.ownedDependencies = value;
+  }
+
   public get lazyDependencies(): Array<string> {
     return this._getCurrentOrDefaultArray('lazyDependencies');
+  }
+
+  public set lazyDependencies(value: Array<string>) {
+    this.settings.lazyDependencies = value;
   }
 
   public get lazyDependenciesAsync(): Array<string> {
     return this._getCurrentOrDefaultArray('lazyDependenciesAsync');
   }
 
+  public set lazyDependenciesAsync(value: Array<string>) {
+    this.settings.lazyDependenciesAsync = value;
+  }
+
   public get isSingleton(): boolean {
     return this._getCurrentOrDefault('isSingleton');
+  }
+
+  public set isSingleton(value: boolean) {
+    this.settings.isSingleton = value;
   }
 
   public get isObject(): boolean {
     return this._getCurrentOrDefault('isObject');
   }
 
+  public set isObject(value: boolean) {
+    this.settings.isObject = value;
+  }
+
   public get isFactory(): boolean {
     return this._getCurrentOrDefault('isFactory');
+  }
+
+  public set isFactory(value: boolean) {
+    this.settings.isFactory = value;
   }
 
   public get wantsInjection(): boolean {
     return this._getCurrentOrDefault('wantsInjection');
   }
 
+  public set wantsInjection(value: boolean) {
+    this.settings.wantsInjection = value;
+  }
+
   public get injectInto(): string {
     return this._getCurrentOrDefault('injectInto');
+  }
+
+  public set injectInto(value: string) {
+    this.settings.injectInto = value;
   }
 
   public get functionsToBind(): Array<string> {
     return this._getCurrentOrDefaultArray('functionsToBind');
   }
 
+  public set functionsToBind(value: Array<string>) {
+    this.settings.functionsToBind = value;
+  }
+
   public get overwrittenKeys(): IOverwrittenKeys {
     return this._getCurrentOrDefaultIndexer('overwrittenKeys');
+  }
+
+  public set overwrittenKeys(value: IOverwrittenKeys) {
+    this.settings.overwrittenKeys = value;
   }
 
   private _getCurrentOrDefault(key: string): any {
@@ -96,16 +151,16 @@ export class RegistrationSettings<T> implements IRegistrationSettings {
   }
 
   private _getCurrentOrDefaultArray(key: string): Array<any> {
-    const defaultValue = typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
+    const defaultValue: Array<any> = typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
     return defaultValue || [];
   }
 
   private _getCurrentOrDefaultIndexer(key: string): any {
 
-    const defaultValue = typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
-    
+    const defaultValue: any = typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
+
     if (!defaultValue) {
-      const value = {};
+      const value: any = {};
       this.settings[key] = value;
       return value;
     }
@@ -115,13 +170,12 @@ export class RegistrationSettings<T> implements IRegistrationSettings {
 
 }
 
-
 export class TypeRegistrationSettings<T> extends RegistrationSettings<T> {
 
   constructor(registrationSettings: ITypeRegistrationSettings<T>) {
     super(registrationSettings);
   }
-  
+
   public get settings(): ITypeRegistrationSettings<T> {
     return this.settings;
   }
@@ -135,14 +189,13 @@ export class TypeRegistrationSettings<T> extends RegistrationSettings<T> {
   }
 }
 
-
 export class ObjectRegistrationSettings<T> extends RegistrationSettings<T> {
 
-  constructor(registrationSettings: IObjectRegistrationSettings) {
+  constructor(registrationSettings: IObjectRegistrationSettings<T>) {
     super(registrationSettings);
   }
-  
-  public get settings(): IObjectRegistrationSettings {
+
+  public get settings(): IObjectRegistrationSettings<T> {
     return this.settings;
   }
 
@@ -155,14 +208,13 @@ export class ObjectRegistrationSettings<T> extends RegistrationSettings<T> {
   }
 }
 
-
 export class FactoryRegistrationSettings<T> extends RegistrationSettings<T> {
 
-  constructor(registrationSettings: IFactoryRegistrationSettings) {
+  constructor(registrationSettings: IFactoryRegistrationSettings<T>) {
     super(registrationSettings);
   }
-  
-  public get settings(): IFactoryRegistrationSettings {
+
+  public get settings(): IFactoryRegistrationSettings<T> {
     return this.settings;
   }
 

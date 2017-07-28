@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Registration = (function () {
     function Registration(settings) {
         this._settings = this._ensureSettings(settings);
@@ -6,7 +7,7 @@ var Registration = (function () {
     Registration.prototype._ensureSettings = function (settings) {
         var baseSettings = {
             overwrittenKeys: {},
-            tags: {}
+            tags: {},
         };
         return Object.assign(baseSettings, settings);
     };
@@ -53,8 +54,8 @@ var Registration = (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             lazyPromiseDependencies[_i] = arguments[_i];
         }
-        this.settings.lazyPromiseDependencies = lazyPromiseDependencies;
-        this.settings.wantsPromiseLazyInjection = true;
+        this.settings.lazyDependenciesAsync = lazyPromiseDependencies;
+        this.settings.wantsLazyInjectionAsync = true;
         return this;
     };
     Registration.prototype.injectInto = function (targetFunction) {
@@ -96,6 +97,10 @@ var Registration = (function () {
             ownedDependencies[_i] = arguments[_i];
         }
         this.settings.ownedDependencies = ownedDependencies;
+        return this;
+    };
+    Registration.prototype.withResolver = function (resolver) {
+        this.settings.resolver = resolver;
         return this;
     };
     return Registration;

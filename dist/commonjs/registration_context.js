@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var RegistrationContext = (function () {
     function RegistrationContext(registry, registrationSettings) {
         this.registry = registry;
@@ -14,6 +15,11 @@ var RegistrationContext = (function () {
     };
     RegistrationContext.prototype.registerObject = function (key, object) {
         var registration = this.registry.registerObject(key, object);
+        this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
+        return registration;
+    };
+    RegistrationContext.prototype.registerFactory = function (key, factory) {
+        var registration = this.registry.registerFactory(key, factory);
         this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
         return registration;
     };

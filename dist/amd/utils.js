@@ -1,5 +1,6 @@
 define(["require", "exports", "bluebird"], function (require, exports, BluebirdPromise) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function getPropertyDescriptor(type, key) {
         var propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
         if (propertyDescriptor) {

@@ -29,13 +29,13 @@
   },
   "homepage": "https://github.com/5minds/addict-ioc#readme",
   "devDependencies": {
-    "eslint": "^3.9.1",
-    "eslint-config-5minds": "0.0.5",
-    "eslint-plugin-import": "^1.16.0",
     "gulp": "^3.9.1",
-    "gulptraum": "^1.2.0",
+    "gulptraum": "^2.0.0",
+    "gulptraum-typescript": "^1.0.0",
     "should": "^11.2.1",
-    "tsconfig": "^6.0.0"
+    "tsconfig": "^6.0.0",
+    "tslint": "^5.4.3",
+    "tslint-config-5minds": "^1.0.3"
   },
   "dependencies": {
     "node-uuid": "^1.4.8"

@@ -1,5 +1,6 @@
-define(["require", "exports", "./registration", "./registration_settings", "./registration_context", "./default_settings"], function (require, exports, registration_1, registration_settings_1, registration_context_1, default_settings_1) {
+define(["require", "exports", "./default_settings", "./registration", "./registration_context", "./registration_settings"], function (require, exports, default_settings_1, registration_1, registration_context_1, registration_settings_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     var Registry = (function () {
         function Registry(settings, parentRegistry) {
             this.parentRegistry = parentRegistry;
@@ -8,7 +9,7 @@ define(["require", "exports", "./registration", "./registration_settings", "./re
             this.parentRegistry = parentRegistry;
         }
         Registry.prototype.initialize = function () {
-            this.settings = this._mergeSettings(default_settings_1.DefaultSettings, this.settings);
+            this.settings = this._mergeSettings(default_settings_1.defaultSettings, this.settings);
         };
         Registry.prototype.clear = function () {
             this.registrations = {};
@@ -126,7 +127,7 @@ define(["require", "exports", "./registration", "./registration_settings", "./re
                     var registrationKey = registrationKeys_1[_a];
                     var registration = this.getRegistration(registrationKey);
                     var registrationTagValue = registration.settings.tags[tag];
-                    if (tagValue == registrationTagValue) {
+                    if (tagValue === registrationTagValue) {
                         foundKeys.push(registrationKey);
                     }
                 }

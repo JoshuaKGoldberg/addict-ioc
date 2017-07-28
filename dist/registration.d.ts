@@ -1,4 +1,4 @@
-import { RegistrationKey, IRegistrationSettings, IRegistration, ISpecializedRegistration } from './interfaces';
+import { IInstanceWrapper, IRegistration, IRegistrationSettings, IResolver, ISpecializedRegistration, RegistrationKey } from './interfaces';
 export declare class Registration<T extends IRegistration, U extends IRegistrationSettings> implements ISpecializedRegistration<T, U> {
     private _settings;
     constructor(settings: U);
@@ -15,5 +15,6 @@ export declare class Registration<T extends IRegistration, U extends IRegistrati
     tags(...tags: Array<string>): ISpecializedRegistration<T, U>;
     setTag(tag: string, value: any): ISpecializedRegistration<T, U>;
     overwrite(originalKey: string, overwrittenKey: string): ISpecializedRegistration<T, U>;
-    owns(...ownedDependencies: any[]): ISpecializedRegistration<T, U>;
+    owns(...ownedDependencies: Array<string>): ISpecializedRegistration<T, U>;
+    withResolver<V extends IInstanceWrapper<T> = any>(resolver: IResolver<T, V>): ISpecializedRegistration<T, U>;
 }

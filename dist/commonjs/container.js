@@ -1,9 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || Object.assign || function(t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
         s = arguments[i];
@@ -21,8 +26,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -47,25 +52,26 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var registry_1 = require("./registry");
+Object.defineProperty(exports, "__esModule", { value: true });
 var default_settings_1 = require("./default_settings");
+var registry_1 = require("./registry");
 var utils_1 = require("./utils");
 var uuid = require("node-uuid");
 var Container = (function (_super) {
     __extends(Container, _super);
     function Container(settings, parentContainer, parentRegistry) {
-        if (settings === void 0) { settings = default_settings_1.DefaultSettings; }
+        if (settings === void 0) { settings = default_settings_1.defaultSettings; }
         var _this = _super.call(this, settings, parentRegistry) || this;
         _this.instances = {};
         _this.parentContainer = parentContainer;
-        _this.settings = Object.assign(Object.assign({}, default_settings_1.DefaultSettings), settings);
+        _this.settings = Object.assign(Object.assign({}, default_settings_1.defaultSettings), settings);
         _this.initialize();
         return _this;
     }
     Container.prototype.initialize = function () {
         _super.prototype.initialize.call(this);
         this.instances = {};
-        this.settings = this._mergeSettings(default_settings_1.DefaultSettings, this.settings);
+        this.settings = this._mergeSettings(default_settings_1.defaultSettings, this.settings);
         this.registerObject(this.settings.containerRegistrationKey, this);
     };
     Container.prototype.clear = function () {
@@ -124,8 +130,6 @@ var Container = (function (_super) {
                     errors.push("recursive dependency detected: " + recurs.join(' -> '));
                 }
             }
-            console.log('results');
-            console.log(results);
         }
         if (errors.length > 0) {
             console.log('.................');
@@ -152,7 +156,7 @@ var Container = (function (_super) {
             else if (nest.indexOf(dependency) > -1) {
                 if (!this._historyHasCircularBreak(nest, dependency)) {
                     nest.push(dependency);
-                    results.recursive.push(nest.slice(0).map(function (x) { return x.settings.key; }));
+                    results.recursive.push(nest.slice(0).map(function (recursiveRegistration) { return recursiveRegistration.settings.key; }));
                     nest.pop();
                 }
             }
@@ -170,12 +174,12 @@ var Container = (function (_super) {
         var currentResolution = {
             id: id,
             registration: registration,
-            ownedInstances: []
+            ownedInstances: [],
         };
         var resolutionContext = {
             currentResolution: currentResolution,
             instanceLookup: {},
-            instanceResolutionOrder: []
+            instanceResolutionOrder: [],
         };
         resolutionContext.instanceLookup[id] = currentResolution;
         return resolutionContext;
@@ -208,15 +212,15 @@ var Container = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!registration.settings.isObject) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._resolveObjectAsync(registration, resolutionContext, injectionArgs, config)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                        if (!registration.settings.isObject) return [3, 2];
+                        return [4, this._resolveObjectAsync(registration, resolutionContext, injectionArgs, config)];
+                    case 1: return [2, _a.sent()];
                     case 2:
-                        if (!registration.settings.isFactory) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config)];
-                    case 3: return [2 /*return*/, _a.sent()];
-                    case 4: return [4 /*yield*/, this._resolveTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
-                    case 5: return [2 /*return*/, _a.sent()];
+                        if (!registration.settings.isFactory) return [3, 4];
+                        return [4, this._resolveFactoryAsync(registration, resolutionContext, injectionArgs, config)];
+                    case 3: return [2, _a.sent()];
+                    case 4: return [4, this._resolveTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
+                    case 5: return [2, _a.sent()];
                 }
             });
         });
@@ -266,11 +270,11 @@ var Container = (function (_super) {
                     case 0:
                         configUsed = this._mergeRegistrationConfig(registration, config);
                         dependencies = this._resolveDependencies(registration, resolutionContext);
-                        return [4 /*yield*/, this._createObjectAsync(registration, dependencies, injectionArgs)];
+                        return [4, this._createObjectAsync(registration, dependencies, injectionArgs)];
                     case 1:
                         object = _a.sent();
                         this._configureInstance(object, registration, configUsed);
-                        return [2 /*return*/, object];
+                        return [2, object];
                 }
             });
         });
@@ -286,11 +290,16 @@ var Container = (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             var configUsed, dependencies, factory;
             return __generator(this, function (_a) {
-                configUsed = this._mergeRegistrationConfig(registration, config);
-                dependencies = this._resolveDependencies(registration, resolutionContext);
-                factory = this._createFactoryAsync(registration, dependencies, injectionArgs);
-                this._configureInstance(factory, registration, configUsed);
-                return [2 /*return*/, factory];
+                switch (_a.label) {
+                    case 0:
+                        configUsed = this._mergeRegistrationConfig(registration, config);
+                        dependencies = this._resolveDependencies(registration, resolutionContext);
+                        return [4, this._createFactoryAsync(registration, dependencies, injectionArgs)];
+                    case 1:
+                        factory = _a.sent();
+                        this._configureInstance(factory, registration, configUsed);
+                        return [2, factory];
+                }
             });
         });
     };
@@ -308,11 +317,11 @@ var Container = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         configUsed = this._mergeRegistrationConfig(registration, config);
-                        if (!registration.settings.isSingleton) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._getTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [4 /*yield*/, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
-                    case 3: return [2 /*return*/, _a.sent()];
+                        if (!registration.settings.isSingleton) return [3, 2];
+                        return [4, this._getTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
+                    case 1: return [2, _a.sent()];
+                    case 2: return [4, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
+                    case 3: return [2, _a.sent()];
                 }
             });
         });
@@ -333,10 +342,10 @@ var Container = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         instances = this._getCachedInstances(registration, injectionArgs, config);
-                        if (!(instances.length === 0)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
-                    case 1: return [2 /*return*/, _a.sent()];
-                    case 2: return [2 /*return*/, instances[0]];
+                        if (!(instances.length === 0)) return [3, 2];
+                        return [4, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, config)];
+                    case 1: return [2, _a.sent()];
+                    case 2: return [2, instances[0]];
                 }
             });
         });
@@ -360,15 +369,15 @@ var Container = (function (_super) {
                     case 0:
                         configUsed = this._mergeRegistrationConfig(registration, config);
                         this._validateResolutionContext(registration, resolutionContext);
-                        return [4 /*yield*/, this._resolveDependenciesAsync(registration, resolutionContext)];
+                        return [4, this._resolveDependenciesAsync(registration, resolutionContext)];
                     case 1:
                         dependencies = _a.sent();
-                        return [4 /*yield*/, this._createType(registration, dependencies, injectionArgs)];
+                        return [4, this._createType(registration, dependencies, injectionArgs)];
                     case 2:
                         instance = _a.sent();
                         this._configureInstance(instance, registration, configUsed);
                         this._cacheInstance(registration, resolutionContext, instance, injectionArgs, config);
-                        return [2 /*return*/, instance];
+                        return [2, instance];
                 }
             });
         });
@@ -396,17 +405,17 @@ var Container = (function (_super) {
                         _i = 0, dependencies_2 = dependencies;
                         _a.label = 1;
                     case 1:
-                        if (!(_i < dependencies_2.length)) return [3 /*break*/, 4];
+                        if (!(_i < dependencies_2.length)) return [3, 4];
                         dependencyKey = dependencies_2[_i];
-                        return [4 /*yield*/, this._resolveDependencyAsync(registration, dependencyKey, resolutionContext)];
+                        return [4, this._resolveDependencyAsync(registration, dependencyKey, resolutionContext)];
                     case 2:
                         resolvedDependency = _a.sent();
                         resolvedDependencies.push(resolvedDependency);
                         _a.label = 3;
                     case 3:
                         _i++;
-                        return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/, resolvedDependencies];
+                        return [3, 1];
+                    case 4: return [2, resolvedDependencies];
                 }
             });
         });
@@ -440,21 +449,21 @@ var Container = (function (_super) {
                         newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
                         overwrittenDependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
                         dependencyRegistration = this.getRegistration(dependencyKey);
-                        if (!this._isDependencyLazy(registration, dependencyKey)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                        if (!this._isDependencyLazy(registration, dependencyKey)) return [3, 2];
+                        return [4, this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                    case 1: return [2, _a.sent()];
                     case 2:
-                        if (!this._isDependencyLazyAsync(registration, dependencyKey)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
-                    case 3: return [2 /*return*/, _a.sent()];
+                        if (!this._isDependencyLazyAsync(registration, dependencyKey)) return [3, 4];
+                        return [4, this._resolveLazyAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                    case 3: return [2, _a.sent()];
                     case 4:
                         isOwned = this._isDependencyOwned(registration, overwrittenDependencyKey);
                         if (isOwned) {
                             newResolutionContext.currentResolution.ownedBy = resolutionContext.currentResolution.id;
                             resolutionContext.currentResolution.ownedInstances.push(newResolutionContext.currentResolution.id);
                         }
-                        return [4 /*yield*/, this._resolveAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
-                    case 5: return [2 /*return*/, _a.sent()];
+                        return [4, this._resolveAsync(dependencyRegistration, newResolutionContext, undefined, undefined)];
+                    case 5: return [2, _a.sent()];
                 }
             });
         });
@@ -472,11 +481,11 @@ var Container = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         resolver = this._getResolver(registration);
-                        return [4 /*yield*/, resolver.resolveObjectAsync(this, registration)];
+                        return [4, resolver.resolveObjectAsync(this, registration)];
                     case 1:
                         object = _a.sent();
                         createdObject = resolver.createObject(this, object, registration, dependencies, injectionArgs);
-                        return [2 /*return*/, createdObject];
+                        return [2, createdObject];
                 }
             });
         });
@@ -494,11 +503,11 @@ var Container = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         resolver = this._getResolver(registration);
-                        return [4 /*yield*/, resolver.resolveFactoryAsync(this, registration)];
+                        return [4, resolver.resolveFactoryAsync(this, registration)];
                     case 1:
                         type = _a.sent();
                         factory = resolver.createFactory(this, type, registration, dependencies, injectionArgs);
-                        return [2 /*return*/, factory];
+                        return [2, factory];
                 }
             });
         });
@@ -516,11 +525,11 @@ var Container = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         resolver = this._getResolver(registration);
-                        return [4 /*yield*/, resolver.resolveTypeAsync(this, registration)];
+                        return [4, resolver.resolveTypeAsync(this, registration)];
                     case 1:
                         type = _a.sent();
                         instance = resolver.createInstance(this, type, registration, dependencies, injectionArgs);
-                        return [2 /*return*/, instance];
+                        return [2, instance];
                 }
             });
         });
@@ -672,8 +681,8 @@ var Container = (function (_super) {
                     parentSettings.lazyDependencies.indexOf(dependency.settings.key) >= 0) {
                     return true;
                 }
-                if (parentSettings.wantsPromiseLazyInjection ||
-                    parentSettings.lazyPromiseDependencies.indexOf(dependency.settings.key) >= 0) {
+                if (parentSettings.wantsLazyInjectionAsync ||
+                    parentSettings.lazyDependenciesAsync.indexOf(dependency.settings.key) >= 0) {
                     return true;
                 }
             }
@@ -750,10 +759,10 @@ var Container = (function (_super) {
         return registration.settings.lazyDependencies.length === 0 || registration.settings.lazyDependencies.indexOf(dependencyKey) >= 0;
     };
     Container.prototype._isDependencyLazyAsync = function (registration, dependencyKey) {
-        if (!registration.settings.wantsPromiseLazyInjection) {
+        if (!registration.settings.wantsLazyInjectionAsync) {
             return false;
         }
-        return registration.settings.lazyPromiseDependencies.length === 0 || registration.settings.lazyPromiseDependencies.indexOf(dependencyKey) >= 0;
+        return registration.settings.lazyDependenciesAsync.length === 0 || registration.settings.lazyDependenciesAsync.indexOf(dependencyKey) >= 0;
     };
     Container.prototype._isDependencyOwned = function (registration, dependencyKey) {
         if (!registration.settings.ownedDependencies) {

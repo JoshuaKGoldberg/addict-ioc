@@ -1,17 +1,16 @@
-import {IContainerSettings} from './interfaces';
-import {Resolver} from './resolver';
+import { IContainerSettings } from './interfaces';
+import { Resolver } from './resolver';
 
-export const DefaultSettings: IContainerSettings = {
-  
+export const defaultSettings: IContainerSettings = {
   defaults: {
     isSingleton: false,
     wantsInjection: true,
     dependencies: [],
     lazyDependencies: [],
-    lazyPromiseDependencies: [],
+    lazyDependenciesAsync: [],
     ownedDependencies: [],
     functionsToBind: [],
-    overwrittenKeys: {}
+    overwrittenKeys: {},
     // isLazy: false,
     // bindFunctions: false,
     // autoCreateMissingSubscribers: true
@@ -20,5 +19,4 @@ export const DefaultSettings: IContainerSettings = {
   containerRegistrationKey: 'container',
   circularDependencyCanIncludeSingleton: true,
   circularDependencyCanIncludeLazy: true,
-
-}
+};

@@ -1,4 +1,4 @@
-import { IRegistry, IFactoryRegistration, IObjectRegistration, IInstanceCache, IContainer, RegistrationKey, IRegistration, IResolver, IContainerSettings, IResolutionContext, ITypeRegistration, IFactory, IFactoryAsync, IInstanceWrapper, IValidationResults } from './interfaces';
+import { IContainer, IContainerSettings, IFactory, IFactoryAsync, IFactoryRegistration, IInstanceCache, IInstanceWrapper, IObjectRegistration, IRegistration, IRegistry, IResolutionContext, IResolver, ITypeRegistration, IValidationResults, RegistrationKey } from './interfaces';
 import { Registry } from './registry';
 export declare class Container<U extends IInstanceWrapper<any>> extends Registry implements IContainer<U> {
     instances: IInstanceCache<any, U>;
@@ -41,13 +41,13 @@ export declare class Container<U extends IInstanceWrapper<any>> extends Registry
     protected _createType<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T;
     protected _createTypeAsync<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): Promise<T>;
     protected _getResolver<T>(registration: IRegistration): IResolver<T, U>;
-    protected _configureInstance(instance: any, registration: IRegistration, runtimeConfig?: any): void;
+    protected _configureInstance<T>(instance: T, registration: IRegistration, runtimeConfig?: any): void;
     protected _getCachedInstances<T>(registration: IRegistration, injectionArgs: Array<any>, config: any): Array<T>;
     protected _createInstanceId(): string;
     protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: any, injectionArgs: Array<any>, config: any): void;
     validateDependencies2(...keys: Array<RegistrationKey>): Array<string>;
     protected _validateDependencies(keys: Array<RegistrationKey>, history?: Array<IRegistration>): Array<string>;
-    protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>): any[];
+    protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>): Array<string>;
     protected _historyHasCircularBreak(history: Array<IRegistration>, dependency: IRegistration): boolean;
     protected _validateOverwrittenKeys(registration: IRegistration): Array<string>;
     protected _validateOverwrittenKey(registration: IRegistration, overwrittenKey: RegistrationKey): Array<string>;

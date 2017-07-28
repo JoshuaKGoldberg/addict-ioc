@@ -1,13 +1,13 @@
 import * as BluebirdPromise from 'bluebird';
-export function getPropertyDescriptor(type: any, key: string) {
+export function getPropertyDescriptor(type: any, key: string): PropertyDescriptor {
 
-  const propertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
+  const propertyDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(type, key);
 
   if (propertyDescriptor) {
     return propertyDescriptor;
   }
 
-  const prototype = Object.getPrototypeOf(type);
+  const prototype: any = Object.getPrototypeOf(type);
 
   if (!prototype) {
     return undefined;
@@ -15,7 +15,6 @@ export function getPropertyDescriptor(type: any, key: string) {
 
   return getPropertyDescriptor(prototype, key);
 }
-
 
 export function executeAsExtensionHookAsync(func: any, thisContext: any, args?: any): Promise<any> {
 
@@ -41,6 +40,6 @@ export function executeAsExtensionHook(func: any, thisContext: any, args?: Array
   }
 }
 
-function isValidFunction(func) {
+function isValidFunction(func: any): boolean {
   return func && typeof func === 'function';
 }

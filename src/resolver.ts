@@ -1,17 +1,9 @@
-import { IContainer, ITypeRegistration, IRegistrationSettings, IRegistration, Type, TypeConfig, IResolver, IInstanceWrapper } from './interfaces';
+import { IContainer, IInstanceWrapper, IRegistration, IRegistrationSettings, IResolver, ITypeRegistration, Type, TypeConfig } from './interfaces';
 import {getPropertyDescriptor} from './utils';
-
-// we need this workaround until TypeScript supports async import() syntax
-declare global {
-  interface System {
-    import (request: string): Promise<any>
-  }
-  var System: System
-}
 
 export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, U> {
 
-  hash(anything: any): string {
+  public hash(anything: any): string {
     // if (typeof anything === 'undefined' || anything === null || Array.isArray(anything)) {
     //   return "";
     // }
@@ -21,30 +13,29 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return JSON.stringify(anything);
   }
 
-  hashType<T>(type: Type<T>): string {
+  public hashType<V extends T = T>(type: Type<V>): string {
     return this.hash(type);
   }
 
-  hashObject(object: any): string {
+  public hashObject<V extends T = T>(object: V): string {
     return this.hash(object);
   }
 
-  hashFactory(factory: any): string {
+  public hashFactory<V extends T = T>(factory: V): string {
     return this.hash(factory);
   }
-  
-  hashConfig(config: any): string {
+
+  public hashConfig(config: any): string {
     return this.hash(config);
   }
 
-  public resolveType<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Type<T> {
+  public resolveType<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Type<V> {
     return registration.settings.type;
   }
 
-  public async resolveTypeAsync<T>(container: IContainer<U>, registration: ITypeRegistration<T>): Promise<Type<T>> {
-    return new Promise<Type<T>>((resolve, reject) => {
-      resolve(registration.settings.type);
-    });
+  public async resolveTypeAsync<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Promise<Type<V>> {
+    const module: any = await import(registration.settings.module);
+    return module[registration.settings.key];
   }
 
   public resolveObject(container: IContainer<U>, registration: IRegistration): any {
@@ -52,9 +43,8 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
   }
 
   public async resolveObjectAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      resolve(registration.settings.object);
-    });
+    const module: any = await import(registration.settings.module);
+    return module[registration.settings.key];
   }
 
   public resolveFactory(container: IContainer<U>, registration: IRegistration): any {
@@ -62,25 +52,24 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
   }
 
   public async resolveFactoryAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      resolve(registration.settings.factory);
-    });
+    const module: any = await import(registration.settings.module);
+    return module[registration.settings.key];
   }
 
   public resolveConfig(config: TypeConfig): any {
     return config;
   }
 
-  protected _configureInstance(instance: any, config: any) {
+  protected _configureInstance(instance: any, config: any): void {
 
     if (!config) {
       return;
     }
 
-    const configPropertyDescriptor = getPropertyDescriptor(instance, 'config');
+    const configPropertyDescriptor: PropertyDescriptor = getPropertyDescriptor(instance, 'config');
 
     if (configPropertyDescriptor === undefined || (!configPropertyDescriptor.writable && !configPropertyDescriptor.set)) {
-      const instancePrototype = Object.getPrototypeOf(instance);
+      const instancePrototype: any = Object.getPrototypeOf(instance);
 
       throw new Error(`The setter for the config property on type '${instancePrototype.constructor.name}' is missing.`);
     }
@@ -88,13 +77,13 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     instance.config = config;
   }
 
-  public createObject<T>(container: IContainer<U>, object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
-    return this._createObject(object, registration, dependencies, injectionArgs);
+  public createObject<V extends T = T>(container: IContainer<U>, object: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+    return this._createObject<V>(object, registration, dependencies, injectionArgs);
   }
 
-  protected _createObject<T>(object: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
-    
-    const argumentsToBeInjected = dependencies.concat(injectionArgs);
+  protected _createObject<V extends T = T>(object: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+
+    const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, object, argumentsToBeInjected);
@@ -103,20 +92,20 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return object;
   }
 
-  public createFactory<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createFactory<V extends T = T>(container: IContainer<U>, type: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
     return this._createFactory(registration, dependencies, injectionArgs);
   }
 
-  protected _createFactory<T>(registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
-    
-    const argumentsToBeInjected = dependencies.concat(injectionArgs);
+  protected _createFactory<V extends T = T>(registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+
+    const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
-      return this._createInstanceByFactoryWithInjection<T>(registration.settings.factory, argumentsToBeInjected);
-    } 
-    
-    const instance = this._createInstanceByFactory<T>(registration.settings.factory);
-    
+      return this._createInstanceByFactoryWithInjection<V>(registration.settings.factory, argumentsToBeInjected);
+    }
+
+    const instance: V = this._createInstanceByFactory<V>(registration.settings.factory);
+
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
     }
@@ -124,20 +113,20 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return instance;
   }
 
-  public createInstance<T>(container: IContainer<U>, type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs?: Array<any>): T {
+  public createInstance<V extends T = T>(container: IContainer<U>, type: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
     return this._createInstance(type, registration, dependencies, injectionArgs);
   }
 
-  protected _createInstance<T>(type: any, registration: ITypeRegistration<T>, dependencies: Array<any>, injectionArgs: Array<any>): T {
+  protected _createInstance<V extends T = T>(type: any, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs: Array<any>): V {
 
-    const argumentsToBeInjected = dependencies.concat(injectionArgs);
+    const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-      return this._createInstanceByConstructorWithInjection<T>(type, argumentsToBeInjected);
-    } 
-    
-    const instance = this._createInstanceByConstructor<T>(type);
-    
+      return this._createInstanceByConstructorWithInjection<V>(type, argumentsToBeInjected);
+    }
+
+    const instance: V = this._createInstanceByConstructor<V>(type);
+
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
     }
@@ -145,29 +134,29 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return instance;
   }
 
-  protected _createInstanceByFactory<T>(factoryFunction: any): T {
-    const instance = factoryFunction();
+  protected _createInstanceByFactory<V extends T = T>(factoryFunction: any): V {
+    const instance: V = factoryFunction();
     return instance;
   }
 
-  protected _createInstanceByFactoryWithInjection<T>(factoryFunction: any, argumentsToBeInjected: Array<any>): T {
-    const instance = factoryFunction.apply(undefined, argumentsToBeInjected);
+  protected _createInstanceByFactoryWithInjection<V extends T = T>(factoryFunction: any, argumentsToBeInjected: Array<any>): V {
+    const instance: V = factoryFunction.apply(undefined, argumentsToBeInjected);
     return instance;
   }
 
-  protected _createInstanceByConstructor<T>(type): T {
-    const instance = new type();
+  protected _createInstanceByConstructor<V extends T = T>(type: Type<V>): V {
+    const instance: V = new type();
     return instance;
   }
 
-  protected _createInstanceByConstructorWithInjection<T>(type, argumentsToBeInjected): T {
-    const instance = new type(...argumentsToBeInjected);
+  protected _createInstanceByConstructorWithInjection<V extends T = T>(type: Type<V>, argumentsToBeInjected: Array<any>): V {
+    const instance: V = new type(...argumentsToBeInjected);
     return instance;
   }
 
   protected _injectDependenciesIntoInstance(registrationSettings: IRegistrationSettings, instance: any, argumentsToBeInjected: Array<any>): void {
 
-    let propertySource;
+    let propertySource: any;
 
     if (registrationSettings.isFactory) {
 
@@ -178,7 +167,7 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
       propertySource = Object.getPrototypeOf(instance);
     }
 
-    const injectionTargetPropertyDescriptor = getPropertyDescriptor(propertySource, registrationSettings.injectInto);
+    const injectionTargetPropertyDescriptor: PropertyDescriptor = getPropertyDescriptor(propertySource, registrationSettings.injectInto);
 
     if (injectionTargetPropertyDescriptor) {
 

@@ -1,15 +1,16 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var resolver_1 = require("./resolver");
-exports.DefaultSettings = {
+exports.defaultSettings = {
     defaults: {
         isSingleton: false,
         wantsInjection: true,
         dependencies: [],
         lazyDependencies: [],
-        lazyPromiseDependencies: [],
+        lazyDependenciesAsync: [],
         ownedDependencies: [],
         functionsToBind: [],
-        overwrittenKeys: {}
+        overwrittenKeys: {},
     },
     resolver: new resolver_1.Resolver(),
     containerRegistrationKey: 'container',
