@@ -1,6 +1,6 @@
 import { IContainer, IContainerSettings, IFactory, IFactoryAsync, IFactoryRegistration, IInstanceCache, IInstanceWrapper, IObjectRegistration, IRegistration, IRegistry, IResolutionContext, IResolver, ITypeRegistration, IValidationResults, RegistrationKey } from './interfaces';
 import { Registry } from './registry';
-export declare class Container<U extends IInstanceWrapper<any>> extends Registry implements IContainer<U> {
+export declare class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> extends Registry implements IContainer<U> {
     instances: IInstanceCache<any, U>;
     settings: IContainerSettings;
     parentContainer: IContainer<any>;

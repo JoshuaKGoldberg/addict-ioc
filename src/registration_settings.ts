@@ -146,6 +146,14 @@ export class RegistrationSettings<T> implements IRegistrationSettings {
     this.settings.overwrittenKeys = value;
   }
 
+  public get tags(): ITags {
+    return this._getCurrentOrDefault('tags');
+  }
+
+  public set tags(value: ITags) {
+    this.settings.tags = value;
+  }
+
   private _getCurrentOrDefault(key: string): any {
     return typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
   }

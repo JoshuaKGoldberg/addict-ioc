@@ -1,6 +1,6 @@
 // tslint:disable:no-empty-interface
 
-export interface IContainer<T extends IInstanceWrapper<any>> extends IRegistry {
+export interface IContainer<T extends IInstanceWrapper<any> = IInstanceWrapper<any>> extends IRegistry {
   instances: IInstanceCache<any, T>;
   parentContainer: IContainer<any>;
   settings: IContainerSettings;

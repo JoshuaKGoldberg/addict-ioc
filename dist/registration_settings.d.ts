@@ -1,4 +1,4 @@
-import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings, IResolver, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
+import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings, IResolver, ITags, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
 export declare class RegistrationSettings<T> implements IRegistrationSettings {
     defaults: IRegistrationSettings;
     settings: IRegistrationSettings;
@@ -20,6 +20,7 @@ export declare class RegistrationSettings<T> implements IRegistrationSettings {
     injectInto: string;
     functionsToBind: Array<string>;
     overwrittenKeys: IOverwrittenKeys;
+    tags: ITags;
     private _getCurrentOrDefault(key);
     private _getCurrentOrDefaultArray(key);
     private _getCurrentOrDefaultIndexer(key);

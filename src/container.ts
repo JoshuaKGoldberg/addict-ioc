@@ -10,7 +10,7 @@ import {getPropertyDescriptor} from './utils';
 
 import * as uuid from 'node-uuid';
 
-export class Container<U extends IInstanceWrapper<any>> extends Registry implements IContainer<U> {
+export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> extends Registry implements IContainer<U> {
 
   public instances: IInstanceCache<any, U> = {};
   public settings: IContainerSettings;

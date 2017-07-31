@@ -186,6 +186,16 @@ define(["require", "exports"], function (require, exports) {
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(RegistrationSettings.prototype, "tags", {
+            get: function () {
+                return this._getCurrentOrDefault('tags');
+            },
+            set: function (value) {
+                this.settings.tags = value;
+            },
+            enumerable: true,
+            configurable: true
+        });
         RegistrationSettings.prototype._getCurrentOrDefault = function (key) {
             return typeof this.settings[key] !== 'undefined' ? this.settings[key] : this.defaults[key];
         };
