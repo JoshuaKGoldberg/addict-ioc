@@ -179,7 +179,7 @@ export class Registry implements IRegistry {
     const registrationKeys: Array<string> = this.getRegistrationKeys();
     const foundKeys: Array<string> = [];
 
-    const query: ITags = this._buildTagQuery(tags);
+    const query: ITags = this._buildTagQuery(...tags);
 
     for (const tag in query) {
 
@@ -189,10 +189,12 @@ export class Registry implements IRegistry {
 
         const registration: IRegistration = this.getRegistration(registrationKey);
 
-        const registrationTagValue: any = registration.settings.tags[tag];
+        if (Object.keys(tagValue).length > 0) {
+          if (tagValue === registration.settings.tags[tag]) {
 
-        if (tagValue === registrationTagValue) {
-
+            foundKeys.push(registrationKey);
+          }
+        } else if (!!registration.settings.tags[tag]) {
           foundKeys.push(registrationKey);
         }
       }
@@ -209,7 +211,7 @@ export class Registry implements IRegistry {
 
       if (typeof value === 'string') {
 
-        const hasTagDefaultValue: boolean = typeof query[value] === 'undefined';
+        const hasTagDefaultValue: boolean = typeof query[value] !== 'undefined';
 
         if (!hasTagDefaultValue) {
           query[value] = {};

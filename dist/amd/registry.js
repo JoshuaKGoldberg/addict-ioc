@@ -120,14 +120,18 @@ define(["require", "exports", "./default_settings", "./registration", "./registr
             }
             var registrationKeys = this.getRegistrationKeys();
             var foundKeys = [];
-            var query = this._buildTagQuery(tags);
+            var query = this._buildTagQuery.apply(this, tags);
             for (var tag in query) {
                 var tagValue = query[tag];
                 for (var _a = 0, registrationKeys_1 = registrationKeys; _a < registrationKeys_1.length; _a++) {
                     var registrationKey = registrationKeys_1[_a];
                     var registration = this.getRegistration(registrationKey);
-                    var registrationTagValue = registration.settings.tags[tag];
-                    if (tagValue === registrationTagValue) {
+                    if (Object.keys(tagValue).length > 0) {
+                        if (tagValue === registration.settings.tags[tag]) {
+                            foundKeys.push(registrationKey);
+                        }
+                    }
+                    else if (!!registration.settings.tags[tag]) {
                         foundKeys.push(registrationKey);
                     }
                 }
@@ -143,7 +147,7 @@ define(["require", "exports", "./default_settings", "./registration", "./registr
             for (var _a = 0, tags_1 = tags; _a < tags_1.length; _a++) {
                 var value = tags_1[_a];
                 if (typeof value === 'string') {
-                    var hasTagDefaultValue = typeof query[value] === 'undefined';
+                    var hasTagDefaultValue = typeof query[value] !== 'undefined';
                     if (!hasTagDefaultValue) {
                         query[value] = {};
                     }
