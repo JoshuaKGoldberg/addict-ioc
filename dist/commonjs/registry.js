@@ -158,7 +158,7 @@ var Registry = (function () {
             else {
                 for (var tagKey in value) {
                     var tagValue = query[tagKey];
-                    var hasTagValue = Object.keys(tagValue).length !== 0;
+                    var hasTagValue = !!tagValue && Object.keys(tagValue).length !== 0;
                     if (!hasTagValue) {
                         query[tagKey] = value[tagKey];
                     }

@@ -223,7 +223,7 @@ export class Registry implements IRegistry {
 
           const tagValue: any = query[tagKey];
 
-          const hasTagValue: boolean = Object.keys(tagValue).length !== 0;
+          const hasTagValue: boolean = !!tagValue && Object.keys(tagValue).length !== 0;
 
           if (!hasTagValue) {
             query[tagKey] = value[tagKey];
