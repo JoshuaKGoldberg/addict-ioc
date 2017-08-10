@@ -105,7 +105,16 @@ define(["require", "exports", "./default_settings", "./registration", "./registr
             return registration;
         };
         Registry.prototype.getRegistrationKeys = function () {
-            return Object.keys(this.registrations);
+            var keys = Object.keys(this.registrations);
+            return keys.sort(function (a, b) {
+                if (a < b) {
+                    return -1;
+                }
+                if (a > b) {
+                    return 1;
+                }
+                return 0;
+            });
         };
         Registry.prototype.cacheRegistration = function (key, registration) {
             this.registrations[key] = registration;

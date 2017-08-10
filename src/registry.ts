@@ -163,7 +163,16 @@ export class Registry implements IRegistry {
   }
 
   protected getRegistrationKeys(): Array<string> {
-    return Object.keys(this.registrations);
+    const keys: Array<string> = Object.keys(this.registrations);
+    return keys.sort((a: string, b: string): number => {
+      if (a < b) {
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      return 0;
+    });
   }
 
   protected cacheRegistration<T>(key: RegistrationKey, registration: IRegistration): void {
