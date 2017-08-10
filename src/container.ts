@@ -165,6 +165,11 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
   public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
 
     const registration: IRegistration = this.getRegistration(key);
+
+    if (!registration) {
+      throw new Error(`registration for key "${key}" not found`);
+    }
+
     const resolutionContext: IResolutionContext<T, U> = this._createNewResolutionContext<T>(registration);
 
     return this._resolve<T>(registration, resolutionContext, injectionArgs, config);
@@ -173,6 +178,11 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
   public resolveAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<T> {
 
     const registration: IRegistration = this.getRegistration(key);
+
+    if (!registration) {
+      throw new Error(`registration for key "${key}" not found`);
+    }
+
     const resolutionContext: IResolutionContext<T, U> = this._createNewResolutionContext(registration);
 
     return this._resolveAsync<T>(registration, resolutionContext, injectionArgs, config);
@@ -205,13 +215,25 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
   }
 
   public resolveLazy<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
+
     const registration: IRegistration = this.getRegistration(key);
+
+    if (!registration) {
+      throw new Error(`registration for key "${key}" not found`);
+    }
+
     const resolutionContext: IResolutionContext<T, U> = this._createNewResolutionContext(registration);
     return this._resolveLazy<T>(registration, resolutionContext, injectionArgs, config);
   }
 
   public resolveLazyAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
+
     const registration: IRegistration = this.getRegistration(key);
+
+    if (!registration) {
+      throw new Error(`registration for key "${key}" not found`);
+    }
+
     const resolutionContext: IResolutionContext<T, U> = this._createNewResolutionContext(registration);
     return this._resolveLazyAsync<T>(registration, resolutionContext, injectionArgs, config);
   }

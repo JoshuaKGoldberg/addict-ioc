@@ -187,12 +187,18 @@ var Container = (function (_super) {
     Container.prototype.resolve = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = this.getRegistration(key);
+        if (!registration) {
+            throw new Error("registration for key \"" + key + "\" not found");
+        }
         var resolutionContext = this._createNewResolutionContext(registration);
         return this._resolve(registration, resolutionContext, injectionArgs, config);
     };
     Container.prototype.resolveAsync = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = this.getRegistration(key);
+        if (!registration) {
+            throw new Error("registration for key \"" + key + "\" not found");
+        }
         var resolutionContext = this._createNewResolutionContext(registration);
         return this._resolveAsync(registration, resolutionContext, injectionArgs, config);
     };
@@ -228,12 +234,18 @@ var Container = (function (_super) {
     Container.prototype.resolveLazy = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = this.getRegistration(key);
+        if (!registration) {
+            throw new Error("registration for key \"" + key + "\" not found");
+        }
         var resolutionContext = this._createNewResolutionContext(registration);
         return this._resolveLazy(registration, resolutionContext, injectionArgs, config);
     };
     Container.prototype.resolveLazyAsync = function (key, injectionArgs, config) {
         if (injectionArgs === void 0) { injectionArgs = []; }
         var registration = this.getRegistration(key);
+        if (!registration) {
+            throw new Error("registration for key \"" + key + "\" not found");
+        }
         var resolutionContext = this._createNewResolutionContext(registration);
         return this._resolveLazyAsync(registration, resolutionContext, injectionArgs, config);
     };
