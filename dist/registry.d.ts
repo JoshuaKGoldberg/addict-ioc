@@ -23,6 +23,7 @@ export declare class Registry implements IRegistry {
     protected createFactoryRegistration<T>(key: RegistrationKey, factoryFunction: any, registrationSettings?: IRegistrationSettings): IFactoryRegistration<T>;
     getRegistration(key: RegistrationKey): IRegistration;
     protected getRegistrationKeys(): Array<string>;
+    private sortKeys(keys);
     protected cacheRegistration<T>(key: RegistrationKey, registration: IRegistration): void;
     protected deleteRegistration(key: RegistrationKey): void;
     getKeysByTags(...tags: Array<ITags | string>): Array<RegistrationKey>;

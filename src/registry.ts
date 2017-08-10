@@ -164,6 +164,10 @@ export class Registry implements IRegistry {
 
   protected getRegistrationKeys(): Array<string> {
     const keys: Array<string> = Object.keys(this.registrations);
+    return this.sortKeys(keys);
+  }
+
+  private sortKeys(keys: Array<string>): Array<string> {
     return keys.sort((a: string, b: string): number => {
       if (a < b) {
         return -1;
@@ -209,7 +213,7 @@ export class Registry implements IRegistry {
       }
     }
 
-    return foundKeys;
+    return this.sortKeys(foundKeys);
   }
 
   protected _buildTagQuery(...tags: Array<ITags | string>): ITags {

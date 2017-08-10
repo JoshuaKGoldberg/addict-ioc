@@ -109,6 +109,9 @@ var Registry = (function () {
     };
     Registry.prototype.getRegistrationKeys = function () {
         var keys = Object.keys(this.registrations);
+        return this.sortKeys(keys);
+    };
+    Registry.prototype.sortKeys = function (keys) {
         return keys.sort(function (a, b) {
             if (a < b) {
                 return -1;
@@ -148,7 +151,7 @@ var Registry = (function () {
                 }
             }
         }
-        return foundKeys;
+        return this.sortKeys(foundKeys);
     };
     Registry.prototype._buildTagQuery = function () {
         var tags = [];
