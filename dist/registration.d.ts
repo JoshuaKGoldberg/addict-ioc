@@ -1,4 +1,4 @@
-import { IInstanceWrapper, IRegistration, IRegistrationSettings, IResolver, ISpecializedRegistration, RegistrationKey } from './interfaces';
+import { IInstanceWrapper, IOverwrittenConventionCalls, IRegistration, IRegistrationSettings, IResolver, ISpecializedRegistration, RegistrationKey } from './interfaces';
 export declare class Registration<T extends IRegistration, U extends IRegistrationSettings> implements ISpecializedRegistration<T, U> {
     private _settings;
     constructor(settings: U);
@@ -17,4 +17,6 @@ export declare class Registration<T extends IRegistration, U extends IRegistrati
     overwrite(originalKey: string, overwrittenKey: string): ISpecializedRegistration<T, U>;
     owns(...ownedDependencies: Array<string>): ISpecializedRegistration<T, U>;
     withResolver<V extends IInstanceWrapper<T> = any>(resolver: IResolver<T, V>): ISpecializedRegistration<T, U>;
+    overwriteConventionCalls(conventionCalls: IOverwrittenConventionCalls): ISpecializedRegistration<T, U>;
+    injectConventionCalled(registrationKey: string, conventionCall: string): ISpecializedRegistration<T, U>;
 }

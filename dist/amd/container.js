@@ -433,6 +433,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             var newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
             var overwrittenDependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
             var dependencyRegistration = this.getRegistration(overwrittenDependencyKey);
+            newResolutionContext.currentResolution.registration = dependencyRegistration;
             if (!dependencyRegistration) {
                 throw new Error("dependency \"" + overwrittenDependencyKey + "\" of key \"" + registration.settings.key + "\" is missing");
             }
@@ -458,6 +459,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                             newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
                             overwrittenDependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
                             dependencyRegistration = this.getRegistration(dependencyKey);
+                            newResolutionContext.currentResolution.registration = dependencyRegistration;
                             if (!this._isDependencyLazy(registration, dependencyKey)) return [3, 2];
                             return [4, this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined)];
                         case 1: return [2, _a.sent()];

@@ -104,6 +104,14 @@ define(["require", "exports"], function (require, exports) {
             this.settings.resolver = resolver;
             return this;
         };
+        Registration.prototype.overwriteConventionCalls = function (conventionCalls) {
+            this.settings.overwrittenConventionCalls = conventionCalls;
+            return this;
+        };
+        Registration.prototype.injectConventionCalled = function (registrationKey, conventionCall) {
+            this.settings.injectConventionCalled[registrationKey] = conventionCall;
+            return this;
+        };
         return Registration;
     }());
     exports.Registration = Registration;

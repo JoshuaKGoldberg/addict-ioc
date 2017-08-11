@@ -11,6 +11,8 @@ define(["require", "exports", "./resolver"], function (require, exports, resolve
             ownedDependencies: [],
             functionsToBind: [],
             overwrittenKeys: {},
+            overwrittenConventionCalls: {},
+            injectConventionCalled: {},
         },
         resolver: new resolver_1.Resolver(),
         containerRegistrationKey: 'container',

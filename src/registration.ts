@@ -1,5 +1,16 @@
 // tslint:disable-next-line:max-line-length
-import { IInstanceWrapper, IRegistration, IRegistrationSettings, IResolver, ISpecializedRegistration, ITypeRegistration, ITypeRegistrationSettings, RegistrationKey, Type } from './interfaces';
+import {
+  IInstanceWrapper,
+  IOverwrittenConventionCalls,
+  IRegistration,
+  IRegistrationSettings,
+  IResolver,
+  ISpecializedRegistration,
+  ITypeRegistration,
+  ITypeRegistrationSettings,
+  RegistrationKey,
+  Type,
+} from './interfaces';
 
 export class Registration<T extends IRegistration, U extends IRegistrationSettings> implements ISpecializedRegistration<T, U> {
 
@@ -89,6 +100,16 @@ export class Registration<T extends IRegistration, U extends IRegistrationSettin
 
   public withResolver<V extends IInstanceWrapper<T> = any>(resolver: IResolver<T, V>): ISpecializedRegistration<T, U> {
     this.settings.resolver = resolver;
+    return this;
+  }
+
+  public overwriteConventionCalls(conventionCalls: IOverwrittenConventionCalls): ISpecializedRegistration<T, U> {
+    this.settings.overwrittenConventionCalls = conventionCalls;
+    return this;
+  }
+
+  public injectConventionCalled(registrationKey: string, conventionCall: string): ISpecializedRegistration<T, U> {
+    this.settings.injectConventionCalled[registrationKey] = conventionCall;
     return this;
   }
 

@@ -11,6 +11,8 @@ exports.defaultSettings = {
         ownedDependencies: [],
         functionsToBind: [],
         overwrittenKeys: {},
+        overwrittenConventionCalls: {},
+        injectConventionCalled: {},
     },
     resolver: new resolver_1.Resolver(),
     containerRegistrationKey: 'container',

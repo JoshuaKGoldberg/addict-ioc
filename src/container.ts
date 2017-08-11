@@ -446,6 +446,8 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
 
     const dependencyRegistration: IRegistration = this.getRegistration(overwrittenDependencyKey);
 
+    newResolutionContext.currentResolution.registration = dependencyRegistration;
+
     if (!dependencyRegistration) {
       throw new Error(`dependency "${overwrittenDependencyKey}" of key "${registration.settings.key}" is missing`);
     }
@@ -474,6 +476,8 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
     const overwrittenDependencyKey: string = this._getDependencyKeyOverwritten(registration, dependencyKey);
 
     const dependencyRegistration: IRegistration = this.getRegistration(dependencyKey);
+
+    newResolutionContext.currentResolution.registration = dependencyRegistration;
 
     if (this._isDependencyLazy(registration, dependencyKey)) {
       return await this._resolveLazy(dependencyRegistration, newResolutionContext, undefined, undefined);

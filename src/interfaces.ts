@@ -129,8 +129,27 @@ export interface IRegistrationSettings {
   lazyDependenciesAsync?: Array<string>;
   overwrittenKeys?: IOverwrittenKeys;
   conventionCalls?: Array<string>;
+  overwrittenConventionCalls?: IOverwrittenConventionCalls;
+  injectConventionCalled?: IInjectConventionCalled;
   // autoCreateMissingSubscribers?: boolean;
   // subscriptions?: IHookSubscriptions;
+
+}
+
+export interface IInjectConventionCalled {
+  [registrationKey: string]: string;
+}
+
+export interface IOverwrittenConventionCalls {
+  [overwrittenConventionCall: string]: string;
+}
+
+export interface IConventionCalls {
+  [dependencyKey: string]: IConventionCall;
+}
+
+export interface IConventionCall {
+  [call: string]: string;
 
 }
 

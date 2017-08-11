@@ -11,6 +11,8 @@ export const defaultSettings: IContainerSettings = {
     ownedDependencies: [],
     functionsToBind: [],
     overwrittenKeys: {},
+    overwrittenConventionCalls: {},
+    injectConventionCalled: {},
     // isLazy: false,
     // bindFunctions: false,
     // autoCreateMissingSubscribers: true
