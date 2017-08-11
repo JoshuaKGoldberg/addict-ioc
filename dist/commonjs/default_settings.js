@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var interfaces_1 = require("./interfaces");
 var resolver_1 = require("./resolver");
 exports.defaultSettings = {
     defaults: {
@@ -18,6 +19,7 @@ exports.defaultSettings = {
     containerRegistrationKey: 'container',
     circularDependencyCanIncludeSingleton: true,
     circularDependencyCanIncludeLazy: true,
+    conventionCallTypes: [interfaces_1.ConventionCallType.Class],
 };
 
 //# sourceMappingURL=default_settings.js.map

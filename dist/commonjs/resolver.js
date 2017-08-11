@@ -62,13 +62,16 @@ var Resolver = (function () {
     };
     Resolver.prototype.resolveTypeAsync = function (container, registration) {
         return __awaiter(this, void 0, void 0, function () {
-            var module;
+            var module_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
+                    case 0:
+                        if (!registration.settings.module) return [3, 2];
+                        return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
                     case 1:
-                        module = _a.sent();
-                        return [2, module[registration.settings.key]];
+                        module_1 = _a.sent();
+                        return [2, module_1[registration.settings.key]];
+                    case 2: return [2, registration.settings.type];
                 }
             });
         });
@@ -78,13 +81,16 @@ var Resolver = (function () {
     };
     Resolver.prototype.resolveObjectAsync = function (container, registration) {
         return __awaiter(this, void 0, void 0, function () {
-            var module;
+            var module_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
+                    case 0:
+                        if (!registration.settings.module) return [3, 2];
+                        return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
                     case 1:
-                        module = _a.sent();
-                        return [2, module[registration.settings.key]];
+                        module_2 = _a.sent();
+                        return [2, module_2[registration.settings.key]];
+                    case 2: return [2, registration.settings.object];
                 }
             });
         });
@@ -94,13 +100,16 @@ var Resolver = (function () {
     };
     Resolver.prototype.resolveFactoryAsync = function (container, registration) {
         return __awaiter(this, void 0, void 0, function () {
-            var module;
+            var module_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
+                    case 0:
+                        if (!registration.settings.module) return [3, 2];
+                        return [4, Promise.resolve().then(function () { return require(registration.settings.module); })];
                     case 1:
-                        module = _a.sent();
-                        return [2, module[registration.settings.key]];
+                        module_3 = _a.sent();
+                        return [2, module_3[registration.settings.key]];
+                    case 2: return [2, registration.settings.factory];
                 }
             });
         });

@@ -12,6 +12,7 @@ export declare class InvocationContainer extends Container<IInvocationWrapper<an
     protected _initializeDependencyInvocationContext<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<T>): void;
     protected _performInvocationsAsync<T>(resolutionContext: IInvocationResolutionContext<T>): Promise<void>;
     protected _performInvocationAsync<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): Promise<void>;
+    private _isConventionCallTypeActive<T>(resolutionContext);
     protected _performInvocations<T>(resolutionContext: IInvocationResolutionContext<T>): void;
     protected _performInvocation<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): void;
     private _getInjectCalledInstances<T>(resolutionContext);

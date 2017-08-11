@@ -103,6 +103,13 @@ export interface IContainerSettings extends IRegistrationSettings {
   containerRegistrationKey: RegistrationKey;
   circularDependencyCanIncludeSingleton: boolean;
   circularDependencyCanIncludeLazy: boolean;
+  conventionCallTypes: Array<ConventionCallType>;
+}
+
+export enum ConventionCallType {
+  Class,
+  Object,
+  Factory,
 }
 
 export interface IRegistrationSettings {

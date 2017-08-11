@@ -1,4 +1,4 @@
-import { IContainerSettings } from './interfaces';
+import { ConventionCallType, IContainerSettings } from './interfaces';
 import { Resolver } from './resolver';
 
 export const defaultSettings: IContainerSettings = {
@@ -21,4 +21,5 @@ export const defaultSettings: IContainerSettings = {
   containerRegistrationKey: 'container',
   circularDependencyCanIncludeSingleton: true,
   circularDependencyCanIncludeLazy: true,
+  conventionCallTypes: [ConventionCallType.Class],
 };

@@ -1,5 +1,6 @@
 import {Container} from './container';
 import {
+  ConventionCallType,
   IConventionCall,
   IConventionCalls,
   IFactory,
@@ -166,6 +167,10 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
   protected async _performInvocationAsync<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): Promise<void> {
 
+    if (!this._isConventionCallTypeActive(resolutionContext)) {
+      return;
+    }
+
     const instanceWrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[instanceId];
 
     if (instanceWrapper.invoked && instanceWrapper.invoked.indexOf(call) !== -1) {
@@ -190,7 +195,26 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     await extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
   }
 
+  private _isConventionCallTypeActive<T>(resolutionContext: IInvocationResolutionContext<T>): boolean {
+
+    const registration: IRegistration = resolutionContext.currentResolution.registration;
+
+    if (registration.settings.isFactory) {
+      return this.settings.conventionCallTypes.indexOf(ConventionCallType.Factory) !== -1;
+    }
+
+    if (registration.settings.isObject) {
+      return this.settings.conventionCallTypes.indexOf(ConventionCallType.Object) !== -1;
+    }
+
+    return this.settings.conventionCallTypes.indexOf(ConventionCallType.Class) !== -1;
+  }
+
   protected _performInvocations<T>(resolutionContext: IInvocationResolutionContext<T>): void {
+
+    if (!this._isConventionCallTypeActive(resolutionContext)) {
+      return;
+    }
 
     const calls: Array<string> = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
 

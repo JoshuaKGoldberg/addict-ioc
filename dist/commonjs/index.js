@@ -5,6 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./container"));
 __export(require("./default_settings"));
+__export(require("./interfaces"));
 __export(require("./invocation_container"));
 __export(require("./registration_context"));
 __export(require("./registry"));

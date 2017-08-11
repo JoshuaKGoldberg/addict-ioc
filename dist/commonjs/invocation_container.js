@@ -46,6 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var container_1 = require("./container");
+var interfaces_1 = require("./interfaces");
 var utils_1 = require("./utils");
 var InvocationContainer = (function (_super) {
     __extends(InvocationContainer, _super);
@@ -228,6 +229,9 @@ var InvocationContainer = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (!this._isConventionCallTypeActive(resolutionContext)) {
+                            return [2];
+                        }
                         instanceWrapper = resolutionContext.instanceLookup[instanceId];
                         if (instanceWrapper.invoked && instanceWrapper.invoked.indexOf(call) !== -1) {
                             return [2];
@@ -253,7 +257,20 @@ var InvocationContainer = (function (_super) {
             });
         });
     };
+    InvocationContainer.prototype._isConventionCallTypeActive = function (resolutionContext) {
+        var registration = resolutionContext.currentResolution.registration;
+        if (registration.settings.isFactory) {
+            return this.settings.conventionCallTypes.indexOf(interfaces_1.ConventionCallType.Factory) !== -1;
+        }
+        if (registration.settings.isObject) {
+            return this.settings.conventionCallTypes.indexOf(interfaces_1.ConventionCallType.Object) !== -1;
+        }
+        return this.settings.conventionCallTypes.indexOf(interfaces_1.ConventionCallType.Class) !== -1;
+    };
     InvocationContainer.prototype._performInvocations = function (resolutionContext) {
+        if (!this._isConventionCallTypeActive(resolutionContext)) {
+            return;
+        }
         var calls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
         if (!calls) {
             return;

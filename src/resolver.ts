@@ -34,8 +34,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
   }
 
   public async resolveTypeAsync<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Promise<Type<V>> {
-    const module: any = await import(registration.settings.module);
-    return module[registration.settings.key];
+    if (registration.settings.module) {
+      const module: any = await import(registration.settings.module);
+      return module[registration.settings.key];
+    }
+    return registration.settings.type;
   }
 
   public resolveObject(container: IContainer<U>, registration: IRegistration): any {
@@ -43,8 +46,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
   }
 
   public async resolveObjectAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
-    const module: any = await import(registration.settings.module);
-    return module[registration.settings.key];
+    if (registration.settings.module) {
+      const module: any = await import(registration.settings.module);
+      return module[registration.settings.key];
+    }
+    return registration.settings.object;
   }
 
   public resolveFactory(container: IContainer<U>, registration: IRegistration): any {
@@ -52,8 +58,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
   }
 
   public async resolveFactoryAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
-    const module: any = await import(registration.settings.module);
-    return module[registration.settings.key];
+    if (registration.settings.module) {
+      const module: any = await import(registration.settings.module);
+      return module[registration.settings.key];
+    }
+    return registration.settings.factory;
   }
 
   public resolveConfig(config: TypeConfig): any {

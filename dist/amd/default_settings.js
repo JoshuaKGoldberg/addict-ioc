@@ -1,4 +1,4 @@
-define(["require", "exports", "./resolver"], function (require, exports, resolver_1) {
+define(["require", "exports", "./interfaces", "./resolver"], function (require, exports, interfaces_1, resolver_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.defaultSettings = {
@@ -18,6 +18,7 @@ define(["require", "exports", "./resolver"], function (require, exports, resolve
         containerRegistrationKey: 'container',
         circularDependencyCanIncludeSingleton: true,
         circularDependencyCanIncludeLazy: true,
+        conventionCallTypes: [interfaces_1.ConventionCallType.Class],
     };
 });
 
