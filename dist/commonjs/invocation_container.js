@@ -161,40 +161,63 @@ var InvocationContainer = (function (_super) {
     };
     InvocationContainer.prototype._performInvocationsAsync = function (resolutionContext) {
         return __awaiter(this, void 0, void 0, function () {
-            var calls, _i, calls_1, call, instanceResolutionIndex, instancesToInvoke, _a, instancesToInvoke_1, instanceId;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var calls, injectConventionCalled, injectConventionCalledInstances, _i, injectConventionCalledInstances_1, wrapper, _a, calls_1, call, _b, calls_2, call, instanceResolutionIndex, instancesToInvoke, _c, instancesToInvoke_1, instanceId;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
                         calls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
                         if (!calls) {
                             return [2];
                         }
-                        _i = 0, calls_1 = calls;
-                        _b.label = 1;
+                        injectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
+                        injectConventionCalledInstances = this._getInjectCalledInstances(resolutionContext);
+                        _i = 0, injectConventionCalledInstances_1 = injectConventionCalledInstances;
+                        _d.label = 1;
                     case 1:
-                        if (!(_i < calls_1.length)) return [3, 6];
-                        call = calls_1[_i];
-                        instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
-                        if (instanceResolutionIndex === -1) {
-                            throw new Error('that shouldn`t happen');
-                        }
-                        instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
-                        _a = 0, instancesToInvoke_1 = instancesToInvoke;
-                        _b.label = 2;
+                        if (!(_i < injectConventionCalledInstances_1.length)) return [3, 6];
+                        wrapper = injectConventionCalledInstances_1[_i];
+                        _a = 0, calls_1 = calls;
+                        _d.label = 2;
                     case 2:
-                        if (!(_a < instancesToInvoke_1.length)) return [3, 5];
-                        instanceId = instancesToInvoke_1[_a];
-                        return [4, this._performInvocationAsync(resolutionContext, call, instanceId)];
+                        if (!(_a < calls_1.length)) return [3, 5];
+                        call = calls_1[_a];
+                        return [4, this._performInvocationAsync(resolutionContext, call, wrapper.id)];
                     case 3:
-                        _b.sent();
-                        _b.label = 4;
+                        _d.sent();
+                        _d.label = 4;
                     case 4:
                         _a++;
                         return [3, 2];
                     case 5:
                         _i++;
                         return [3, 1];
-                    case 6: return [2];
+                    case 6:
+                        _b = 0, calls_2 = calls;
+                        _d.label = 7;
+                    case 7:
+                        if (!(_b < calls_2.length)) return [3, 12];
+                        call = calls_2[_b];
+                        instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
+                        if (instanceResolutionIndex === -1) {
+                            throw new Error('that shouldn`t happen');
+                        }
+                        instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
+                        _c = 0, instancesToInvoke_1 = instancesToInvoke;
+                        _d.label = 8;
+                    case 8:
+                        if (!(_c < instancesToInvoke_1.length)) return [3, 11];
+                        instanceId = instancesToInvoke_1[_c];
+                        return [4, this._performInvocationAsync(resolutionContext, call, instanceId)];
+                    case 9:
+                        _d.sent();
+                        _d.label = 10;
+                    case 10:
+                        _c++;
+                        return [3, 8];
+                    case 11:
+                        _b++;
+                        return [3, 7];
+                    case 12: return [2];
                 }
             });
         });
@@ -217,10 +240,10 @@ var InvocationContainer = (function (_super) {
                         }
                         invocation = instanceWrapper.invocations[call] || call;
                         if (invocation === call) {
-                            process.stdout.write("invoking \"" + invocation + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
+                            console.log("invoking \"" + invocation + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
                         }
                         else {
-                            process.stdout.write("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
+                            console.log("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
                         }
                         return [4, utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, [])];
                     case 1:
@@ -237,15 +260,15 @@ var InvocationContainer = (function (_super) {
         }
         var injectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
         var injectConventionCalledInstances = this._getInjectCalledInstances(resolutionContext);
-        for (var _i = 0, injectConventionCalledInstances_1 = injectConventionCalledInstances; _i < injectConventionCalledInstances_1.length; _i++) {
-            var wrapper = injectConventionCalledInstances_1[_i];
-            for (var _a = 0, calls_2 = calls; _a < calls_2.length; _a++) {
-                var call = calls_2[_a];
+        for (var _i = 0, injectConventionCalledInstances_2 = injectConventionCalledInstances; _i < injectConventionCalledInstances_2.length; _i++) {
+            var wrapper = injectConventionCalledInstances_2[_i];
+            for (var _a = 0, calls_3 = calls; _a < calls_3.length; _a++) {
+                var call = calls_3[_a];
                 this._performInvocation(resolutionContext, call, wrapper.id);
             }
         }
-        for (var _b = 0, calls_3 = calls; _b < calls_3.length; _b++) {
-            var call = calls_3[_b];
+        for (var _b = 0, calls_4 = calls; _b < calls_4.length; _b++) {
+            var call = calls_4[_b];
             var isConventionCalled = !!injectConventionCalled[call];
             if (isConventionCalled) {
                 continue;

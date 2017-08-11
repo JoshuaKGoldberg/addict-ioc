@@ -138,6 +138,16 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       return;
     }
 
+    const injectConventionCalled: IInjectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
+    const injectConventionCalledInstances: Array<IInvocationWrapper<T>> = this._getInjectCalledInstances(resolutionContext);
+
+    for (const wrapper of injectConventionCalledInstances) {
+
+      for (const call of calls) {
+        await this._performInvocationAsync(resolutionContext, call, wrapper.id);
+      }
+    }
+
     for (const call of calls) {
 
       const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
@@ -172,9 +182,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     const invocation: string = instanceWrapper.invocations[call] || call;
 
     if (invocation === call) {
-      process.stdout.write(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+      console.log(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
     } else {
-      process.stdout.write(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+      console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
     }
 
     await extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
