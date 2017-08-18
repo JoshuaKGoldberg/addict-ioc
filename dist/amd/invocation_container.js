@@ -165,7 +165,7 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                     switch (_d.label) {
                         case 0:
                             calls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
-                            if (!calls) {
+                            if (!calls || !this._isConventionCallTypeActive(resolutionContext)) {
                                 return [2];
                             }
                             injectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
@@ -227,9 +227,6 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (!this._isConventionCallTypeActive(resolutionContext)) {
-                                return [2];
-                            }
                             instanceWrapper = resolutionContext.instanceLookup[instanceId];
                             if (instanceWrapper.invoked && instanceWrapper.invoked.indexOf(call) !== -1) {
                                 return [2];
@@ -266,11 +263,8 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
             return this.settings.conventionCallTypes.indexOf(interfaces_1.ConventionCallType.Class) !== -1;
         };
         InvocationContainer.prototype._performInvocations = function (resolutionContext) {
-            if (!this._isConventionCallTypeActive(resolutionContext)) {
-                return;
-            }
             var calls = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
-            if (!calls) {
+            if (!calls || !this._isConventionCallTypeActive(resolutionContext)) {
                 return;
             }
             var injectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;

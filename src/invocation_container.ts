@@ -135,7 +135,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     const calls: Array<string> = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
 
-    if (!calls) {
+    if (!calls || !this._isConventionCallTypeActive(resolutionContext)) {
       return;
     }
 
@@ -166,10 +166,6 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
   }
 
   protected async _performInvocationAsync<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): Promise<void> {
-
-    if (!this._isConventionCallTypeActive(resolutionContext)) {
-      return;
-    }
 
     const instanceWrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[instanceId];
 
@@ -212,13 +208,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
   protected _performInvocations<T>(resolutionContext: IInvocationResolutionContext<T>): void {
 
-    if (!this._isConventionCallTypeActive(resolutionContext)) {
-      return;
-    }
-
     const calls: Array<string> = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
 
-    if (!calls) {
+    if (!calls || !this._isConventionCallTypeActive(resolutionContext)) {
       return;
     }
 
