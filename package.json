@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/5minds/addict-ioc#readme",
   "devDependencies": {
+    "bluebird": "^3.5.0",
     "gulp": "^3.9.1",
     "gulptraum": "^2.0.0",
     "gulptraum-typescript": "^1.0.0",
