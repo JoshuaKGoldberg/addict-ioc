@@ -82,10 +82,10 @@ export interface IConfigResolver {
 }
 export declare type TypeConfig = string | any | IConfigResolver;
 export interface IContainerSettings extends IRegistrationSettings {
-    containerRegistrationKey: RegistrationKey;
-    circularDependencyCanIncludeSingleton: boolean;
-    circularDependencyCanIncludeLazy: boolean;
-    conventionCallTypes: Array<ConventionCallType>;
+    containerRegistrationKey?: RegistrationKey;
+    circularDependencyCanIncludeSingleton?: boolean;
+    circularDependencyCanIncludeLazy?: boolean;
+    conventionCallTypes?: Array<ConventionCallType>;
 }
 export declare enum ConventionCallType {
     Class = 0,
