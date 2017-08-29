@@ -60,7 +60,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return (lazyInjectionArgs: Array<any>, lazyConfig: any): T => {
 
-      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext(registration);
+      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createChildResolutionContext(registration, resolutionContext);
 
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
@@ -78,7 +78,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return async(lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<T> => {
 
-      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext(registration);
+      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createChildResolutionContext(registration, resolutionContext);
 
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
@@ -157,13 +157,14 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     for (const call of calls) {
 
-      const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
+      const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution);
+      const instanceResolutionOrderIds: Array<string> = resolutionContext.instanceResolutionOrder.map((resolution: IInvocationWrapper<any>) => { return resolution.id; });
 
       // if (instanceResolutionIndex === -1) {
       //   throw new Error('that shouldn`t happen');
       // }
 
-      const instancesToInvoke: Array<string> = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
+      const instancesToInvoke: Array<string> = instanceResolutionOrderIds.slice(0, instanceResolutionIndex + 1);
 
       for (const instanceId of instancesToInvoke) {
         await this._performInvocationAsync(resolutionContext, call, instanceId);
@@ -238,13 +239,14 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
         continue;
       }
 
-      const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
+      const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution);
+      const instanceResolutionOrderIds: Array<string> = resolutionContext.instanceResolutionOrder.map((resolution: IInvocationWrapper<any>) => { return resolution.id; });
 
       // if (instanceResolutionIndex === -1) {
       //   throw new Error('that shouldn`t happen');
       // }
 
-      const instancesToInvoke: Array<string> = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
+      const instancesToInvoke: Array<string> = instanceResolutionOrderIds.slice(0, instanceResolutionIndex + 1);
 
       for (const instanceId of instancesToInvoke) {
         this._performInvocation(resolutionContext, call, instanceId);
@@ -286,9 +288,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     for (const registrationKey in injectConventionCalled) {
 
-      for (const instanceId of resolutionContext.instanceResolutionOrder) {
+      for (const resolution of resolutionContext.instanceResolutionOrder) {
 
-        const wrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[instanceId];
+        const wrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[resolution.id];
 
         if (wrapper.registration.settings.key === registrationKey) {
           result.push(wrapper);

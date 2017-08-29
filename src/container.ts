@@ -602,24 +602,16 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
     return uuid.v4();
   }
 
-  protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: any, injectionArgs: Array<any>, config: any): void {
+  protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: T, injectionArgs: Array<any>, config: any): void {
 
     const key: string = registration.settings.key;
-
-    // const instanceId = resolutionContext.cu.currentId;
-
-    // const instanceWrapper =  {
-    //   id: instanceId,
-    //   registration: registration,
-    //   instance: instance
-    // };
 
     if (!resolutionContext.instanceLookup) {
       resolutionContext.instanceLookup = {};
     }
 
     resolutionContext.currentResolution.instance = instance;
-    resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
+    resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
 
     if (!registration.settings.isSingleton) {
       return;

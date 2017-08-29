@@ -44,7 +44,7 @@ export declare class Container<U extends IInstanceWrapper<any> = IInstanceWrappe
     protected _configureInstance<T>(instance: T, registration: IRegistration, runtimeConfig?: any): void;
     protected _getCachedInstances<T>(registration: IRegistration, injectionArgs: Array<any>, config: any): Array<T>;
     protected _createInstanceId(): string;
-    protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: any, injectionArgs: Array<any>, config: any): void;
+    protected _cacheInstance<T>(registration: IRegistration, resolutionContext: IResolutionContext<T, U>, instance: T, injectionArgs: Array<any>, config: any): void;
     validateDependencies2(...keys: Array<RegistrationKey>): Array<string>;
     protected _validateDependencies(keys: Array<RegistrationKey>, history?: Array<IRegistration>): Array<string>;
     protected _validateDependency(registration: IRegistration, dependencyKey: RegistrationKey, history: Array<IRegistration>): Array<string>;

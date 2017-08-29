@@ -593,7 +593,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                 resolutionContext.instanceLookup = {};
             }
             resolutionContext.currentResolution.instance = instance;
-            resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
+            resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
             if (!registration.settings.isSingleton) {
                 return;
             }

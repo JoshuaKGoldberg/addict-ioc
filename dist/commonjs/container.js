@@ -596,7 +596,7 @@ var Container = (function (_super) {
             resolutionContext.instanceLookup = {};
         }
         resolutionContext.currentResolution.instance = instance;
-        resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution.id);
+        resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
         if (!registration.settings.isSingleton) {
             return;
         }

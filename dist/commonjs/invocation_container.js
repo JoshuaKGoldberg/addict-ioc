@@ -91,10 +91,10 @@ var InvocationContainer = (function (_super) {
         var _this = this;
         if (injectionArgs === void 0) { injectionArgs = []; }
         return function (lazyInjectionArgs, lazyConfig) {
+            var lazyResolutionContext = _this._createChildResolutionContext(registration, resolutionContext);
             var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
             var lazyConfigUsed = _this._mergeConfigs(config, lazyConfig);
             var resolvedInstance = _this._resolve(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
-            var lazyResolutionContext = _this._createNewResolutionContext(registration);
             _this._performInvocations(lazyResolutionContext);
             return resolvedInstance;
         };
@@ -107,7 +107,7 @@ var InvocationContainer = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        lazyResolutionContext = this._createNewResolutionContext(registration);
+                        lazyResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
                         injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                         lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
                         return [4, this._resolveAsync(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed)];
@@ -166,7 +166,7 @@ var InvocationContainer = (function (_super) {
     };
     InvocationContainer.prototype._performInvocationsAsync = function (resolutionContext) {
         return __awaiter(this, void 0, void 0, function () {
-            var calls, injectConventionCalled, injectConventionCalledInstances, _i, injectConventionCalledInstances_1, wrapper, _a, calls_1, call, _b, calls_2, call, instanceResolutionIndex, instancesToInvoke, _c, instancesToInvoke_1, instanceId;
+            var calls, injectConventionCalled, injectConventionCalledInstances, _i, injectConventionCalledInstances_1, wrapper, _a, calls_1, call, _b, calls_2, call, instanceResolutionIndex, instanceResolutionOrderIds, instancesToInvoke, _c, instancesToInvoke_1, instanceId;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -202,8 +202,9 @@ var InvocationContainer = (function (_super) {
                     case 7:
                         if (!(_b < calls_2.length)) return [3, 12];
                         call = calls_2[_b];
-                        instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
-                        instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
+                        instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution);
+                        instanceResolutionOrderIds = resolutionContext.instanceResolutionOrder.map(function (resolution) { return resolution.id; });
+                        instancesToInvoke = instanceResolutionOrderIds.slice(0, instanceResolutionIndex + 1);
                         _c = 0, instancesToInvoke_1 = instancesToInvoke;
                         _d.label = 8;
                     case 8:
@@ -285,8 +286,9 @@ var InvocationContainer = (function (_super) {
             if (isConventionCalled) {
                 continue;
             }
-            var instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
-            var instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
+            var instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution);
+            var instanceResolutionOrderIds = resolutionContext.instanceResolutionOrder.map(function (resolution) { return resolution.id; });
+            var instancesToInvoke = instanceResolutionOrderIds.slice(0, instanceResolutionIndex + 1);
             for (var _c = 0, instancesToInvoke_2 = instancesToInvoke; _c < instancesToInvoke_2.length; _c++) {
                 var instanceId = instancesToInvoke_2[_c];
                 this._performInvocation(resolutionContext, call, instanceId);
@@ -318,8 +320,8 @@ var InvocationContainer = (function (_super) {
         var result = [];
         for (var registrationKey in injectConventionCalled) {
             for (var _i = 0, _a = resolutionContext.instanceResolutionOrder; _i < _a.length; _i++) {
-                var instanceId = _a[_i];
-                var wrapper = resolutionContext.instanceLookup[instanceId];
+                var resolution = _a[_i];
+                var wrapper = resolutionContext.instanceLookup[resolution.id];
                 if (wrapper.registration.settings.key === registrationKey) {
                     result.push(wrapper);
                 }

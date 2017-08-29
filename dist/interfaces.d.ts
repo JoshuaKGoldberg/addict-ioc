@@ -185,7 +185,7 @@ export declare type InstanceId = string;
 export interface IResolutionContext<T, U extends IInstanceWrapper<T>> {
     currentResolution: U;
     instanceLookup: IInstanceLookup<U>;
-    instanceResolutionOrder: Array<InstanceId>;
+    instanceResolutionOrder: Array<U>;
 }
 export interface IInvocationResolutionContext<T> extends IResolutionContext<T, IInvocationWrapper<T>> {
     invocations: Array<T>;
