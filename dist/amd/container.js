@@ -610,7 +610,17 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             if (!configInstances) {
                 configInstances = allInstances[configHash] = {};
             }
-            var injectionArgsHash = resolver.hash(injectionArgs);
+            var injectionArgsHashes = injectionArgs.map(function (injectionArgument) {
+                var hashResult;
+                try {
+                    hashResult = resolver.hash(injectionArgs);
+                }
+                catch (error) {
+                    hashResult = undefined;
+                }
+                return hashResult.toString();
+            });
+            var injectionArgsHash = injectionArgsHashes.join('__');
             var argumentInstances = configInstances[injectionArgsHash];
             if (!argumentInstances) {
                 argumentInstances = configInstances[injectionArgsHash] = [];

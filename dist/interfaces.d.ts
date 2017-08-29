@@ -4,10 +4,10 @@ export interface IContainer<T extends IInstanceWrapper<any> = IInstanceWrapper<a
     settings: IContainerSettings;
     clear(): void;
     initialize(): void;
-    resolve<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): V;
-    resolveLazy<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<V>;
-    resolveAsync<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<V>;
-    resolveLazyAsync<V extends T = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<V>;
+    resolve<V = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): V;
+    resolveLazy<V = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactory<V>;
+    resolveAsync<V = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): Promise<V>;
+    resolveLazyAsync<V = T>(key: RegistrationKey, injectionArgs?: Array<any>, config?: any): IFactoryAsync<V>;
     validateDependencies(...keys: Array<RegistrationKey>): Array<string>;
 }
 export interface IInstanceCache<T, U extends IInstanceWrapper<T>> {

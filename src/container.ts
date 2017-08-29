@@ -645,7 +645,17 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
       configInstances = allInstances[configHash] = {};
     }
 
-    const injectionArgsHash: string = resolver.hash(injectionArgs);
+    const injectionArgsHashes: Array<any> = injectionArgs.map((injectionArgument: any) => {
+      let hashResult: any;
+      try {
+        hashResult = resolver.hash(injectionArgs);
+      } catch (error) {
+        hashResult = undefined;
+      }
+      return hashResult.toString();
+    });
+
+    const injectionArgsHash: string = injectionArgsHashes.join('__');
 
     let argumentInstances: any = configInstances[injectionArgsHash];
 
