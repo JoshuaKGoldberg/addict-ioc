@@ -60,13 +60,15 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return (lazyInjectionArgs: Array<any>, lazyConfig: any): T => {
 
+      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext(registration);
+
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
       const lazyConfigUsed: any = this._mergeConfigs(config, lazyConfig);
 
       const resolvedInstance: T = this._resolve<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
 
-      this._performInvocations<T>(resolutionContext);
+      this._performInvocations<T>(lazyResolutionContext);
 
       return resolvedInstance;
     };
@@ -76,13 +78,15 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return async(lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<T> => {
 
+      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext(registration);
+
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
       const lazyConfigUsed: any = this._mergeConfigs(config, lazyConfig);
 
-      const resolvedInstance: T = await this._resolveAsync<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
+      const resolvedInstance: T = await this._resolveAsync<T>(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed);
 
-      await this._performInvocationsAsync<T>(resolutionContext);
+      await this._performInvocationsAsync<T>(lazyResolutionContext);
 
       return resolvedInstance;
     };
@@ -91,12 +95,14 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
   protected _createNewResolutionContext<T>(registration: IRegistration): IInvocationResolutionContext<T> {
     const newResolutionContext: IResolutionContext<T, IInvocationWrapper<T>> = super._createNewResolutionContext<T>(registration);
     newResolutionContext.currentResolution.invocations = {};
+    newResolutionContext.currentResolution.registration = registration;
     return newResolutionContext as IInvocationResolutionContext<T>;
   }
 
   protected _createChildResolutionContext<T>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<T>): IInvocationResolutionContext<T> {
     const newResolutionContext: IResolutionContext<T, IInvocationWrapper<T>> = super._createChildResolutionContext(registration, resolutionContext);
     newResolutionContext.currentResolution.invocations = {};
+    newResolutionContext.currentResolution.registration = registration;
     return newResolutionContext as IInvocationResolutionContext<T>;
   }
 
@@ -153,9 +159,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
       const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
 
-      if (instanceResolutionIndex === -1) {
-        throw new Error('that shouldn`t happen');
-      }
+      // if (instanceResolutionIndex === -1) {
+      //   throw new Error('that shouldn`t happen');
+      // }
 
       const instancesToInvoke: Array<string> = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
 
@@ -234,9 +240,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
       const instanceResolutionIndex: number = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
 
-      if (instanceResolutionIndex === -1) {
-        throw new Error('that shouldn`t happen');
-      }
+      // if (instanceResolutionIndex === -1) {
+      //   throw new Error('that shouldn`t happen');
+      // }
 
       const instancesToInvoke: Array<string> = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
 

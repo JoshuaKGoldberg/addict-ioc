@@ -92,7 +92,8 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                 var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
                 var lazyConfigUsed = _this._mergeConfigs(config, lazyConfig);
                 var resolvedInstance = _this._resolve(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
-                _this._performInvocations(resolutionContext);
+                var lazyResolutionContext = _this._createNewResolutionContext(registration);
+                _this._performInvocations(lazyResolutionContext);
                 return resolvedInstance;
             };
         };
@@ -100,16 +101,17 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
             var _this = this;
             if (injectionArgs === void 0) { injectionArgs = []; }
             return function (lazyInjectionArgs, lazyConfig) { return __awaiter(_this, void 0, void 0, function () {
-                var injectionArgsUsed, lazyConfigUsed, resolvedInstance;
+                var lazyResolutionContext, injectionArgsUsed, lazyConfigUsed, resolvedInstance;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
+                            lazyResolutionContext = this._createNewResolutionContext(registration);
                             injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                             lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
-                            return [4, this._resolveAsync(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed)];
+                            return [4, this._resolveAsync(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed)];
                         case 1:
                             resolvedInstance = _a.sent();
-                            return [4, this._performInvocationsAsync(resolutionContext)];
+                            return [4, this._performInvocationsAsync(lazyResolutionContext)];
                         case 2:
                             _a.sent();
                             return [2, resolvedInstance];
@@ -120,11 +122,13 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
         InvocationContainer.prototype._createNewResolutionContext = function (registration) {
             var newResolutionContext = _super.prototype._createNewResolutionContext.call(this, registration);
             newResolutionContext.currentResolution.invocations = {};
+            newResolutionContext.currentResolution.registration = registration;
             return newResolutionContext;
         };
         InvocationContainer.prototype._createChildResolutionContext = function (registration, resolutionContext) {
             var newResolutionContext = _super.prototype._createChildResolutionContext.call(this, registration, resolutionContext);
             newResolutionContext.currentResolution.invocations = {};
+            newResolutionContext.currentResolution.registration = registration;
             return newResolutionContext;
         };
         InvocationContainer.prototype._resolveDependencyAsync = function (registration, dependencyKey, resolutionContext) {
@@ -197,9 +201,6 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                             if (!(_b < calls_2.length)) return [3, 12];
                             call = calls_2[_b];
                             instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
-                            if (instanceResolutionIndex === -1) {
-                                throw new Error('that shouldn`t happen');
-                            }
                             instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
                             _c = 0, instancesToInvoke_1 = instancesToInvoke;
                             _d.label = 8;
@@ -283,9 +284,6 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                     continue;
                 }
                 var instanceResolutionIndex = resolutionContext.instanceResolutionOrder.indexOf(resolutionContext.currentResolution.id);
-                if (instanceResolutionIndex === -1) {
-                    throw new Error('that shouldn`t happen');
-                }
                 var instancesToInvoke = resolutionContext.instanceResolutionOrder.slice(0, instanceResolutionIndex + 1);
                 for (var _c = 0, instancesToInvoke_2 = instancesToInvoke; _c < instancesToInvoke_2.length; _c++) {
                     var instanceId = instancesToInvoke_2[_c];
