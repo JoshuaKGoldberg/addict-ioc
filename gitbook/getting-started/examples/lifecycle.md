@@ -12,34 +12,53 @@ That's where a lifecycle hook can make your life easier.
 
 ---
 
-When we declare a lifecycle hook `initialize` we're implicitly stating that:
+Let's assume a little complex dependency graph:
+```
+A -> B -> D -> E
+A -> C -> D
+     C -> E
+```
+
+This reads as `A has a dependency on B`, `B has a dependency on D`, and so on...
+
+The correct order of instantiation for this dependency graph (beginning with the first instantiation) would be:
+```
+E -> D -> C -> B -> A
+```
+
+When we declare the lifecycle hook `initialize` we're implicitly stating that:
 
 Many (but not necessarily all) of our classes implement a method that virtually does the same.
 
-```javascript
-import {Hello} from './hello';
-import {World} from './world';
 
+The declaration for this dependency graph looks like this:
+
+```javascript
+import {A, B, C, D, E} from './examples';
 import {InvocationContainer} from 'addict-ioc';
 
-const container = new InvocationContainer({  defaults: {
+const container = new InvocationContainer({
+  defaults: {
     conventionCalls: ['initialize'],
   },
 });
 
-container.register('MainApp', MainApp)
-  .dependencies('container');
-
-container.register('Plugin1', Hello)
-  .tags('MyPlugin');
-
-container.register('Plugin2', World)
-  .tags('MyPlugin');
+container.register('A', A)
+  .dependencies('B', 'C');
+container.register('B', B)
+  .dependencies('D');
+container.register('C', C)
+  .dependencies('D', 'E');
+container.register('D', D)
+  .dependencies('E');
+container.register('E', E);
 ```
 
-Remember that the class `MainApp` already has an `initialize`-method in which we instantiate the plugins.
+This time we used the `InvocationContainer` in order to use the lifecycle hooks.
 
-Let's add `initialize`-methods to our plugins as well.
+When we declare the lifecycle hook `initialize` we're implicitly stating that:
+
+Many (but not necessarily all) of our classes implement a method that virtually does the same.
 
 ```javascript
 export class Hello {

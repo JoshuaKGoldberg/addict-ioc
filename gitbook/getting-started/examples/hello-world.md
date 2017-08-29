@@ -66,11 +66,9 @@ container.register('World', World)
   .dependencies('Hello');
 ```
 
-As you can see we declared 'World' to have a dependency on 'Hello'.
-
 ## Instantiate the world
 
-Time for some magic! By calling `resolve` with the key `World`, we tell the IoC container to instantiate that class for us. If there are dependencies they will be resolved as well.
+Time for some magic! By calling `resolve` with the key `World`, we tell the IoC container to instantiate that class for us. If there are dependencies, they will be resolved as well.
 
 ```javascript
 // Remember we placed the log statements in the constructors?

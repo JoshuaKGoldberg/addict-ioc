@@ -404,29 +404,38 @@
 <p>What gave me a headache more than once for sure is the need to <code>initialize</code> things in the right order all over the application. Especially when things get asynchronously it can get really nasty.</p>
 <p>That&apos;s where a lifecycle hook can make your life easier.</p>
 <hr>
-<p>When we declare a lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
+<p>Let&apos;s assume a little complex dependency graph:</p>
+<pre><code>A -&gt; B -&gt; D -&gt; E
+A -&gt; C -&gt; D
+     C -&gt; E
+</code></pre><p>This reads as <code>A has a dependency on B</code>, <code>B has a dependency on D</code>, and so on...</p>
+<p>The correct order of instantiation for this dependency graph (beginning with the first instantiation) would be:</p>
+<pre><code>E -&gt; D -&gt; C -&gt; B -&gt; A
+</code></pre><p>When we declare the lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
 <p>Many (but not necessarily all) of our classes implement a method that virtually does the same.</p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> {Hello} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./hello&apos;</span>;
-<span class="hljs-keyword">import</span> {World} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./world&apos;</span>;
-
+<p>The declaration for this dependency graph looks like this:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> {A, B, C, D, E} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./examples&apos;</span>;
 <span class="hljs-keyword">import</span> {InvocationContainer} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;addict-ioc&apos;</span>;
 
-<span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> InvocationContainer({  defaults: {
+<span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> InvocationContainer({
+  defaults: {
     conventionCalls: [<span class="hljs-string">&apos;initialize&apos;</span>],
   },
 });
 
-container.register(<span class="hljs-string">&apos;MainApp&apos;</span>, MainApp)
-  .dependencies(<span class="hljs-string">&apos;container&apos;</span>);
-
-container.register(<span class="hljs-string">&apos;Plugin1&apos;</span>, Hello)
-  .tags(<span class="hljs-string">&apos;MyPlugin&apos;</span>);
-
-container.register(<span class="hljs-string">&apos;Plugin2&apos;</span>, World)
-  .tags(<span class="hljs-string">&apos;MyPlugin&apos;</span>);
+container.register(<span class="hljs-string">&apos;A&apos;</span>, A)
+  .dependencies(<span class="hljs-string">&apos;B&apos;</span>, <span class="hljs-string">&apos;C&apos;</span>);
+container.register(<span class="hljs-string">&apos;B&apos;</span>, B)
+  .dependencies(<span class="hljs-string">&apos;D&apos;</span>);
+container.register(<span class="hljs-string">&apos;C&apos;</span>, C)
+  .dependencies(<span class="hljs-string">&apos;D&apos;</span>, <span class="hljs-string">&apos;E&apos;</span>);
+container.register(<span class="hljs-string">&apos;D&apos;</span>, D)
+  .dependencies(<span class="hljs-string">&apos;E&apos;</span>);
+container.register(<span class="hljs-string">&apos;E&apos;</span>, E);
 </code></pre>
-<p>Remember that the class <code>MainApp</code> already has an <code>initialize</code>-method in which we instantiate the plugins.</p>
-<p>Let&apos;s add <code>initialize</code>-methods to our plugins as well.</p>
+<p>This time we used the <code>InvocationContainer</code> in order to use the lifecycle hooks.</p>
+<p>When we declare the lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
+<p>Many (but not necessarily all) of our classes implement a method that virtually does the same.</p>
 <pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Hello</span> </span>{
   <span class="hljs-keyword">constructor</span>() {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;Hello&apos;</span>);
@@ -519,7 +528,7 @@ container.register(<span class="hljs-string">&apos;Plugin2&apos;</span>, World)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Lifecycle","level":"1.3.3","depth":2,"next":{"title":"Application Structure","level":"1.4","depth":1,"path":"getting-started/hello-world.md","ref":"getting-started/hello-world.md","articles":[]},"previous":{"title":"Discovery","level":"1.3.2","depth":2,"path":"getting-started/examples/discovery.md","ref":"getting-started/examples/discovery.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","livereload"],"pluginsConfig":{"collapsible-menu":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"getting-started/examples/lifecycle.md","mtime":"2017-08-28T16:38:22.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-28T16:38:41.727Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Lifecycle","level":"1.3.3","depth":2,"next":{"title":"Application Structure","level":"1.4","depth":1,"path":"getting-started/hello-world.md","ref":"getting-started/hello-world.md","articles":[]},"previous":{"title":"Discovery","level":"1.3.2","depth":2,"path":"getting-started/examples/discovery.md","ref":"getting-started/examples/discovery.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","livereload"],"pluginsConfig":{"collapsible-menu":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"getting-started/examples/lifecycle.md","mtime":"2017-08-29T09:22:37.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-29T09:23:11.440Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
