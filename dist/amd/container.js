@@ -433,7 +433,6 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             var newResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
             var overwrittenDependencyKey = this._getDependencyKeyOverwritten(registration, dependencyKey);
             var dependencyRegistration = this.getRegistration(overwrittenDependencyKey);
-            newResolutionContext.currentResolution.registration = dependencyRegistration;
             if (!dependencyRegistration) {
                 throw new Error("dependency \"" + overwrittenDependencyKey + "\" of key \"" + registration.settings.key + "\" is missing");
             }
@@ -577,7 +576,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             if (!configInstances) {
                 return [];
             }
-            var injectionArgsHash = resolver.hash(injectionArgs);
+            var injectionArgsHash = this._hashInjectionArgs(injectionArgs, resolver);
             var argumentInstances = configInstances[injectionArgsHash];
             if (!argumentInstances) {
                 return [];
@@ -610,22 +609,26 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             if (!configInstances) {
                 configInstances = allInstances[configHash] = {};
             }
+            var injectionArgsHash = this._hashInjectionArgs(injectionArgs, resolver);
+            var argumentInstances = configInstances[injectionArgsHash];
+            if (!argumentInstances) {
+                argumentInstances = configInstances[injectionArgsHash] = [];
+            }
+            argumentInstances.push(instance);
+        };
+        Container.prototype._hashInjectionArgs = function (injectionArgs, resolver) {
             var injectionArgsHashes = injectionArgs.map(function (injectionArgument) {
                 var hashResult;
                 try {
                     hashResult = resolver.hash(injectionArgs);
                 }
                 catch (error) {
-                    hashResult = undefined;
+                    hashResult = '--';
                 }
                 return hashResult.toString();
             });
             var injectionArgsHash = injectionArgsHashes.join('__');
-            var argumentInstances = configInstances[injectionArgsHash];
-            if (!argumentInstances) {
-                argumentInstances = configInstances[injectionArgsHash] = [];
-            }
-            argumentInstances.push(instance);
+            return injectionArgsHash;
         };
         Container.prototype.validateDependencies2 = function () {
             var keys = [];
@@ -765,6 +768,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             var id = this._createInstanceId();
             newResolutionContext.currentResolution = {
                 id: id,
+                registration: registration,
             };
             resolutionContext.instanceLookup[id] = newResolutionContext.currentResolution;
             var ownedDependencies = registration.settings.ownedDependencies || [];

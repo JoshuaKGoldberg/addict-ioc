@@ -446,8 +446,6 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
 
     const dependencyRegistration: IRegistration = this.getRegistration(overwrittenDependencyKey);
 
-    newResolutionContext.currentResolution.registration = dependencyRegistration;
-
     if (!dependencyRegistration) {
       throw new Error(`dependency "${overwrittenDependencyKey}" of key "${registration.settings.key}" is missing`);
     }
@@ -587,7 +585,7 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
       return [];
     }
 
-    const injectionArgsHash: string = resolver.hash(injectionArgs);
+    const injectionArgsHash: string = this._hashInjectionArgs(injectionArgs, resolver);
 
     const argumentInstances: Array<any> = configInstances[injectionArgsHash];
 
@@ -637,17 +635,7 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
       configInstances = allInstances[configHash] = {};
     }
 
-    const injectionArgsHashes: Array<any> = injectionArgs.map((injectionArgument: any) => {
-      let hashResult: any;
-      try {
-        hashResult = resolver.hash(injectionArgs);
-      } catch (error) {
-        hashResult = undefined;
-      }
-      return hashResult.toString();
-    });
-
-    const injectionArgsHash: string = injectionArgsHashes.join('__');
+    const injectionArgsHash: string = this._hashInjectionArgs(injectionArgs, resolver);
 
     let argumentInstances: any = configInstances[injectionArgsHash];
 
@@ -656,6 +644,23 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
     }
 
     argumentInstances.push(instance);
+  }
+
+  private _hashInjectionArgs<T>(injectionArgs: Array<any>, resolver: IResolver<T, U>): string {
+
+    const injectionArgsHashes: Array<any> = injectionArgs.map((injectionArgument: any) => {
+      let hashResult: any;
+      try {
+        hashResult = resolver.hash(injectionArgs);
+      } catch (error) {
+        hashResult = '--';
+      }
+      return hashResult.toString();
+    });
+
+    const injectionArgsHash: string = injectionArgsHashes.join('__');
+
+    return injectionArgsHash;
   }
 
   public validateDependencies2(...keys: Array<RegistrationKey>): Array<string> {
@@ -846,6 +851,7 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
 
     newResolutionContext.currentResolution = <U> {
       id: id,
+      registration: registration,
     };
 
     resolutionContext.instanceLookup[id] = newResolutionContext.currentResolution;

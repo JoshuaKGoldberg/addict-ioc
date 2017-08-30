@@ -124,7 +124,6 @@ var InvocationContainer = (function (_super) {
     InvocationContainer.prototype._createNewResolutionContext = function (registration) {
         var newResolutionContext = _super.prototype._createNewResolutionContext.call(this, registration);
         newResolutionContext.currentResolution.invocations = {};
-        newResolutionContext.currentResolution.registration = registration;
         return newResolutionContext;
     };
     InvocationContainer.prototype._createChildResolutionContext = function (registration, resolutionContext) {
