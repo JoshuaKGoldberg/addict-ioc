@@ -101,7 +101,6 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
   protected _createChildResolutionContext<T>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<T>): IInvocationResolutionContext<T> {
     const newResolutionContext: IResolutionContext<T, IInvocationWrapper<T>> = super._createChildResolutionContext(registration, resolutionContext);
     newResolutionContext.currentResolution.invocations = {};
-    newResolutionContext.currentResolution.registration = registration;
     return newResolutionContext as IInvocationResolutionContext<T>;
   }
 

@@ -609,6 +609,7 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
     }
 
     resolutionContext.currentResolution.instance = instance;
+    resolutionContext.currentResolution.registration = registration;
     resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
 
     if (!registration.settings.isSingleton) {
@@ -655,7 +656,7 @@ export class Container<U extends IInstanceWrapper<any> = IInstanceWrapper<any>> 
       } catch (error) {
         hashResult = '--';
       }
-      return hashResult.toString();
+      return hashResult;
     });
 
     const injectionArgsHash: string = injectionArgsHashes.join('__');

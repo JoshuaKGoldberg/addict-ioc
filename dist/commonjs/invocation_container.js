@@ -129,7 +129,6 @@ var InvocationContainer = (function (_super) {
     InvocationContainer.prototype._createChildResolutionContext = function (registration, resolutionContext) {
         var newResolutionContext = _super.prototype._createChildResolutionContext.call(this, registration, resolutionContext);
         newResolutionContext.currentResolution.invocations = {};
-        newResolutionContext.currentResolution.registration = registration;
         return newResolutionContext;
     };
     InvocationContainer.prototype._resolveDependencyAsync = function (registration, dependencyKey, resolutionContext) {

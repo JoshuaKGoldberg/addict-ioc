@@ -595,6 +595,7 @@ var Container = (function (_super) {
             resolutionContext.instanceLookup = {};
         }
         resolutionContext.currentResolution.instance = instance;
+        resolutionContext.currentResolution.registration = registration;
         resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
         if (!registration.settings.isSingleton) {
             return;
@@ -628,7 +629,7 @@ var Container = (function (_super) {
             catch (error) {
                 hashResult = '--';
             }
-            return hashResult.toString();
+            return hashResult;
         });
         var injectionArgsHash = injectionArgsHashes.join('__');
         return injectionArgsHash;

@@ -592,6 +592,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                 resolutionContext.instanceLookup = {};
             }
             resolutionContext.currentResolution.instance = instance;
+            resolutionContext.currentResolution.registration = registration;
             resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
             if (!registration.settings.isSingleton) {
                 return;
@@ -625,7 +626,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                 catch (error) {
                     hashResult = '--';
                 }
-                return hashResult.toString();
+                return hashResult;
             });
             var injectionArgsHash = injectionArgsHashes.join('__');
             return injectionArgsHash;
