@@ -398,12 +398,10 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="lifecycle">Lifecycle</h1>
-<p>If you didn&apos;t look into the <a href="discovery.html">Discovery</a> give it a quick visit as we&apos;re slightly advancing what we previously did.</p>
-<h2 id="lifecycle-hooks">Lifecycle hooks</h2>
 <p>You&apos;re likely to end up with quite some classes after some time developing a project.</p>
 <p>What gave me a headache more than once for sure is the need to <code>initialize</code> things in the right order all over the application. Especially when things get asynchronously it can get really nasty.</p>
 <p>That&apos;s where a lifecycle hook can make your life easier.</p>
-<hr>
+<h2 id="the-problem">The problem</h2>
 <p>Let&apos;s assume a little complex dependency graph:</p>
 <pre><code>A -&gt; B -&gt; D -&gt; E
 A -&gt; C -&gt; D
@@ -411,9 +409,47 @@ A -&gt; C -&gt; D
 </code></pre><p>This reads as <code>A has a dependency on B</code>, <code>B has a dependency on D</code>, and so on...</p>
 <p>The correct order of instantiation for this dependency graph (beginning with the first instantiation) would be:</p>
 <pre><code>E -&gt; D -&gt; C -&gt; B -&gt; A
-</code></pre><p>When we declare the lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
-<p>Many (but not necessarily all) of our classes implement a method that virtually does the same.</p>
-<p>The declaration for this dependency graph looks like this:</p>
+</code></pre><p>In this case we might try something like this for initialization:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">D</span> </span>{
+  <span class="hljs-keyword">constructor</span>(e) {
+    <span class="hljs-keyword">this</span>.e = e;
+  }
+  initialize() {
+    <span class="hljs-keyword">this</span>.e.initialize();
+  }
+}
+</code></pre>
+<p>Looks fine you say? Ok, but then we might do this as well:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">C</span> </span>{
+  <span class="hljs-keyword">constructor</span>(d, e) {
+    <span class="hljs-keyword">this</span>.d = d;
+    <span class="hljs-keyword">this</span>.e = e;
+  }
+  initialize() {
+    <span class="hljs-keyword">this</span>.d.initialize();
+    <span class="hljs-keyword">this</span>.e.initialize();
+  }
+}
+</code></pre>
+<p>Now we&apos;ve got a problem.</p>
+<p><code>C</code> should not be aware of <code>D</code> also having a dependency on <code>E</code>.</p>
+<p>Because of that it naively calls <code>initialize</code> on both of its dependencies. As a result the <code>initialize</code> method of <code>E</code> would be called twice in this example. There can occur numerous side effects in scenarios like this, for example:</p>
+<ul>
+<li>multiple connection attempts on the same ressource<ul>
+<li>possibly ghost connections that are not closed as a result of that</li>
+</ul>
+</li>
+<li>dead locks in case of unintentional promise calls</li>
+<li>broken state in classes where only a single method call is expected</li>
+</ul>
+<h2 id="lifecycle-hooks">Lifecycle Hooks</h2>
+<p>When we declare the lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
+<ul>
+<li>any class can have an <code>initialize</code> method - it is not mandatory to have one though</li>
+<li>all the <code>initialize</code> methods virtually have the same purpose</li>
+<li><code>initialize</code> methods must return a promise if they do asynchronous stuff</li>
+</ul>
+<p>The declaration for the aforementioned dependency graph looks like this:</p>
 <pre><code class="lang-javascript"><span class="hljs-keyword">import</span> {A, B, C, D, E} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;./examples&apos;</span>;
 <span class="hljs-keyword">import</span> {InvocationContainer} <span class="hljs-keyword">from</span> <span class="hljs-string">&apos;addict-ioc&apos;</span>;
 
@@ -433,58 +469,75 @@ container.register(<span class="hljs-string">&apos;D&apos;</span>, D)
   .dependencies(<span class="hljs-string">&apos;E&apos;</span>);
 container.register(<span class="hljs-string">&apos;E&apos;</span>, E);
 </code></pre>
-<p>This time we used the <code>InvocationContainer</code> in order to use the lifecycle hooks.</p>
-<p>When we declare the lifecycle hook <code>initialize</code> we&apos;re implicitly stating that:</p>
-<p>Many (but not necessarily all) of our classes implement a method that virtually does the same.</p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Hello</span> </span>{
+<p>Instead of the <code>Container</code>, this time we use the <code>InvocationContainer</code> from addict-ioc.</p>
+<p>The basic <code>Container</code> does not provide lifecycle hooks.</p>
+<p>The <code>InvocationContainer</code> extends the <code>Container</code> and adds that functionality.</p>
+<p>We can configure our lifecycle hooks by using the <code>conventionCalls</code> property in the config we provide to the <code>InvocationContainer</code>. The order in which you specify the lifecycle hooks in <code>conventionCalls</code> will be the order in which they are executed.</p>
+<p>Lifecycle Hooks are like phases that are sequentially executed after class instantiation.</p>
+<p>Let&apos;s pretend every class of our dependency tree looks like this:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span> </span>{
   <span class="hljs-keyword">constructor</span>() {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;Hello&apos;</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;constructor A&apos;</span>);
   }
   initialize() {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;initialize Hello&apos;</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;initialize A&apos;</span>);
   }
 }
 </code></pre>
-<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">World</span> </span>{
-  <span class="hljs-keyword">constructor</span>() {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;World&apos;</span>);
+<p>Now that we&apos;re using the <code>InvocationContainer</code> we don&apos;t need to call any <code>initialize</code> method ourselves.</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> instanceA = container.resolve(<span class="hljs-string">&apos;A&apos;</span>);
+<span class="hljs-comment">// constructor E</span>
+<span class="hljs-comment">// constructor D</span>
+<span class="hljs-comment">// constructor C</span>
+<span class="hljs-comment">// constructor B</span>
+<span class="hljs-comment">// constructor A</span>
+<span class="hljs-comment">// -------------</span>
+<span class="hljs-comment">// initialize E</span>
+<span class="hljs-comment">// initialize D</span>
+<span class="hljs-comment">// initialize C</span>
+<span class="hljs-comment">// initialize B</span>
+<span class="hljs-comment">// initialize A</span>
+</code></pre>
+<p>After the <code>InvocationContainer</code> created our classes it called the <code>initialize</code> method on every class instantiated <strong>in the correct order</strong>.</p>
+<p>The <code>InvocationContainer</code> guarantees that before <code>initialize</code> is called on a class, it was successfully called and finished on all instances it has a dependency on.</p>
+<h2 id="asynchronous-lifecycle-hooks">Asynchronous Lifecycle Hooks</h2>
+<p>In our previous example the <code>initialize</code> methods were implemented synchronously. That was rather easy.</p>
+<p>Let&apos;s return a promise in one of the <code>initialize</code> methods to see how it works asynchronously:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">D</span> </span>{
+  <span class="hljs-keyword">constructor</span>(e) {
+    <span class="hljs-keyword">this</span>.e = e;
   }
   initialize() {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&apos;initialize World&apos;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>((resolve, reject) =&gt; {
+      setTimeout(() =&gt; {
+        resolve();
+      }, <span class="hljs-number">2000</span>);
+    });
   }
 }
 </code></pre>
-<p>Normally if we wanted out <code>initialize</code>-methods to be called, we would have to take care of that ourselves.</p>
-<p>But now the <code>InvocationContainer</code> can take care of that for us. So we can remove the manual <code>initialize</code>-call we used in our <code>MainApp</code>.</p>
-<pre><code class="lang-javascript"><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainApp</span> </span>{
-
-  private container;
-
-  <span class="hljs-keyword">constructor</span>(container) {
-    <span class="hljs-keyword">this</span>.container = container;
-  }
-
-  initialize() {
-
-    <span class="hljs-keyword">const</span> pluginKeys = <span class="hljs-keyword">this</span>.container.getKeysByTags(<span class="hljs-string">&apos;MyPlugin&apos;</span>);
-
-    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> pluginKey <span class="hljs-keyword">of</span> pluginKeys) {
-
-      <span class="hljs-keyword">const</span> pluginInstance = <span class="hljs-keyword">this</span>.container.resolve(pluginKey);
-
-      <span class="hljs-comment">// we don&apos;t need to call this anymore</span>
-      <span class="hljs-comment">// pluginInstance.initialize();</span>
-    }
-  }
-}
+<p>If we now try the same as before using <code>container.resolve()</code> it won&apos;t work properly.</p>
+<p>Instead we have to use <code>container.resolveAsync()</code>. The reason for that is that we need to retrieve a promise for our asynchronous operation.</p>
+<p>One promise in any <code>initialize</code> method of our dependency graph is enough to require the whole dependency graph to be asynchronous by definition - and therefore use <code>container.resolveAsync()</code>.</p>
+<p>That does not mean you have to return a promise in every <code>initialize</code> method though, you just have the freedom to do it whenever you need to.</p>
+<p>Let&apos;s put that knowledge to use:</p>
+<pre><code class="lang-javascript">container.resolveAsync(<span class="hljs-string">&apos;A&apos;</span>)
+  .then((instanceA) =&gt; {
+    <span class="hljs-comment">// constructor E</span>
+    <span class="hljs-comment">// constructor D</span>
+    <span class="hljs-comment">// constructor C</span>
+    <span class="hljs-comment">// constructor B</span>
+    <span class="hljs-comment">// constructor A</span>
+    <span class="hljs-comment">// -------------</span>
+    <span class="hljs-comment">// initialize E</span>
+    <span class="hljs-comment">// initialize D</span>
+    <span class="hljs-comment">// (waits 2 seconds)</span>
+    <span class="hljs-comment">// initialize C</span>
+    <span class="hljs-comment">// initialize B</span>
+    <span class="hljs-comment">// initialize A</span>
+  });
 </code></pre>
-<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> mainApp = container.resolve(<span class="hljs-string">&apos;MainApp&apos;</span>);
-<span class="hljs-comment">// Hello</span>
-<span class="hljs-comment">// World</span>
-<span class="hljs-comment">// initialize Hello</span>
-<span class="hljs-comment">// initialize World</span>
-</code></pre>
-<p>Not only has the <code>InvocationContainer</code> called <code>initialize</code> on our <code>MainApp</code>. It also called <code>initialize</code> in the order of the dependency tree on all classes instantiated by the <code>InvocationContainer</code>.</p>
+<p>This can save you hours (even days) of frustration and gives you much cleaner code to work with.</p>
 
                                 
                                 </section>
@@ -528,7 +581,7 @@ container.register(<span class="hljs-string">&apos;E&apos;</span>, E);
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Lifecycle","level":"1.3.3","depth":2,"next":{"title":"Application Structure","level":"1.4","depth":1,"path":"getting-started/hello-world.md","ref":"getting-started/hello-world.md","articles":[]},"previous":{"title":"Discovery","level":"1.3.2","depth":2,"path":"getting-started/examples/discovery.md","ref":"getting-started/examples/discovery.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","livereload"],"pluginsConfig":{"collapsible-menu":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"getting-started/examples/lifecycle.md","mtime":"2017-08-29T09:22:37.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-08-29T09:23:11.440Z"},"basePath":"../..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Lifecycle","level":"1.3.3","depth":2,"next":{"title":"Application Structure","level":"1.4","depth":1,"path":"getting-started/hello-world.md","ref":"getting-started/hello-world.md","articles":[]},"previous":{"title":"Discovery","level":"1.3.2","depth":2,"path":"getting-started/examples/discovery.md","ref":"getting-started/examples/discovery.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["collapsible-menu","livereload"],"pluginsConfig":{"collapsible-menu":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"getting-started/examples/lifecycle.md","mtime":"2017-09-01T16:45:19.000Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2017-09-01T13:21:07.883Z"},"basePath":"../..","book":{"language":""}});
         });
     </script>
 </div>
