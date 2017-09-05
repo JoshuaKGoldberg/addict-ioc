@@ -1,7 +1,7 @@
 import { IContainer, IInstanceWrapper, IRegistration, IRegistrationSettings, IResolver, ITypeRegistration, Type, TypeConfig } from './interfaces';
 import {getPropertyDescriptor} from './utils';
 
-export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, U> {
+export class Resolver<TType, TInstanceWrapper extends IInstanceWrapper<TType>> implements IResolver<TType, TInstanceWrapper> {
 
   public hash(anything: any): string {
     // if (typeof anything === 'undefined' || anything === null || Array.isArray(anything)) {
@@ -13,15 +13,15 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return JSON.stringify(anything);
   }
 
-  public hashType<V extends T = T>(type: Type<V>): string {
+  public hashType<TExtendedType extends TType = TType>(type: Type<TExtendedType>): string {
     return this.hash(type);
   }
 
-  public hashObject<V extends T = T>(object: V): string {
+  public hashObject<TExtendedType extends TType = TType>(object: TExtendedType): string {
     return this.hash(object);
   }
 
-  public hashFactory<V extends T = T>(factory: V): string {
+  public hashFactory<TExtendedType extends TType = TType>(factory: TExtendedType): string {
     return this.hash(factory);
   }
 
@@ -29,11 +29,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return this.hash(config);
   }
 
-  public resolveType<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Type<V> {
+  public resolveType<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: ITypeRegistration<TExtendedType>): Type<TExtendedType> {
     return registration.settings.type;
   }
 
-  public async resolveTypeAsync<V extends T = T>(container: IContainer<U>, registration: ITypeRegistration<V>): Promise<Type<V>> {
+  public async resolveTypeAsync<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: ITypeRegistration<TExtendedType>): Promise<Type<TExtendedType>> {
     if (registration.settings.module) {
       const module: any = await import(registration.settings.module);
       return module[registration.settings.key];
@@ -41,11 +41,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return registration.settings.type;
   }
 
-  public resolveObject(container: IContainer<U>, registration: IRegistration): any {
+  public resolveObject<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: IRegistration): TExtendedType {
     return registration.settings.object;
   }
 
-  public async resolveObjectAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
+  public async resolveObjectAsync<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: IRegistration): Promise<TExtendedType> {
     if (registration.settings.module) {
       const module: any = await import(registration.settings.module);
       return module[registration.settings.key];
@@ -53,11 +53,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return registration.settings.object;
   }
 
-  public resolveFactory(container: IContainer<U>, registration: IRegistration): any {
+  public resolveFactory<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: IRegistration): TExtendedType {
     return registration.settings.factory;
   }
 
-  public async resolveFactoryAsync(container: IContainer<U>, registration: IRegistration): Promise<any> {
+  public async resolveFactoryAsync<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, registration: IRegistration): Promise<TExtendedType> {
     if (registration.settings.module) {
       const module: any = await import(registration.settings.module);
       return module[registration.settings.key];
@@ -86,11 +86,11 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     instance.config = config;
   }
 
-  public createObject<V extends T = T>(container: IContainer<U>, object: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
-    return this._createObject<V>(object, registration, dependencies, injectionArgs);
+  public createObject<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, object: TExtendedType, registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs?: Array<any>): TExtendedType {
+    return this._createObject<TExtendedType>(object, registration, dependencies, injectionArgs);
   }
 
-  protected _createObject<V extends T = T>(object: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+  protected _createObject<TExtendedType extends TType = TType>(object: TExtendedType, registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs?: Array<any>): TExtendedType {
 
     const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
@@ -101,19 +101,19 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return object;
   }
 
-  public createFactory<V extends T = T>(container: IContainer<U>, type: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+  public createFactory<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, type: TExtendedType, registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs?: Array<any>): TExtendedType {
     return this._createFactory(registration, dependencies, injectionArgs);
   }
 
-  protected _createFactory<V extends T = T>(registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+  protected _createFactory<TExtendedType extends TType = TType>(registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs?: Array<any>): TExtendedType {
 
     const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && !registration.settings.injectInto && injectionArgs.length > 0) {
-      return this._createInstanceByFactoryWithInjection<V>(registration.settings.factory, argumentsToBeInjected);
+      return this._createInstanceByFactoryWithInjection<TExtendedType>(registration.settings.factory, argumentsToBeInjected);
     }
 
-    const instance: V = this._createInstanceByFactory<V>(registration.settings.factory);
+    const instance: TExtendedType = this._createInstanceByFactory<TExtendedType>(registration.settings.factory);
 
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
@@ -122,19 +122,19 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return instance;
   }
 
-  public createInstance<V extends T = T>(container: IContainer<U>, type: V, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs?: Array<any>): V {
+  public createInstance<TExtendedType extends TType = TType>(container: IContainer<TInstanceWrapper>, type: TExtendedType, registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs?: Array<any>): TExtendedType {
     return this._createInstance(type, registration, dependencies, injectionArgs);
   }
 
-  protected _createInstance<V extends T = T>(type: any, registration: ITypeRegistration<V>, dependencies: Array<any>, injectionArgs: Array<any>): V {
+  protected _createInstance<TExtendedType extends TType = TType>(type: any, registration: ITypeRegistration<TExtendedType>, dependencies: Array<any>, injectionArgs: Array<any>): TExtendedType {
 
     const argumentsToBeInjected: Array<any> = dependencies.concat(injectionArgs);
 
     if (registration.settings.wantsInjection && !registration.settings.injectInto && argumentsToBeInjected.length > 0) {
-      return this._createInstanceByConstructorWithInjection<V>(type, argumentsToBeInjected);
+      return this._createInstanceByConstructorWithInjection<TExtendedType>(type, argumentsToBeInjected);
     }
 
-    const instance: V = this._createInstanceByConstructor<V>(type);
+    const instance: TExtendedType = this._createInstanceByConstructor<TExtendedType>(type);
 
     if (registration.settings.wantsInjection && typeof registration.settings.injectInto === 'string') {
       this._injectDependenciesIntoInstance(registration.settings, instance, argumentsToBeInjected);
@@ -143,23 +143,23 @@ export class Resolver<T, U extends IInstanceWrapper<T>> implements IResolver<T, 
     return instance;
   }
 
-  protected _createInstanceByFactory<V extends T = T>(factoryFunction: any): V {
-    const instance: V = factoryFunction();
+  protected _createInstanceByFactory<TExtendedType extends TType = TType>(factoryFunction: any): TExtendedType {
+    const instance: TExtendedType = factoryFunction();
     return instance;
   }
 
-  protected _createInstanceByFactoryWithInjection<V extends T = T>(factoryFunction: any, argumentsToBeInjected: Array<any>): V {
-    const instance: V = factoryFunction.apply(undefined, argumentsToBeInjected);
+  protected _createInstanceByFactoryWithInjection<TExtendedType extends TType = TType>(factoryFunction: any, argumentsToBeInjected: Array<any>): TExtendedType {
+    const instance: TExtendedType = factoryFunction.apply(undefined, argumentsToBeInjected);
     return instance;
   }
 
-  protected _createInstanceByConstructor<V extends T = T>(type: Type<V>): V {
-    const instance: V = new type();
+  protected _createInstanceByConstructor<TExtendedType extends TType = TType>(type: Type<TExtendedType>): TExtendedType {
+    const instance: TExtendedType = new type();
     return instance;
   }
 
-  protected _createInstanceByConstructorWithInjection<V extends T = T>(type: Type<V>, argumentsToBeInjected: Array<any>): V {
-    const instance: V = new type(...argumentsToBeInjected);
+  protected _createInstanceByConstructorWithInjection<TExtendedType extends TType = TType>(type: Type<TExtendedType>, argumentsToBeInjected: Array<any>): TExtendedType {
+    const instance: TExtendedType = new type(...argumentsToBeInjected);
     return instance;
   }
 

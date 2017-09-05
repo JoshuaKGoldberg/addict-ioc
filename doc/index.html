@@ -1,0 +1,746 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>addict-ioc-docs</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">addict-ioc-docs</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> addict-ioc-docs</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p><img src="https://raw.githubusercontent.com/5minds/addict-ioc/master/logo.png" alt="logo"></p>
+				<p>Addict IoC is a lightweight IoC container with a fluent declaration syntax easing your development and simplifying your code.</p>
+				<p>It is designed to be easily extensible for your own needs without complicating the architecture by abstractions.</p>
+				<p><a href="https://jenkins.mindassist.net/job/Addict.IoC"><img src="http://jenkins.mindassist.net/buildStatus/icon?job=Addict.IoC" alt="Build Status"></a></p>
+				<h1 id="features">Features</h1>
+				<pre><code>* Fluent declaration syntax
+* Fully covered by unit tests
+* Written <span class="hljs-keyword">in</span> vanilla ES6 JavaScript - now ported <span class="hljs-keyword">to</span> TypeScript
+  * Lightweight
+  * Well structured, easily understandable code
+  * Without external dependencies
+  * Typings included
+* Dependency Injection into
+  * Constructor
+  * Properties
+  * Methods
+*<span class="hljs-built_in"> Discovery </span>by tags <span class="hljs-keyword">and</span> key/value matching
+* Singleton <span class="hljs-keyword">or</span> transient instantiation
+* Injection with lazy instantiation
+* Support <span class="hljs-keyword">for</span> factory functions
+* Circular dependency detection
+* Configuration injection
+* Subscribe <span class="hljs-keyword">to</span> instances created before they <span class="hljs-builtin-name">get</span> injected
+* Optional auto-bind methods (e.g.: EventHandler) <span class="hljs-keyword">to</span><span class="hljs-built_in"> instance
+</span>* Validation of registered dependencies
+* Supports<span class="hljs-built_in"> service </span>locator pattern
+</code></pre><h1 id="basic-usage">Basic Usage</h1>
+				<h2 id="import-package">Import Package</h2>
+				<p>The package exports a the container class under the key <code>DependencyInjectionContainer</code>. Ideally you want to instantiate the container only a single time to be used all over your application.</p>
+				<p>If you<code>re using the</code>commonjs` module system this looks like the following:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> DependencyInjectionContainer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'addict-ioc'</span>).DependencyInjectionContainer;
+
+<span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> DependencyInjectionContainer();
+</code></pre>
+				<p>If you´re using the <code>es6</code> module system it looks like this:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> { DependencyInjectionContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'addict-ioc'</span>);
+
+<span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> DependencyInjectionContainer();
+</code></pre>
+				<h2 id="customizing-default-settings">Customizing Default settings</h2>
+				<p>All of the following settings are there for you without the need to set them manually.</p>
+				<p>You only need to do this if you want to customize the default settings.</p>
+				<p>The following example shows how you can override the default settings if needed and what the default settings are.</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> DependencyInjectionContainer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'addict-ioc'</span>).DependencyInjectionContainer;
+
+<span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> DependencyInjectionContainer();
+
+container.setDefaults({
+  <span class="hljs-attr">isSingleton</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">wantsInjection</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-attr">isLazy</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">bindFunctions</span>: <span class="hljs-literal">false</span>,
+  <span class="hljs-attr">autoCreateMissingSubscribers</span>: <span class="hljs-literal">true</span>
+});
+</code></pre>
+				<h2 id="dependency-injection">Dependency Injection</h2>
+				<p>For a regular dependency injection you just need to register one or more classes on the container. As soon as a class is registered, it can be referenced within another registrations <code>dependencies</code> declaration. When a class registered with dependencies gets instantiated by the container, its dependencies are injected into the constructor by default.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeUserRepository</span> </span>{}
+
+container.register(<span class="hljs-string">'UserRepo'</span>, SomeUserRepository);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeEmailService</span> </span>{}
+
+container.register(<span class="hljs-string">'EmailService'</span>, SomeEmailService);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUserNotifier</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(userRepository, emailService) {
+    <span class="hljs-keyword">this</span>._userRepository = userRepository;
+    <span class="hljs-keyword">this</span>._emailService = emailService;
+  }
+}
+
+container.register(<span class="hljs-string">'UserNotifier'</span>, MyUserNotifier)
+  .dependencies(<span class="hljs-string">'UserRepo'</span>, <span class="hljs-string">'EmailService'</span>);
+
+<span class="hljs-keyword">const</span> myUserNotifierInstance = container.resolve(<span class="hljs-string">'UserNotifier'</span>);
+<span class="hljs-comment">// now the constructor has been called with the two dependency instances</span>
+<span class="hljs-comment">// the instances of 'First' and 'Second' are created before the 'Third' instance</span>
+</code></pre>
+				<h1 id="advanced-usage">Advanced Usage</h1>
+				<h2 id="patterns">Patterns</h2>
+				<h3 id="ioc-module">IoC Module</h3>
+				<p>Since the IoC container is used to decouple your application, it is not favorable to use the container all over your application by directly referencing it via an import.</p>
+				<p>Consider the following example of the file test_class.js as an <code>ANTI</code>-pattern:</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> container = <span class="hljs-built_in">require</span>(<span class="hljs-string">'addict-ioc'</span>);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUserRepository</span> </span>{
+<span class="hljs-comment">// ...</span>
+}
+
+container.register(<span class="hljs-string">'UserRepo'</span>, MyUserRepository);
+
+<span class="hljs-built_in">module</span>.exports = MyUserRepository;
+</code></pre>
+				<p>Let&#39;s consider a more modular approach where your application consists of several self-contained modules. Each of the modules should know how the dependencies of its inner classes interact and which external dependencies it has.</p>
+				<p>Now if we take a closer look at those external dependencies, the self-contained module needs a way to reference its external dependencies so that the external dependency itself can load its dependencies the same way (yep we&#39;re building a dependency tree here).</p>
+				<p>The easiest way to achieve this is to let each self-contained module expose a function that takes the container instance used for registration as a parameter and registers all dependencies on that instance.</p>
+				<pre><code class="lang-javascript"><span class="hljs-comment">// modules/user/ioc_module.js</span>
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">registerInContainer</span>(<span class="hljs-params">container</span>) </span>{
+
+  <span class="hljs-keyword">const</span> ItemIocModule = <span class="hljs-built_in">require</span>(<span class="hljs-string">'item/ioc_module'</span>);
+
+  ItemIocModule.registerInContainer(container);
+
+
+  container.register(<span class="hljs-string">'UserRepo'</span>)
+    .singleton();
+
+  container.register(<span class="hljs-string">'UserService'</span>)
+    .dependencies(<span class="hljs-string">'UserRepo'</span>, <span class="hljs-string">'ItemService'</span>)
+    .singleton();
+
+}
+
+<span class="hljs-built_in">module</span>.exports.registerInContainer = registerInContainer;
+</code></pre>
+				<p>The following folder structure shows how functional modules can consist of several layers, in this case <code>service</code> and <code>repository</code> layers. Every module defines its dependencies via an <code>ioc_module.js</code> and can reference other modules&#39; ioc modules as well like in the above example.</p>
+				<pre><code>modules/
+  user/
+    modules/
+      user_service/
+        <span class="hljs-class"><span class="hljs-keyword">lib</span>/</span>
+          user_service.js
+      user_repository/
+        <span class="hljs-class"><span class="hljs-keyword">lib</span>/</span>
+          user_repository.js
+    index.js
+    ioc_module.js
+    package.json
+  item/
+    modules/
+      ...
+    index.js
+    ioc_module.js
+    package.json
+index.js
+ioc_module.js
+package.json
+<span class="hljs-string">`</span>
+</code></pre><h2 id="registration">Registration</h2>
+				<p>The registration is the entry point to declare settings for a type registration on the container.</p>
+				<p>The <code>register</code> method is used to register classes on the container and creates a registration object on which other fluent methods are available to further specify the registration. If it somehow is missing before a fluent declaration, an error will be thrown.</p>
+				<p><em>Note: The IoC container registers itself to the key <code>container</code> by default. You can adjust this by setting <code>container.config.injectContainerKey</code> to whatever key you&#39;d like and calling the method <code>clear</code> afterwards (this also clears all registrations so you best do it before registering your components).</em></p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUserRepository</span> </span>{}
+
+container.register(<span class="hljs-string">'UserRepo'</span>, MyUserRepository);
+</code></pre>
+				<h3 id="as-factory-functions">As Factory Functions</h3>
+				<p>The method <code>registerFactory</code> is used to register a factory function instead of an ES6 class as the instantiation point for a given key.</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> factory = <span class="hljs-function">(<span class="hljs-params">something</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> {
+    <span class="hljs-attr">logIt</span>: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-built_in">console</span>.log(something);
+    }
+  }
+}
+
+container.registerFactory(<span class="hljs-string">'factoryKey'</span>, factory);
+</code></pre>
+				<h3 id="as-static-object">As Static Object</h3>
+				<p>In cases where you don&#39;t need the container to instantiate something, e.g. when you use an external singleton instance or decide to create the instance yourself, you can register the resulting object directly to the container.</p>
+				<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> object = {
+  <span class="hljs-string">'this-could-be'</span>: <span class="hljs-string">'virtually-anything'</span>
+}
+
+container.registerObject(<span class="hljs-string">'objectKey'</span>, object);
+</code></pre>
+				<h2 id="discovery">Discovery</h2>
+				<p>Since our main goals when using an IoC container are to decouple our applications components and establish clear patterns in our architecture, we should embrace that thought and use extension points in our application.</p>
+				<p>In this case extension points mean we have a component that uses the container to instantiate other components itself. Now if we want to decouple such a component from the components it instantiates, we need some kind of discovery, because otherwise we would need to reference those components the old fashioned way.</p>
+				<p>So for the discovery to work we need something to discover things by. Names would be one option, but not a very specific one and therefore likely to produce errors. The IoC container offers a fluent declaration to attach <code>tags</code> to registrations. These tags are just strings, but they are solely used for discovery and will not get mixed with registration keys.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RedisImplementation</span> </span>{}
+
+container.registerObject(<span class="hljs-string">'Redis'</span>, RedisImplementation)
+  .tags(<span class="hljs-string">'caching'</span>);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MemcachedImplementation</span> </span>{}
+
+container.registerObject(<span class="hljs-string">'Memcached'</span>, MemcachedImplementation)
+  .tags(<span class="hljs-string">'caching'</span>);
+</code></pre>
+				<p>Both of our test classes are tagged with the same string <code>caching</code>. Now let&#39;s take a look at how to discover them:</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-keyword">const</span> discoveredKeys = container.getKeysByTags(<span class="hljs-string">'caching'</span>);
+
+<span class="hljs-built_in">console</span>.log(discoveredKeys);
+<span class="hljs-comment">// 'RedisImplementation'</span>
+<span class="hljs-comment">// 'MemcachedImplementation'</span>
+</code></pre>
+				<p>By calling the <code>getKeysByTags</code>-method we can retrieve all keys tagged with what we are looking for.</p>
+				<p>Another example of this would be an express API that can discover router implementations this way, instantiate them and hook them up to the API.</p>
+				<h3 id="attributes">Attributes</h3>
+				<p>For advanced discovery scenarios you can also use tags as key/value stores that can be used to match against.</p>
+				<p>With the fluent declaration <code>setAttribute</code> you can assign values to tags. On the container you can use the <code>getKeysByAttributes</code>-method to retrieve all keys that match the attributes object you supply.</p>
+				<p>Values can be any object and will be matched for full equality (===) by default.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyGenericRouter</span> </span>{}
+
+container.register(<span class="hljs-string">'Router'</span>, MyGenericRouter)
+  .setAttribute(<span class="hljs-string">'someTag'</span>, <span class="hljs-string">'someValue'</span>)
+  .setAttribute(<span class="hljs-string">'someOtherTag'</span>, {
+    <span class="hljs-string">'some-complex'</span>: <span class="hljs-string">'value'</span>
+  });
+
+container.getKeysByAttributes({
+  <span class="hljs-attr">someTag</span>: <span class="hljs-string">'someValue'</span>
+});
+<span class="hljs-comment">// ['Router']</span>
+
+container.getKeysByAttributes({
+  <span class="hljs-attr">someTag</span>: <span class="hljs-string">'someValue'</span>,
+  <span class="hljs-attr">someOtherTag</span>: {
+    <span class="hljs-string">'some-complex'</span>: <span class="hljs-string">'value'</span>
+  }
+});
+<span class="hljs-comment">// ['Router']</span>
+
+container.getKeysByAttributes({
+  <span class="hljs-attr">aMissingTag</span>: <span class="hljs-string">'this-will-not-match'</span>,
+  <span class="hljs-attr">someOtherTag</span>: {
+    <span class="hljs-string">'some-complex'</span>: <span class="hljs-string">'value'</span>
+  }
+});
+<span class="hljs-comment">// []</span>
+</code></pre>
+				<p>As mentioned before the fluent declaration <code>setAttribute</code> uses tags to store the values used for matching.
+				That means you can not only match against attributes with the method <code>getKeysByAttributes</code>, but also with the method <code>getKeysByTags</code>. It only matches the names of the tags, not their values.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyCustomCurrencyType</span> </span>{}
+
+container.register(<span class="hljs-string">'CurrencyType'</span>, MyCustomCurrencyType)
+  .setAttribute(<span class="hljs-string">'someTag'</span>, <span class="hljs-string">'someValue'</span>)
+  .setAttribute(<span class="hljs-string">'someOtherTag'</span>, {
+    <span class="hljs-string">'some-complex'</span>: <span class="hljs-string">'value'</span>
+  });
+
+container.getKeysByTags(<span class="hljs-string">'someTag'</span>);
+<span class="hljs-comment">// ['CurrencyType']</span>
+
+container.getKeysByTags(<span class="hljs-string">'someTag'</span>, <span class="hljs-string">'someOtherTag'</span>);
+<span class="hljs-comment">// ['CurrencyType']</span>
+
+container.getKeysByTags(<span class="hljs-string">'someMissingTag'</span>, <span class="hljs-string">'someTag'</span>);
+<span class="hljs-comment">// []</span>
+</code></pre>
+				<h2 id="dependencies">Dependencies</h2>
+				<p>The <code>dependencies</code> declaration adds dependencies that have to be resolved before the registered class gets instantiated.</p>
+				<pre><code class="lang-javascript">
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeUserRepository</span> </span>{}
+
+container.register(<span class="hljs-string">'UserRepo'</span>, SomeUserRepository);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeEmailService</span> </span>{}
+
+container.register(<span class="hljs-string">'EmailService'</span>, SomeEmailService);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyUserNotifier</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(userRepository, emailService) {
+    <span class="hljs-keyword">this</span>._userRepository = userRepository;
+    <span class="hljs-keyword">this</span>._emailService = emailService;
+  }
+}
+
+container.register(<span class="hljs-string">'UserNotifier'</span>, MyUserNotifier)
+  .dependencies(<span class="hljs-string">'UserRepo'</span>, <span class="hljs-string">'EmailService'</span>);
+</code></pre>
+				<h3 id="overwrite">Overwrite</h3>
+				<p>In special cases you might want to overwrite a registration without side effects to other registrations. For this scenario the IoC container offers the fluent declaration <code>overwrite</code>. You can use this multiple times on the same registration, once for every overwritten key. If you overwrite a key that means that if a dependency with the key you overwrite is to be resolved, instead of taking the original key to resolve the dependency, the overwritten key is used.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyEmailValidator</span> </span>{}
+
+container.register(<span class="hljs-string">'EmailValidation'</span>, MyEmailValidator);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyMuchBetterEmailValidator</span> </span>{}
+
+container.register(<span class="hljs-string">'BetterEmailValidation'</span>, MyMuchBetterEmailValidator);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyEmailService</span> </span>{}
+
+container.register(<span class="hljs-string">'EmailService'</span>, MyEmailService)
+  .dependencies(<span class="hljs-string">'EmailValidation'</span>)
+  .overwrite(<span class="hljs-string">'EmailValidation'</span>, <span class="hljs-string">'BetterEmailValidation'</span>);
+</code></pre>
+				<p>In this example you can see that we have declared the dependency on <code>EmailValidation</code>, but overwrite it with <code>BetterEmailValidation</code>. So when <code>EmailService</code> is instantiated, no instance of <code>MyEmailValidator</code> gets instantiated as a dependency. Currently this only applies to dependencies directly declared on the registration containing the overwritten keys. In the future this might be extended to support the <code>overwrite</code>-feature for the whole dependency tree.</p>
+				<h2 id="multiplicity">Multiplicity</h2>
+				<p>The <code>singleton</code> declaration determines whether the container instantiates a registered class once or every time it is requested.</p>
+				<h3 id="transient">Transient</h3>
+				<p>By default registrations are transient, causing any <code>dependencies</code> referencing the class to get a <em><code>new instance</code></em> injected. A <code>lazy</code> dependency and the service locater (<code>resolve</code>) will also return a <em><code>new instance</code></em> every time they are called.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+  <span class="hljs-comment">//.singleton(false); this can be configured explicitly as well</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(something, alsoSomething) {
+    <span class="hljs-built_in">console</span>.log(something === alsoSomething); <span class="hljs-comment">// "false"</span>
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>, <span class="hljs-string">'SomeClassKey'</span>);
+</code></pre>
+				<h3 id="singleton">Singleton</h3>
+				<p>The <code>singleton</code> declaration causes any <code>dependencies</code> referencing the class declared singleton to get the <em><code>same instance</code></em> injected. A <code>lazy</code> dependency and the service locater (<code>resolve</code>) will also return the <em><code>same instance</code></em> every time they are called.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass)
+  .singleton();
+  <span class="hljs-comment">//.singleton(true); this can be configured explicitly as well</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(something, alsoSomething) {
+    <span class="hljs-built_in">console</span>.log(something === alsoSomething); <span class="hljs-comment">// "true"</span>
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>, <span class="hljs-string">'SomeClassKey'</span>);
+</code></pre>
+				<h2 id="bind-functions-to-instance">Bind Functions to Instance</h2>
+				<p>When you want to use a class instance as an event handler you might notice that by default ES6 class functions have no bound this context when referencing them. So if you want to use them like in the following example, you&#39;ll get an error because <code>this</code> is undefined.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestType</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {
+    <span class="hljs-keyword">this</span>.testString = <span class="hljs-string">'this-is-a-test'</span>;
+  }
+  testMethod() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.testString);
+  }
+};
+
+<span class="hljs-keyword">const</span> testType = <span class="hljs-keyword">new</span> TestType();
+
+<span class="hljs-keyword">const</span> testFunction = <span class="hljs-function">(<span class="hljs-params">handlerFunction</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> handlerFunction();
+};
+
+testFunction(testType.testMethod);
+<span class="hljs-comment">// TypeError: Cannot read property 'testString' of undefined</span>
+</code></pre>
+				<p>This is a common problem when passing handler functions. Normally you would simply alter the previous example.</p>
+				<pre><code class="lang-javascript">testFunction(testType.testMethod.bind(testType));
+</code></pre>
+				<p>But if you got multiple of these it can be quite cumbersome to do this for every handler function. The IoC container exposes the fluent declaration <code>bindFunctions</code> to help out with this. If called <code>without parameters</code> it binds <code>all methods</code> of the class to the class itself so that you don&#39;t have to do manual binding. If you don&#39;t want all methods of the class to be bound you can supply the methods you&#39;d like to bind as <code>string parameters</code> to <code>bindFunctions</code>.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TestType</span> </span>{
+  <span class="hljs-keyword">constructor</span>() {
+    <span class="hljs-keyword">this</span>.testString = <span class="hljs-string">'this-is-a-test'</span>;
+  }
+  methodOne() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.testString);
+  }
+  methodTwo() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.testString);
+  }
+  methodThree() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>.testString);
+  }
+}
+
+container.register(<span class="hljs-string">'TestType'</span>, TestType)
+  .bindFunctions(<span class="hljs-string">'methodOne'</span>, <span class="hljs-string">'methodThree'</span>);
+
+<span class="hljs-keyword">const</span> testType = container.resolve(<span class="hljs-string">'TestType'</span>);
+
+<span class="hljs-keyword">const</span> testFunction = <span class="hljs-function">(<span class="hljs-params">handlerFunction</span>) =&gt;</span> {
+  <span class="hljs-keyword">return</span> handlerFunction();
+};
+
+testFunction(testType.methodOne);
+<span class="hljs-comment">// 'this-is-a-test'</span>
+testFunction(testType.methodThree);
+<span class="hljs-comment">// 'this-is-a-test'</span>
+testFunction(testType.methodTwo);
+<span class="hljs-comment">// TypeError: Cannot read property 'testString' of undefined</span>
+</code></pre>
+				<h2 id="targeted-injection">Targeted Injection</h2>
+				<p>The <code>injectInto</code> declaration enables you to determine where <code>dependencies</code> declared for a registration get injected. The constructor of the registered class can then be used for other properties.</p>
+				<p><em>Note: The <code>injectInto</code> declaration expects a <code>string</code>, not a reference to the target property or function.</em></p>
+				<h3 id="into-property">Into Property</h3>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(youCanUseThisParameterYourself) {
+    <span class="hljs-keyword">this</span>._somethingRegular = youCanUseThisParameterYourself;
+  }
+
+  set anyProperty(value) {
+    <span class="hljs-keyword">this</span>._someClass = value;
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .injectInto(<span class="hljs-string">'anyProperty'</span>);
+</code></pre>
+				<h3 id="into-function">Into Function</h3>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(youCanUseThisParameterYourself) {
+    <span class="hljs-keyword">this</span>._somethingRegular = youCanUseThisParameterYourself;
+  }
+
+  anyFunction(value) {
+    <span class="hljs-keyword">this</span>._someClass = value;
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .injectInto(<span class="hljs-string">'anyFunction'</span>);
+</code></pre>
+				<h2 id="lazy-injection">Lazy Injection</h2>
+				<p>The <code>injectLazy</code> declaration allows you to determine the point in time a class gets instantiated yourself. The function injected resolves and injects all dependencies as configured. If a <code>config</code> function is declared for the registration, this function will then be executed as well.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(someClassLazy) {
+    <span class="hljs-keyword">this</span>._someClassLazy = someClassLazy;
+  }
+
+  start() {
+    <span class="hljs-keyword">const</span> someClass = <span class="hljs-keyword">this</span>._someClassLazy();
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .injectLazy();
+</code></pre>
+				<h2 id="subscribe-to-instance-creation">Subscribe to instance creation</h2>
+				<p>The <code>onNewInstance</code> declaration allows you to invoke a method of your choice every time an instance of a given type is created. The method call will happen before the instance is injected as a dependency. This enables you to perform operations with and on any instance before it is released for further use as a dependency.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FirstType</span> </span>{}
+
+container.register(<span class="hljs-string">'first'</span>, FirstType);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SecondType</span> </span>{
+  newFirstTypeCreated(firstTypeInstance) {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'test'</span>);
+  }
+}
+
+container.register(<span class="hljs-string">'second'</span>, SecondType)
+  .onNewInstance(<span class="hljs-string">'first'</span>, <span class="hljs-string">'newFirstTypeCreated'</span>);
+
+container.resolve(<span class="hljs-string">'first'</span>);
+container.resolve(<span class="hljs-string">'first'</span>);
+<span class="hljs-comment">// test</span>
+<span class="hljs-comment">// test</span>
+</code></pre>
+				<h2 id="configuration">Configuration</h2>
+				<p>The <code>configure</code> declaration allows you to set the <code>config</code> property of a class instantiated by the container.</p>
+				<h3 id="static-configuration">Static configuration</h3>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(someClass) {
+    <span class="hljs-keyword">this</span>._someClass = someClass;
+  }
+
+  set config(value) {
+    <span class="hljs-keyword">this</span>._config = value;
+  }
+
+  start() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-keyword">this</span>._config.aConfigValue); <span class="hljs-comment">// something</span>
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .config({<span class="hljs-attr">aConfigValue</span>: <span class="hljs-string">'something'</span>});
+</code></pre>
+				<h3 id="with-function-reference-defered-">With Function Reference (defered)</h3>
+				<p>As seen in the examle below, the <code>config</code> function gets executed when the registered class it is declared for gets instantiated. In case this class gets injected lazy, the <code>config</code> function will not be executed until the lazy injection is resolved.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{
+
+  get config() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._config;
+  }
+
+  set config(value) {
+    <span class="hljs-keyword">this</span>._config = value;
+  }
+}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass)
+  .config(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'config function executed'</span>);
+    <span class="hljs-keyword">return</span> { <span class="hljs-attr">aConfigValue</span>: <span class="hljs-string">'something'</span> }
+  });
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(someClassLazy) {
+    <span class="hljs-keyword">this</span>._someClassLazy = someClassLazy;
+  }
+
+  start() {
+    <span class="hljs-keyword">const</span> someClass = <span class="hljs-keyword">this</span>._someClassLazy(); <span class="hljs-comment">// config function executed</span>
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .injectLazy();
+</code></pre>
+				<h2 id="no-injection-service-locator-">No Injection (Service Locator)</h2>
+				<p>The <code>noInjection</code> declaration allows you to determine the point in time a class gets instantiated yourself.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeOtherClass</span> </span>{
+
+  <span class="hljs-keyword">constructor</span>(youCanUseThisParameterYourself) {
+    <span class="hljs-keyword">this</span>._somethingRegular = youCanUseThisParameterYourself;
+  }
+
+  start() {
+    <span class="hljs-keyword">const</span> someClass = container.resolve(<span class="hljs-string">'SomeClassKey'</span>);
+  }
+}
+
+container.register(<span class="hljs-string">'SomeOtherClassKey'</span>, SomeOtherClass)
+  .dependencies(<span class="hljs-string">'SomeClassKey'</span>)
+  .noInjection();
+</code></pre>
+				<h2 id="validation">Validation</h2>
+				<p>Before you start an application that uses the IoC container you typically want to be sure that you declared all the dependencies correctly so that you won&#39;t get nasty errors during runtime. For this the IoC container exposes the validation method <code>validateDependencies</code>.</p>
+				<p>You can call it either without parameters to validate all dependencies or use a single string or an array of strings to validate just the given keys.</p>
+				<pre><code class="lang-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SomeClass</span> </span>{}
+
+container.register(<span class="hljs-string">'SomeClassKey'</span>, SomeClass)
+  .dependencies(<span class="hljs-string">'SomeMissingRegistrationKey'</span>);
+
+<span class="hljs-keyword">try</span> {
+
+  container.validateDependencies();
+
+} <span class="hljs-keyword">catch</span>(error) {
+
+  <span class="hljs-comment">// this will throw because there is a dependency missing</span>
+}
+</code></pre>
+				<p>The method will throw an error if the validation fails, but it won&#39;t stop the validation on the first error so that you can get all validation errors in a single run. The error description will contain a list of all the validation errors.</p>
+				<p><em>Note: The IoC container validates a circular dependency if there is a <code>singleton</code> dependency in the tree. You can adjust this by setting <code>container.config.circularDependencyCanIncludeSingleton</code> to false so that the validation fails even if it is no strictly defined circular dependency.</em></p>
+				<p><em>Note: The IoC container validates a circular dependency if there is a <code>lazy</code> dependency in the tree. You can adjust this by setting <code>container.config.circularDependencyCanIncludeLazy</code> to false so that the validation fails even if it is no strictly defined circular dependency.</em></p>
+				<h1 id="supported-by">Supported by</h1>
+				<p><img src="https://raw.githubusercontent.com/5minds/addict-ioc/master/logo_huf.png" alt="logo"></p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_container_.html">"container"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_default_settings_.html">"default_<wbr>settings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_interfaces_.html">"interfaces"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_invocation_container_.html">"invocation_<wbr>container"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_registration_.html">"registration"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_registration_context_.html">"registration_<wbr>context"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_registration_settings_.html">"registration_<wbr>settings"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_registry_.html">"registry"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_resolver_.html">"resolver"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_.html">"utils"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

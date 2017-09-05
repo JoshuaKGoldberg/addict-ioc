@@ -1,7 +1,7 @@
 import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings,
   IResolver, ITags, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
 
-export class RegistrationSettings<T> implements IRegistrationSettings {
+export class RegistrationSettings<TType> implements IRegistrationSettings {
 
   public defaults: IRegistrationSettings;
   public settings: IRegistrationSettings = {};
@@ -34,11 +34,11 @@ export class RegistrationSettings<T> implements IRegistrationSettings {
     this.settings.factory = value;
   }
 
-  public get resolver(): IResolver<T, IInstanceWrapper<T>> {
+  public get resolver(): IResolver<TType, IInstanceWrapper<TType>> {
     return this._getCurrentOrDefault('resolver');
   }
 
-  public set resolver(value: IResolver<T, IInstanceWrapper<T>>) {
+  public set resolver(value: IResolver<TType, IInstanceWrapper<TType>>) {
     this.settings.resolver = value;
   }
 

@@ -1,12 +1,12 @@
 import { IFactoryRegistrationSettings, IInstanceWrapper, IObjectRegistrationSettings, IOverwrittenKeys, IRegistrationSettings, IResolver, ITags, ITypeRegistrationSettings, RegistrationKey, Type, TypeConfig } from './interfaces';
-export declare class RegistrationSettings<T> implements IRegistrationSettings {
+export declare class RegistrationSettings<TType> implements IRegistrationSettings {
     defaults: IRegistrationSettings;
     settings: IRegistrationSettings;
     constructor(registrationSettings: IRegistrationSettings);
     key: RegistrationKey;
     object: any;
     factory: any;
-    resolver: IResolver<T, IInstanceWrapper<T>>;
+    resolver: IResolver<TType, IInstanceWrapper<TType>>;
     module: string;
     config: TypeConfig;
     dependencies: Array<string>;

@@ -22,7 +22,7 @@ import {executeAsExtensionHook as extensionHook, executeAsExtensionHookAsync as 
 
 export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
-  public async resolveAsync<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<T> {
+  public async resolveAsync<TType>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): Promise<TType> {
 
     const registration: IRegistration = this.getRegistration(key);
 
@@ -30,16 +30,16 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       throw new Error(`registration for key "${key}" not found`);
     }
 
-    const resolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext<T>(registration);
+    const resolutionContext: IInvocationResolutionContext<TType> = this._createNewResolutionContext<TType>(registration);
 
-    const resolvedInstance: T = await this._resolveAsync<T>(registration, resolutionContext, injectionArgs, config);
+    const resolvedInstance: TType = await this._resolveAsync<TType>(registration, resolutionContext, injectionArgs, config);
 
-    await this._performInvocationsAsync<T>(resolutionContext);
+    await this._performInvocationsAsync<TType>(resolutionContext);
 
     return resolvedInstance;
   }
 
-  public resolve<T>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): T {
+  public resolve<TType>(key: RegistrationKey, injectionArgs: Array<any> = [], config?: any): TType {
 
     const registration: IRegistration = this.getRegistration(key);
 
@@ -47,76 +47,76 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       throw new Error(`registration for key "${key}" not found`);
     }
 
-    const resolutionContext: IInvocationResolutionContext<T> = this._createNewResolutionContext<T>(registration);
+    const resolutionContext: IInvocationResolutionContext<TType> = this._createNewResolutionContext<TType>(registration);
 
-    const resolvedInstance: T = this._resolve<T>(registration, resolutionContext, injectionArgs, config);
+    const resolvedInstance: TType = this._resolve<TType>(registration, resolutionContext, injectionArgs, config);
 
-    this._performInvocations<T>(resolutionContext);
+    this._performInvocations<TType>(resolutionContext);
 
     return resolvedInstance;
   }
 
-  protected _resolveLazy<T>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<T>, injectionArgs: Array<any> = [], config?: any): IFactory<T> {
+  protected _resolveLazy<TType>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<TType>, injectionArgs: Array<any> = [], config?: any): IFactory<TType> {
 
-    return (lazyInjectionArgs: Array<any>, lazyConfig: any): T => {
+    return (lazyInjectionArgs: Array<any>, lazyConfig: any): TType => {
 
-      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createChildResolutionContext(registration, resolutionContext);
-
-      const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
-
-      const lazyConfigUsed: any = this._mergeConfigs(config, lazyConfig);
-
-      const resolvedInstance: T = this._resolve<T>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
-
-      this._performInvocations<T>(lazyResolutionContext);
-
-      return resolvedInstance;
-    };
-  }
-
-  protected _resolveLazyAsync<T>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<T>, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<T> {
-
-    return async(lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<T> => {
-
-      const lazyResolutionContext: IInvocationResolutionContext<T> = this._createChildResolutionContext(registration, resolutionContext);
+      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createChildResolutionContext(registration, resolutionContext);
 
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
       const lazyConfigUsed: any = this._mergeConfigs(config, lazyConfig);
 
-      const resolvedInstance: T = await this._resolveAsync<T>(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed);
+      const resolvedInstance: TType = this._resolve<TType>(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
 
-      await this._performInvocationsAsync<T>(lazyResolutionContext);
+      this._performInvocations<TType>(lazyResolutionContext);
 
       return resolvedInstance;
     };
   }
 
-  protected _createNewResolutionContext<T>(registration: IRegistration): IInvocationResolutionContext<T> {
-    const newResolutionContext: IResolutionContext<T, IInvocationWrapper<T>> = super._createNewResolutionContext<T>(registration);
-    newResolutionContext.currentResolution.invocations = {};
-    return newResolutionContext as IInvocationResolutionContext<T>;
+  protected _resolveLazyAsync<TType>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<TType>, injectionArgs: Array<any> = [], config?: any): IFactoryAsync<TType> {
+
+    return async(lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<TType> => {
+
+      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createChildResolutionContext(registration, resolutionContext);
+
+      const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
+
+      const lazyConfigUsed: any = this._mergeConfigs(config, lazyConfig);
+
+      const resolvedInstance: TType = await this._resolveAsync<TType>(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed);
+
+      await this._performInvocationsAsync<TType>(lazyResolutionContext);
+
+      return resolvedInstance;
+    };
   }
 
-  protected _createChildResolutionContext<T>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<T>): IInvocationResolutionContext<T> {
-    const newResolutionContext: IResolutionContext<T, IInvocationWrapper<T>> = super._createChildResolutionContext(registration, resolutionContext);
+  protected _createNewResolutionContext<TType>(registration: IRegistration): IInvocationResolutionContext<TType> {
+    const newResolutionContext: IResolutionContext<TType, IInvocationWrapper<TType>> = super._createNewResolutionContext<TType>(registration);
     newResolutionContext.currentResolution.invocations = {};
-    return newResolutionContext as IInvocationResolutionContext<T>;
+    return newResolutionContext as IInvocationResolutionContext<TType>;
   }
 
-  protected async _resolveDependencyAsync<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<T>): Promise<any> {
-    const resolvedDependency: T = await super._resolveDependencyAsync(registration, dependencyKey, resolutionContext);
+  protected _createChildResolutionContext<TType>(registration: IRegistration, resolutionContext: IInvocationResolutionContext<TType>): IInvocationResolutionContext<TType> {
+    const newResolutionContext: IResolutionContext<TType, IInvocationWrapper<TType>> = super._createChildResolutionContext(registration, resolutionContext);
+    newResolutionContext.currentResolution.invocations = {};
+    return newResolutionContext as IInvocationResolutionContext<TType>;
+  }
+
+  protected async _resolveDependencyAsync<TType>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<TType>): Promise<any> {
+    const resolvedDependency: TType = await super._resolveDependencyAsync(registration, dependencyKey, resolutionContext);
     this._initializeDependencyInvocationContext(registration, dependencyKey, resolutionContext);
     return resolvedDependency;
   }
 
-  protected _resolveDependency<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<T>): any {
-    const resolvedDependency: T = super._resolveDependency(registration, dependencyKey, resolutionContext);
+  protected _resolveDependency<TType>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<TType>): any {
+    const resolvedDependency: TType = super._resolveDependency(registration, dependencyKey, resolutionContext);
     this._initializeDependencyInvocationContext(registration, dependencyKey, resolutionContext);
     return resolvedDependency;
   }
 
-  protected _initializeDependencyInvocationContext<T>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<T>): void {
+  protected _initializeDependencyInvocationContext<TType>(registration: IRegistration, dependencyKey: RegistrationKey, resolutionContext: IInvocationResolutionContext<TType>): void {
 
     const parentConventionCalls: IOverwrittenConventionCalls = registration.settings.overwrittenConventionCalls;
 
@@ -135,7 +135,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     resolutionContext.instanceLookup[resolutionContext.currentResolution.id].invocations = invocations;
   }
 
-  protected async _performInvocationsAsync<T>(resolutionContext: IInvocationResolutionContext<T>): Promise<void> {
+  protected async _performInvocationsAsync<TType>(resolutionContext: IInvocationResolutionContext<TType>): Promise<void> {
 
     const calls: Array<string> = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
 
@@ -144,7 +144,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     }
 
     const injectConventionCalled: IInjectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
-    const injectConventionCalledInstances: Array<IInvocationWrapper<T>> = this._getInjectCalledInstances(resolutionContext);
+    const injectConventionCalledInstances: Array<IInvocationWrapper<TType>> = this._getInjectCalledInstances(resolutionContext);
 
     for (const wrapper of injectConventionCalledInstances) {
 
@@ -170,9 +170,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     }
   }
 
-  protected async _performInvocationAsync<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): Promise<void> {
+  protected async _performInvocationAsync<TType>(resolutionContext: IInvocationResolutionContext<TType>, call: string, instanceId: string): Promise<void> {
 
-    const instanceWrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[instanceId];
+    const instanceWrapper: IInvocationWrapper<TType> = resolutionContext.instanceLookup[instanceId];
 
     if (instanceWrapper.invoked && instanceWrapper.invoked.indexOf(call) !== -1) {
       return;
@@ -196,7 +196,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     await extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
   }
 
-  private _isConventionCallTypeActive<T>(resolutionContext: IInvocationResolutionContext<T>): boolean {
+  private _isConventionCallTypeActive<TType>(resolutionContext: IInvocationResolutionContext<TType>): boolean {
 
     const registration: IRegistration = resolutionContext.currentResolution.registration;
 
@@ -211,7 +211,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     return this.settings.conventionCallTypes.indexOf(ConventionCallType.Class) !== -1;
   }
 
-  protected _performInvocations<T>(resolutionContext: IInvocationResolutionContext<T>): void {
+  protected _performInvocations<TType>(resolutionContext: IInvocationResolutionContext<TType>): void {
 
     const calls: Array<string> = this.settings.conventionCalls || this.settings.defaults.conventionCalls;
 
@@ -220,7 +220,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     }
 
     const injectConventionCalled: IInjectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
-    const injectConventionCalledInstances: Array<IInvocationWrapper<T>> = this._getInjectCalledInstances(resolutionContext);
+    const injectConventionCalledInstances: Array<IInvocationWrapper<TType>> = this._getInjectCalledInstances(resolutionContext);
 
     for (const wrapper of injectConventionCalledInstances) {
 
@@ -252,9 +252,9 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     }
   }
 
-  protected _performInvocation<T>(resolutionContext: IInvocationResolutionContext<T>, call: string, instanceId: string): void {
+  protected _performInvocation<TType>(resolutionContext: IInvocationResolutionContext<TType>, call: string, instanceId: string): void {
 
-    const instanceWrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[instanceId];
+    const instanceWrapper: IInvocationWrapper<TType> = resolutionContext.instanceLookup[instanceId];
 
     if (instanceWrapper.invoked && instanceWrapper.invoked.indexOf(call) !== -1) {
       return;
@@ -278,17 +278,17 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
     extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
   }
 
-  private _getInjectCalledInstances<T>(resolutionContext: IInvocationResolutionContext<T>): Array<IInvocationWrapper<T>> {
+  private _getInjectCalledInstances<TType>(resolutionContext: IInvocationResolutionContext<TType>): Array<IInvocationWrapper<TType>> {
 
     const injectConventionCalled: IInjectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
 
-    const result: Array<IInvocationWrapper<T>> = [];
+    const result: Array<IInvocationWrapper<TType>> = [];
 
     for (const registrationKey in injectConventionCalled) {
 
       for (const resolution of resolutionContext.instanceResolutionOrder) {
 
-        const wrapper: IInvocationWrapper<T> = resolutionContext.instanceLookup[resolution.id];
+        const wrapper: IInvocationWrapper<TType> = resolutionContext.instanceLookup[resolution.id];
 
         if (wrapper.registration.settings.key === registrationKey) {
           result.push(wrapper);

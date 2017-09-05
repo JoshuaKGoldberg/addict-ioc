@@ -8,25 +8,25 @@ export class RegistrationContext implements IRegistrator {
     return new RegistrationContext(this, registrationSettings);
   }
 
-  public register<T>(key: RegistrationKey, type: Type<T>): ITypeRegistration<T> {
-    const registration: ITypeRegistration<T> = this.registry.register<T>(key, type);
+  public register<TType>(key: RegistrationKey, type: Type<TType>): ITypeRegistration<TType> {
+    const registration: ITypeRegistration<TType> = this.registry.register<TType>(key, type);
     this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
     return registration;
   }
 
-  public registerObject<T>(key: RegistrationKey, object: any): IObjectRegistration<T> {
-    const registration: IObjectRegistration<T> = this.registry.registerObject<T>(key, object);
+  public registerObject<TType>(key: RegistrationKey, object: any): IObjectRegistration<TType> {
+    const registration: IObjectRegistration<TType> = this.registry.registerObject<TType>(key, object);
     this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
     return registration;
   }
 
-  public registerFactory<T>(key: RegistrationKey, factory: any): IFactoryRegistration<T> {
-    const registration: IFactoryRegistration<T> = this.registry.registerFactory<T>(key, factory);
+  public registerFactory<TType>(key: RegistrationKey, factory: any): IFactoryRegistration<TType> {
+    const registration: IFactoryRegistration<TType> = this.registry.registerFactory<TType>(key, factory);
     this.applyRegistrationTemplate(registration.settings, this.registrationSettings);
     return registration;
   }
 
-  public unregister<T>(key: string): IRegistration | ITypeRegistration<T> {
+  public unregister<TType>(key: string): IRegistration | ITypeRegistration<TType> {
     return this.registry.unregister(key);
   }
 
