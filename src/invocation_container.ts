@@ -193,7 +193,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
     }
 
-    await extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
+    await extensionHookAsync(instanceWrapper.instance[invocation], instanceWrapper.instance);
   }
 
   private _isConventionCallTypeActive<TType>(resolutionContext: IInvocationResolutionContext<TType>): boolean {
@@ -275,7 +275,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
       console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
     }
 
-    extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
+    extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance);
   }
 
   private _getInjectCalledInstances<TType>(resolutionContext: IInvocationResolutionContext<TType>): Array<IInvocationWrapper<TType>> {

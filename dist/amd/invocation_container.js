@@ -244,7 +244,7 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                             else {
                                 console.log("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
                             }
-                            return [4, utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, [])];
+                            return [4, utils_1.executeAsExtensionHookAsync(instanceWrapper.instance[invocation], instanceWrapper.instance)];
                         case 1:
                             _a.sent();
                             return [2];
@@ -309,7 +309,7 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
             else {
                 console.log("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
             }
-            utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance, []);
+            utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance);
         };
         InvocationContainer.prototype._getInjectCalledInstances = function (resolutionContext) {
             var injectConventionCalled = resolutionContext.currentResolution.registration.settings.injectConventionCalled;
