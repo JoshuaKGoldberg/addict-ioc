@@ -60,7 +60,7 @@
 					<a href="_interfaces_.icontainer.html">IContainer</a>
 				</li>
 			</ul>
-			<h1>Interface IContainer&lt;T&gt;</h1>
+			<h1>Interface IContainer&lt;TInstanceWrapper&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>T<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iinstancewrapper.html" class="tsd-signature-type">IInstanceWrapper</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4>TInstanceWrapper<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iinstancewrapper.html" class="tsd-signature-type">IInstanceWrapper</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -137,10 +137,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="instances" class="tsd-anchor"></a>
 					<h3>instances</h3>
-					<div class="tsd-signature tsd-kind-icon">instances<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.iinstancecache.html" class="tsd-signature-type">IInstanceCache</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">instances<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.iinstancecache.html" class="tsd-signature-type">IInstanceCache</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TInstanceWrapper</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L4">interfaces.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L4">interfaces.ts:4</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -150,7 +150,7 @@
 					<div class="tsd-signature tsd-kind-icon">parent<wbr>Container<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.icontainer.html" class="tsd-signature-type">IContainer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L5">interfaces.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L5">interfaces.ts:5</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -160,7 +160,7 @@
 					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.icontainersettings.html" class="tsd-signature-type">IContainerSettings</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L6">interfaces.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L6">interfaces.ts:6</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -177,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L7">interfaces.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L7">interfaces.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -195,7 +195,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistrator.html">IRegistrator</a>.<a href="_interfaces_.iregistrator.html#createregistrationtemplate">createRegistrationTemplate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L45">interfaces.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L45">interfaces.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -219,7 +219,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistry.html">IRegistry</a>.<a href="_interfaces_.iregistry.html#exportregistrations">exportRegistrations</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L54">interfaces.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L54">interfaces.ts:54</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -243,7 +243,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistry.html">IRegistry</a>.<a href="_interfaces_.iregistry.html#getkeysbytags">getKeysByTags</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L57">interfaces.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L57">interfaces.ts:57</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -267,7 +267,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistry.html">IRegistry</a>.<a href="_interfaces_.iregistry.html#getregistration">getRegistration</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L56">interfaces.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L56">interfaces.ts:56</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -291,7 +291,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistry.html">IRegistry</a>.<a href="_interfaces_.iregistry.html#importregistrations">importRegistrations</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L53">interfaces.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L53">interfaces.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -314,7 +314,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L8">interfaces.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L8">interfaces.ts:8</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -332,7 +332,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistry.html">IRegistry</a>.<a href="_interfaces_.iregistry.html#isregistered">isRegistered</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L55">interfaces.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L55">interfaces.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -349,23 +349,23 @@
 					<a name="register" class="tsd-anchor"></a>
 					<h3>register</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">register&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, type<span class="tsd-signature-symbol">: </span><a href="_interfaces_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">register&lt;TType, TRegistrationSettings&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, type<span class="tsd-signature-symbol">: </span><a href="_interfaces_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TRegistrationSettings</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistrator.html">IRegistrator</a>.<a href="_interfaces_.iregistrator.html#register">register</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L46">interfaces.ts:46</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L46">interfaces.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>TType</h4>
 								</li>
 								<li>
-									<h4>U<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
+									<h4>TRegistrationSettings<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -374,13 +374,13 @@
 									<h5>key: <a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a></h5>
 								</li>
 								<li>
-									<h5>type: <a href="_interfaces_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>type: <a href="_interfaces_.type.html" class="tsd-signature-type">Type</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">U</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">TRegistrationSettings</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -388,23 +388,23 @@
 					<a name="registerfactory" class="tsd-anchor"></a>
 					<h3>register<wbr>Factory</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">register<wbr>Factory&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, factory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactoryregistration.html" class="tsd-signature-type">IFactoryRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Factory&lt;TType, TRegistrationSettings&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, factory<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TType</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TRegistrationSettings</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactoryregistration.html" class="tsd-signature-type">IFactoryRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistrator.html">IRegistrator</a>.<a href="_interfaces_.iregistrator.html#registerfactory">registerFactory</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L48">interfaces.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L48">interfaces.ts:48</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>TType</h4>
 								</li>
 								<li>
-									<h4>U<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
+									<h4>TRegistrationSettings<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -413,13 +413,13 @@
 									<h5>key: <a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a></h5>
 								</li>
 								<li>
-									<h5>factory: <span class="tsd-signature-type">T</span></h5>
+									<h5>factory: <span class="tsd-signature-type">TType</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">U</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">TRegistrationSettings</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactoryregistration.html" class="tsd-signature-type">IFactoryRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactoryregistration.html" class="tsd-signature-type">IFactoryRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -427,23 +427,23 @@
 					<a name="registerobject" class="tsd-anchor"></a>
 					<h3>register<wbr>Object</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">register<wbr>Object&lt;T, U&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Object&lt;TType, TRegistrationSettings&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, object<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TType</span>, settings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TRegistrationSettings</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistrator.html">IRegistrator</a>.<a href="_interfaces_.iregistrator.html#registerobject">registerObject</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L47">interfaces.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L47">interfaces.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>TType</h4>
 								</li>
 								<li>
-									<h4>U<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
+									<h4>TRegistrationSettings<span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistrationsettings.html" class="tsd-signature-type">IRegistrationSettings</a></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -452,13 +452,13 @@
 									<h5>key: <a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a></h5>
 								</li>
 								<li>
-									<h5>object: <span class="tsd-signature-type">T</span></h5>
+									<h5>object: <span class="tsd-signature-type">TType</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">U</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> settings: <span class="tsd-signature-type">TRegistrationSettings</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -466,19 +466,19 @@
 					<a name="resolve" class="tsd-anchor"></a>
 					<h3>resolve</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">resolve&lt;V&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">V</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve&lt;TType&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TType</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L9">interfaces.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L9">interfaces.ts:9</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>V</h4>
+									<h4>TType</h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -493,7 +493,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">V</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TType</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -501,19 +501,19 @@
 					<a name="resolveasync" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Async&lt;V&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Async&lt;TType&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L11">interfaces.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L11">interfaces.ts:11</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>V</h4>
+									<h4>TType</h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -528,7 +528,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -536,19 +536,19 @@
 					<a name="resolvelazy" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Lazy</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Lazy&lt;V&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactory.html" class="tsd-signature-type">IFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Lazy&lt;TType&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactory.html" class="tsd-signature-type">IFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L10">interfaces.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L10">interfaces.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>V</h4>
+									<h4>TType</h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -563,7 +563,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactory.html" class="tsd-signature-type">IFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactory.html" class="tsd-signature-type">IFactory</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -571,19 +571,19 @@
 					<a name="resolvelazyasync" class="tsd-anchor"></a>
 					<h3>resolve<wbr>Lazy<wbr>Async</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Lazy<wbr>Async&lt;V&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactoryasync.html" class="tsd-signature-type">IFactoryAsync</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">resolve<wbr>Lazy<wbr>Async&lt;TType&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a>, injectionArgs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ifactoryasync.html" class="tsd-signature-type">IFactoryAsync</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L12">interfaces.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L12">interfaces.ts:12</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>V</h4>
+									<h4>TType</h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -598,7 +598,7 @@
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactoryasync.html" class="tsd-signature-type">IFactoryAsync</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ifactoryasync.html" class="tsd-signature-type">IFactoryAsync</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -606,20 +606,20 @@
 					<a name="unregister" class="tsd-anchor"></a>
 					<h3>unregister</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">unregister&lt;T&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistration.html" class="tsd-signature-type">IRegistration</a><span class="tsd-signature-symbol"> | </span><a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">unregister&lt;TType&gt;<span class="tsd-signature-symbol">(</span>key<span class="tsd-signature-symbol">: </span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.iregistration.html" class="tsd-signature-type">IRegistration</a><span class="tsd-signature-symbol"> | </span><a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.iregistrator.html">IRegistrator</a>.<a href="_interfaces_.iregistrator.html#unregister">unregister</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L49">interfaces.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L49">interfaces.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>T</h4>
+									<h4>TType</h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -630,7 +630,7 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.iregistration.html" class="tsd-signature-type">IRegistration</a>
 								<span class="tsd-signature-symbol"> | </span>
-								<a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>
+								<a href="_interfaces_.ityperegistration.html" class="tsd-signature-type">ITypeRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span>
 							</h4>
 						</li>
 					</ul>
@@ -645,7 +645,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L13">interfaces.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L13">interfaces.ts:13</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>

@@ -60,7 +60,7 @@
 					<a href="_interfaces_.iobjectregistration.html">IObjectRegistration</a>
 				</li>
 			</ul>
-			<h1>Interface IObjectRegistration&lt;T&gt;</h1>
+			<h1>Interface IObjectRegistration&lt;TType&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -71,7 +71,7 @@
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>T</h4>
+						<h4>TType</h4>
 					</li>
 				</ul>
 			</section>
@@ -79,7 +79,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">IObjectRegistration</span>
@@ -123,12 +123,12 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-overwrite tsd-is-inherited">
 					<a name="settings" class="tsd-anchor"></a>
 					<h3>settings</h3>
-					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#settings">settings</a></p>
 						<p>Overrides <a href="_interfaces_.iregistration.html">IRegistration</a>.<a href="_interfaces_.iregistration.html#settings">settings</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L61">interfaces.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L61">interfaces.ts:61</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -139,14 +139,14 @@
 					<a name="bindfunctions" class="tsd-anchor"></a>
 					<h3>bind<wbr>Functions</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">bind<wbr>Functions<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>functionsToBind<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">bind<wbr>Functions<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>functionsToBind<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#bindfunctions">bindFunctions</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L69">interfaces.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L69">interfaces.ts:69</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,7 +155,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>functionsToBind: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -163,14 +163,14 @@
 					<a name="configure" class="tsd-anchor"></a>
 					<h3>configure</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">configure<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">configure<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#configure">configure</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L62">interfaces.ts:62</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L62">interfaces.ts:62</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -179,7 +179,7 @@
 									<h5>config: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -187,14 +187,14 @@
 					<a name="dependencies" class="tsd-anchor"></a>
 					<h3>dependencies</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">dependencies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>dependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">dependencies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>dependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#dependencies">dependencies</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L63">interfaces.ts:63</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L63">interfaces.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -203,7 +203,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>dependencies: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -211,14 +211,14 @@
 					<a name="injectinto" class="tsd-anchor"></a>
 					<h3>inject<wbr>Into</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">inject<wbr>Into<span class="tsd-signature-symbol">(</span>targetFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">inject<wbr>Into<span class="tsd-signature-symbol">(</span>targetFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#injectinto">injectInto</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L68">interfaces.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L68">interfaces.ts:68</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -227,7 +227,7 @@
 									<h5>targetFunction: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -235,14 +235,14 @@
 					<a name="injectlazy" class="tsd-anchor"></a>
 					<h3>inject<wbr>Lazy</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">inject<wbr>Lazy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>lazyDependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">inject<wbr>Lazy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>lazyDependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#injectlazy">injectLazy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L66">interfaces.ts:66</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L66">interfaces.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -251,7 +251,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>lazyDependencies: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -259,14 +259,14 @@
 					<a name="injectpromiselazy" class="tsd-anchor"></a>
 					<h3>inject<wbr>Promise<wbr>Lazy</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">inject<wbr>Promise<wbr>Lazy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>lazyDependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">inject<wbr>Promise<wbr>Lazy<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>lazyDependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#injectpromiselazy">injectPromiseLazy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L67">interfaces.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L67">interfaces.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -275,7 +275,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>lazyDependencies: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -283,14 +283,14 @@
 					<a name="overwrite" class="tsd-anchor"></a>
 					<h3>overwrite</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">overwrite<span class="tsd-signature-symbol">(</span>originalKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, overwrittenKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">overwrite<span class="tsd-signature-symbol">(</span>originalKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, overwrittenKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#overwrite">overwrite</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L71">interfaces.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L71">interfaces.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -302,7 +302,7 @@
 									<h5>overwrittenKey: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -310,14 +310,14 @@
 					<a name="owns" class="tsd-anchor"></a>
 					<h3>owns</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">owns<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>dependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">owns<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>dependencies<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#owns">owns</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L70">interfaces.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L70">interfaces.ts:70</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -326,7 +326,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>dependencies: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/_interfaces_.html#registrationkey" class="tsd-signature-type">RegistrationKey</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -334,14 +334,14 @@
 					<a name="settag" class="tsd-anchor"></a>
 					<h3>set<wbr>Tag</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">set<wbr>Tag<span class="tsd-signature-symbol">(</span>tag<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Tag<span class="tsd-signature-symbol">(</span>tag<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#settag">setTag</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L73">interfaces.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L73">interfaces.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -353,7 +353,7 @@
 									<h5>value: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -361,14 +361,14 @@
 					<a name="singleton" class="tsd-anchor"></a>
 					<h3>singleton</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">singleton<span class="tsd-signature-symbol">(</span>isSingleton<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">singleton<span class="tsd-signature-symbol">(</span>isSingleton<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#singleton">singleton</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L64">interfaces.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L64">interfaces.ts:64</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -377,7 +377,7 @@
 									<h5>isSingleton: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -385,14 +385,14 @@
 					<a name="tags" class="tsd-anchor"></a>
 					<h3>tags</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">tags<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>tags<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#tags">tags</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L72">interfaces.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L72">interfaces.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +401,7 @@
 									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>tags: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -409,14 +409,14 @@
 					<a name="transient" class="tsd-anchor"></a>
 					<h3>transient</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">transient<span class="tsd-signature-symbol">(</span>isTransient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">transient<span class="tsd-signature-symbol">(</span>isTransient<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_interfaces_.ispecializedregistration.html">ISpecializedRegistration</a>.<a href="_interfaces_.ispecializedregistration.html#transient">transient</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/3427229/src/interfaces.ts#L65">interfaces.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/5minds/addict-ioc/blob/680d8df/src/interfaces.ts#L65">interfaces.ts:65</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -425,7 +425,7 @@
 									<h5>isTransient: <span class="tsd-signature-type">boolean</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_interfaces_.ispecializedregistration.html" class="tsd-signature-type">ISpecializedRegistration</a><span class="tsd-signature-symbol">&lt;</span><a href="_interfaces_.iobjectregistration.html" class="tsd-signature-type">IObjectRegistration</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="_interfaces_.iobjectregistrationsettings.html" class="tsd-signature-type">IObjectRegistrationSettings</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TType</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
