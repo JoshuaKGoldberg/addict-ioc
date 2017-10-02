@@ -60,7 +60,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return (lazyInjectionArgs: Array<any>, lazyConfig: any): TType => {
 
-      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createChildResolutionContext(registration, resolutionContext);
+      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createNewResolutionContext(registration);
 
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 
@@ -78,7 +78,7 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     return async(lazyInjectionArgs: Array<any>, lazyConfig: any): Promise<TType> => {
 
-      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createChildResolutionContext(registration, resolutionContext);
+      const lazyResolutionContext: IInvocationResolutionContext<TType> = this._createNewResolutionContext(registration);
 
       const injectionArgsUsed: Array<any> = this._mergeArguments(injectionArgs, lazyInjectionArgs);
 

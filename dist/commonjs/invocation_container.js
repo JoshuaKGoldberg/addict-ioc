@@ -91,7 +91,7 @@ var InvocationContainer = (function (_super) {
         var _this = this;
         if (injectionArgs === void 0) { injectionArgs = []; }
         return function (lazyInjectionArgs, lazyConfig) {
-            var lazyResolutionContext = _this._createChildResolutionContext(registration, resolutionContext);
+            var lazyResolutionContext = _this._createNewResolutionContext(registration);
             var injectionArgsUsed = _this._mergeArguments(injectionArgs, lazyInjectionArgs);
             var lazyConfigUsed = _this._mergeConfigs(config, lazyConfig);
             var resolvedInstance = _this._resolve(registration, resolutionContext, injectionArgsUsed, lazyConfigUsed);
@@ -107,7 +107,7 @@ var InvocationContainer = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        lazyResolutionContext = this._createChildResolutionContext(registration, resolutionContext);
+                        lazyResolutionContext = this._createNewResolutionContext(registration);
                         injectionArgsUsed = this._mergeArguments(injectionArgs, lazyInjectionArgs);
                         lazyConfigUsed = this._mergeConfigs(config, lazyConfig);
                         return [4, this._resolveAsync(registration, lazyResolutionContext, injectionArgsUsed, lazyConfigUsed)];
