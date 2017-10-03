@@ -187,11 +187,11 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     const invocation: string = instanceWrapper.invocations[call] || call;
 
-    if (invocation === call) {
-      console.log(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
-    } else {
-      console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
-    }
+    // if (invocation === call) {
+    //   console.log(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+    // } else {
+    //   console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+    // }
 
     await extensionHookAsync(instanceWrapper.instance[invocation], instanceWrapper.instance);
   }
@@ -269,11 +269,11 @@ export class InvocationContainer extends Container<IInvocationWrapper<any>> {
 
     const invocation: string = instanceWrapper.invocations[call] || call;
 
-    if (invocation === call) {
-      console.log(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
-    } else {
-      console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
-    }
+    // if (invocation === call) {
+    //   console.log(`invoking "${invocation}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+    // } else {
+    //   console.log(`invoking "${invocation}" instead of "${call}" on key "${instanceWrapper.registration.settings.key}" (instance: ${instanceId})`);
+    // }
 
     extensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance);
   }

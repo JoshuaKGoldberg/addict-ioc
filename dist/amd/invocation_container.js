@@ -238,12 +238,6 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                                 instanceWrapper.invoked.push(call);
                             }
                             invocation = instanceWrapper.invocations[call] || call;
-                            if (invocation === call) {
-                                console.log("invoking \"" + invocation + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
-                            }
-                            else {
-                                console.log("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
-                            }
                             return [4, utils_1.executeAsExtensionHookAsync(instanceWrapper.instance[invocation], instanceWrapper.instance)];
                         case 1:
                             _a.sent();
@@ -303,12 +297,6 @@ define(["require", "exports", "./container", "./interfaces", "./utils"], functio
                 instanceWrapper.invoked.push(call);
             }
             var invocation = instanceWrapper.invocations[call] || call;
-            if (invocation === call) {
-                console.log("invoking \"" + invocation + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
-            }
-            else {
-                console.log("invoking \"" + invocation + "\" instead of \"" + call + "\" on key \"" + instanceWrapper.registration.settings.key + "\" (instance: " + instanceId + ")");
-            }
             utils_1.executeAsExtensionHook(instanceWrapper.instance[invocation], instanceWrapper.instance);
         };
         InvocationContainer.prototype._getInjectCalledInstances = function (resolutionContext) {
