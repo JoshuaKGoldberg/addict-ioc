@@ -620,22 +620,22 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
     resolutionContext.currentResolution.registration = registration;
     resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
 
+    if (!this.instances) {
+      this.instances = {};
+    }
+
+    if (registration.settings.isTrueSingleton) {
+      this.instances[key] = instance;
+      return;
+    }
+
     if (!registration.settings.isSingleton) {
       return;
     }
 
     const resolver: IResolver<TType, TInstanceWrapper> = this._getResolver(registration);
 
-    if (!this.instances) {
-      this.instances = {};
-    }
-
     let allInstances: any = this.instances[key];
-
-    if (registration.settings.isTrueSingleton) {
-      this.instances[key] = instance;
-      return;
-    }
 
     if (!allInstances) {
       allInstances = this.instances[key] = {};

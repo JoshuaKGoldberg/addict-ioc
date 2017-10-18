@@ -604,18 +604,18 @@ var Container = (function (_super) {
         resolutionContext.currentResolution.instance = instance;
         resolutionContext.currentResolution.registration = registration;
         resolutionContext.instanceResolutionOrder.push(resolutionContext.currentResolution);
-        if (!registration.settings.isSingleton) {
-            return;
-        }
-        var resolver = this._getResolver(registration);
         if (!this.instances) {
             this.instances = {};
         }
-        var allInstances = this.instances[key];
         if (registration.settings.isTrueSingleton) {
             this.instances[key] = instance;
             return;
         }
+        if (!registration.settings.isSingleton) {
+            return;
+        }
+        var resolver = this._getResolver(registration);
+        var allInstances = this.instances[key];
         if (!allInstances) {
             allInstances = this.instances[key] = {};
         }
