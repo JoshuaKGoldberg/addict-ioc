@@ -570,6 +570,9 @@ var Container = (function (_super) {
         if (!this.instances) {
             this.instances = {};
         }
+        if (registration.settings.isTrueSingleton) {
+            return this.instances[key];
+        }
         var allInstances = this.instances[key];
         if (!allInstances) {
             return [];
@@ -605,6 +608,10 @@ var Container = (function (_super) {
             this.instances = {};
         }
         var allInstances = this.instances[key];
+        if (registration.settings.isTrueSingleton) {
+            this.instances[key] = instance;
+            return;
+        }
         if (!allInstances) {
             allInstances = this.instances[key] = {};
         }

@@ -36,6 +36,10 @@ define(["require", "exports"], function (require, exports) {
             this.settings.isSingleton = isSingleton;
             return this;
         };
+        Registration.prototype.isTrueSingleton = function () {
+            this.settings.isTrueSingleton = true;
+            return this;
+        };
         Registration.prototype.transient = function (isTransient) {
             if (isTransient === void 0) { isTransient = true; }
             this.settings.isSingleton = !isTransient;

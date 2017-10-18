@@ -125,6 +125,16 @@ var RegistrationSettings = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(RegistrationSettings.prototype, "isTrueSingleton", {
+        get: function () {
+            return this._getCurrentOrDefault('isTrueSingleton');
+        },
+        set: function (value) {
+            this.settings.isTrueSingleton = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(RegistrationSettings.prototype, "isObject", {
         get: function () {
             return this._getCurrentOrDefault('isObject');

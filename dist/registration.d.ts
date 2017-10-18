@@ -7,6 +7,7 @@ export declare class Registration<TRegistration extends IRegistration, TRegistra
     configure(config: any): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
     dependencies(...dependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
     singleton(isSingleton?: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
+    isTrueSingleton(): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
     transient(isTransient?: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
     injectLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
     injectPromiseLazy(...lazyPromiseDependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;

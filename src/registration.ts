@@ -47,12 +47,12 @@ export class Registration<TRegistration extends IRegistration, TRegistrationSett
     return this;
   }
 
-  public isTrueSingleton(): ISpecializedRegistration<T, U> {
+  public isTrueSingleton(): ISpecializedRegistration<TRegistration, TRegistrationSettings> {
     this.settings.isTrueSingleton = true;
     return this;
   }
 
-  public transient(isTransient: boolean = true): ISpecializedRegistration<T, U> {
+  public transient(isTransient: boolean = true): ISpecializedRegistration<TRegistration, TRegistrationSettings> {
     this.settings.isSingleton = !isTransient;
     return this;
   }

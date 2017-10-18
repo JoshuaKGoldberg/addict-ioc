@@ -14,6 +14,7 @@ export declare class RegistrationSettings<TType> implements IRegistrationSetting
     lazyDependencies: Array<string>;
     lazyDependenciesAsync: Array<string>;
     isSingleton: boolean;
+    isTrueSingleton: boolean;
     isObject: boolean;
     isFactory: boolean;
     wantsInjection: boolean;

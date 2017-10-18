@@ -567,6 +567,9 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             if (!this.instances) {
                 this.instances = {};
             }
+            if (registration.settings.isTrueSingleton) {
+                return this.instances[key];
+            }
             var allInstances = this.instances[key];
             if (!allInstances) {
                 return [];
@@ -602,6 +605,10 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                 this.instances = {};
             }
             var allInstances = this.instances[key];
+            if (registration.settings.isTrueSingleton) {
+                this.instances[key] = instance;
+                return;
+            }
             if (!allInstances) {
                 allInstances = this.instances[key] = {};
             }
