@@ -573,7 +573,11 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
     }
 
     if (registration.settings.isTrueSingleton) {
-      return this.instances[key];
+      const instance = this.instances[key];
+      if (!instance) {
+        return [];
+      }
+      return [instance];
     }
 
     const allInstances: any = this.instances[key];

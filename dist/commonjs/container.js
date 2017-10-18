@@ -571,7 +571,11 @@ var Container = (function (_super) {
             this.instances = {};
         }
         if (registration.settings.isTrueSingleton) {
-            return this.instances[key];
+            var instance = this.instances[key];
+            if (!instance) {
+                return [];
+            }
+            return [instance];
         }
         var allInstances = this.instances[key];
         if (!allInstances) {
