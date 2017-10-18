@@ -18,7 +18,7 @@ export interface IContainer<TInstanceWrapper extends IInstanceWrapper<any> = IIn
 // export interface IInstanceWithInjectionArgsCache<T> extends Map<string, Array<T>> {}
 
 export interface IInstanceCache<TType, TInstanceWrapper extends IInstanceWrapper<TType>> {
-  [key: string]: {
+  [key: string]: any | {
     [configHash: string]: {
       [injectionArgsHash: string]: Array<TType>;
     },
@@ -61,8 +61,8 @@ export interface ISpecializedRegistration<TRegistration extends IRegistration, T
   settings: TRegistrationSettings;
   configure(config: any): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
   dependencies(...dependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
-  singleton(isSingleton: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
-  transient(isTransient: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
+  singleton(isSingleton?: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
+  transient(isTransient?: boolean): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
   injectLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
   injectPromiseLazy(...lazyDependencies: Array<RegistrationKey>): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
   injectInto(targetFunction: string): ISpecializedRegistration<TRegistration, TRegistrationSettings>;
@@ -126,6 +126,7 @@ export interface IRegistrationSettings {
   tags?: ITags;
   config?: TypeConfig;
   isSingleton?: boolean;
+  isTrueSingleton?: boolean;
   wantsInjection?: boolean;
   injectInto?: string;
   bindFunctions?: boolean;

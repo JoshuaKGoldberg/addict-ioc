@@ -98,6 +98,14 @@ export class RegistrationSettings<TType> implements IRegistrationSettings {
     this.settings.isSingleton = value;
   }
 
+  public get isTrueSingleton(): boolean {
+    return this._getCurrentOrDefault('isTrueSingleton');
+  }
+
+  public set isTrueSingleton(value: boolean) {
+    this.settings.isTrueSingleton = value;
+  }
+
   public get isObject(): boolean {
     return this._getCurrentOrDefault('isObject');
   }

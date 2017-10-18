@@ -572,6 +572,10 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
       this.instances = {};
     }
 
+    if (registration.settings.isTrueSingleton) {
+      return this.instances[key];
+    }
+
     const allInstances: any = this.instances[key];
     if (!allInstances) {
       return [];
@@ -623,6 +627,11 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
     }
 
     let allInstances: any = this.instances[key];
+
+    if (registration.settings.isTrueSingleton) {
+      this.instances[key] = instance;
+      return;
+    }
 
     if (!allInstances) {
       allInstances = this.instances[key] = {};
