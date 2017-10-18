@@ -1,6 +1,6 @@
 {
   "name": "addict-ioc",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "A fluent IoC container for JavaScript.",
   "main": "dist/commonjs/index.js",
   "typings": "dist/index.d.ts",
