@@ -4,6 +4,7 @@ define(["require", "exports", "./interfaces", "./resolver"], function (require, 
     exports.defaultSettings = {
         defaults: {
             isSingleton: false,
+            isTrueSingleton: false,
             wantsInjection: true,
             dependencies: [],
             lazyDependencies: [],

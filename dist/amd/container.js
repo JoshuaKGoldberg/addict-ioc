@@ -314,7 +314,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
         };
         Container.prototype._resolveTypeInstance = function (registration, resolutionContext, injectionArgs, config) {
             var configUsed = this._mergeRegistrationConfig(registration, config);
-            if (registration.settings.isSingleton) {
+            if (registration.settings.isSingleton || registration.settings.isTrueSingleton) {
                 return this._getTypeInstance(registration, resolutionContext, injectionArgs, configUsed);
             }
             return this._getNewTypeInstance(registration, resolutionContext, injectionArgs, configUsed);
@@ -326,7 +326,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
                     switch (_a.label) {
                         case 0:
                             configUsed = this._mergeRegistrationConfig(registration, config);
-                            if (!registration.settings.isSingleton) return [3, 2];
+                            if (!(registration.settings.isSingleton || registration.settings.isTrueSingleton)) return [3, 2];
                             return [4, this._getTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
                         case 1: return [2, _a.sent()];
                         case 2: return [4, this._getNewTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed)];
@@ -705,7 +705,7 @@ define(["require", "exports", "./default_settings", "./registry", "./utils", "no
             var _this = this;
             return history.some(function (parentRegistration) {
                 var parentSettings = parentRegistration.settings;
-                if (_this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
+                if (_this.settings.circularDependencyCanIncludeSingleton && (parentSettings.isSingleton || parentSettings.isTrueSingleton)) {
                     return true;
                 }
                 if (_this.settings.circularDependencyCanIncludeLazy && parentSettings.wantsLazyInjection) {

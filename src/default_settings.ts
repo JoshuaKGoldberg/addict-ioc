@@ -4,6 +4,7 @@ import { Resolver } from './resolver';
 export const defaultSettings: IContainerSettings = {
   defaults: {
     isSingleton: false,
+    isTrueSingleton: false,
     wantsInjection: true,
     dependencies: [],
     lazyDependencies: [],

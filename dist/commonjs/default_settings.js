@@ -5,6 +5,7 @@ var resolver_1 = require("./resolver");
 exports.defaultSettings = {
     defaults: {
         isSingleton: false,
+        isTrueSingleton: false,
         wantsInjection: true,
         dependencies: [],
         lazyDependencies: [],

@@ -318,7 +318,7 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
 
     const configUsed: any = this._mergeRegistrationConfig(registration, config);
 
-    if (registration.settings.isSingleton) {
+    if (registration.settings.isSingleton || registration.settings.isTrueSingleton) {
       return this._getTypeInstance(registration, resolutionContext, injectionArgs, configUsed);
     }
 
@@ -329,7 +329,7 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
 
     const configUsed: any = this._mergeRegistrationConfig(registration, config);
 
-    if (registration.settings.isSingleton) {
+    if (registration.settings.isSingleton || registration.settings.isTrueSingleton) {
       return await this._getTypeInstanceAsync(registration, resolutionContext, injectionArgs, configUsed);
     }
 
@@ -761,7 +761,7 @@ export class Container<TInstanceWrapper extends IInstanceWrapper<any> = IInstanc
 
       const parentSettings: IRegistrationSettings = parentRegistration.settings;
 
-      if (this.settings.circularDependencyCanIncludeSingleton && parentSettings.isSingleton) {
+      if (this.settings.circularDependencyCanIncludeSingleton && (parentSettings.isSingleton || parentSettings.isTrueSingleton)) {
         return true;
       }
 
